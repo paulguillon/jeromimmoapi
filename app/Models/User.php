@@ -21,7 +21,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
      * @var array
      */
     protected $fillable = [
-        'lastnameUser', 'firstnameUser', 'emailUser', 'idRole', 'created_by', 'updated_by'
+        'lastnameUser', 'firstnameUser', 'emailUser', 'idRoleUser', 'created_by', 'updated_by'
     ];
 
     /**
@@ -52,7 +52,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
     {
         return [
             'id' => $this->idUser,
-            'idRole' => $this->idRole
+            'idRoleUser' => $this->idRoleUser
         ];
     }
 

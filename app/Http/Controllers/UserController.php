@@ -33,7 +33,7 @@ class UserController extends Controller
             'firstnameUser' => 'required|string',
             'emailUser' => 'required|email|unique:users',
             'passwordUser' => 'required|confirmed',
-            'idRole' => 'required|integer',
+            'idRoleUser' => 'required|integer',
             'created_by' => 'required|integer',
             'updated_by' => 'required|integer',
         ]);
@@ -46,7 +46,7 @@ class UserController extends Controller
             $user->emailUser = $request->input('emailUser');
             $plainPassword = $request->input('passwordUser');
             $user->passwordUser = app('hash')->make($plainPassword);
-            $user->idRole = $request->input('idRole');
+            $user->idRoleUser = $request->input('idRoleUser');
             $user->created_by = $request->input('created_by');
             $user->updated_by = $request->input('updated_by');
 
