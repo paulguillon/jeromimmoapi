@@ -28,7 +28,7 @@ class CreateUsersTable extends Migration
             $table->foreignId('created_by')->constrained('users', 'idUser');
             $table->timestamp('updated_at')->default(DB::raw('CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP'));
             $table->foreignId('updated_by')->constrained('users', 'idUser');
-            $table->foreignId('idRoleUser')->constrained('roles', 'idRoleUser');
+            $table->foreignId('idRoleUser')->constrained('roles', 'idRole');
         });
     }
 
