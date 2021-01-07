@@ -20,8 +20,8 @@ class CreatePropertydataTable extends Migration
             $table->foreignId('created_by')->constrained('users', 'idUser');
             $table->timestamp('updated_at')->default(DB::raw('CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP'));
             $table->foreignId('updated_by')->constrained('users', 'idUser');
-            $table->string('keyPropertyData');
-            $table->text('valuePropertyData');
+            $table->string('keyPropertyData', 255);
+            $table->longText('valuePropertyData');
             $table->foreignId('idProperty')->constrained('property', 'idProperty');
         });
     }

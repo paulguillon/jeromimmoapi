@@ -46,4 +46,40 @@ $router->group(['prefix' => 'api/v1'], function () use ($router) {
 
     // Matches "/api/v1/login
     $router->post('login', 'UserController@login');
+
+    // Matches "/api/agency
+    $router->get('agency', 'AgencyController@allAgency');
+
+    // Matches "/api/agency/id
+    $router->get('agency/{id}', 'AgencyController@oneAgency');
+
+    // Matches "/api/v1/registerAgency
+    $router->post('/registerAgency', 'AgencyController@registerAgency');
+
+    // Matches "/api/faq
+    $router->get('faq', 'FaqController@allFaq');
+
+    // Matches "/api/agency/id
+    $router->get('faq/{id}', 'FaqController@oneFaq');
+
+    // Matches "/api/v1/registerFaq
+    $router->post('/registerFaq', 'FaqController@registerFaq');
+
+    // Matches "/api/document
+    $router->get('document', 'DocumentController@allDocument');
+
+    // Matches "/api/document/id
+    $router->get('document/{id}', 'DocumentController@oneDocument');
+
+    // Matches "/api/v1/registerDocument
+    $router->post('/registerDocument', 'DocumentController@registerDocument');
+
+    // Matches "/api/visit
+    $router->get('visit', 'VisitController@allVisit');
+
+    // Matches "/api/visit/id
+    $router->get('visit/{id}', 'VisitController@oneVisit');
+
+    // Matches "/api/v1/registerVisit
+    $router->post('/registerVisit', 'VisitController@registerVisit');
 });

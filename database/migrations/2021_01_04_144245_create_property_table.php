@@ -20,10 +20,10 @@ class CreatePropertyTable extends Migration
             $table->foreignId('created_by')->constrained('users', 'idUser');
             $table->timestamp('updated_at')->default(DB::raw('CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP'));
             $table->foreignId('updated_by')->constrained('users', 'idUser');
-            $table->string('typeProperty');
+            $table->string('typeProperty', 55);
             $table->decimal('priceProperty');
-            $table->integer('zipCodeProperty');
-            $table->string('cityProperty');
+            $table->string('zipCodeProperty', 5);
+            $table->string('cityProperty', 55);
         });
     }
 
