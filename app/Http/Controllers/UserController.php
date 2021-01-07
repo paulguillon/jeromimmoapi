@@ -68,7 +68,7 @@ class UserController extends Controller
     public function oneUser($id)
     {
         try {
-            $user = User::all()->where('idUser', $id)->first();
+            $user = User::all()->where('uuidUser', $id)->first();
 
             return response()->json(['user' => $user], 200);
         } catch (\Exception $e) {

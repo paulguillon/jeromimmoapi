@@ -17,7 +17,8 @@ class CreateUsersTable extends Migration
         Schema::disableForeignKeyConstraints();
 
         Schema::create('users', function (Blueprint $table) {
-            $table->uuid('idUser')->unique();
+            $table->bigIncrements('idUser')->unique();
+            $table->uuid('uuidUser')->unique();
             $table->string('lastnameUser');
             $table->string('firstnameUser');
             $table->string('emailUser')->notNullable();
