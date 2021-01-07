@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
 
 class UserController extends Controller
 {
@@ -41,6 +42,7 @@ class UserController extends Controller
         try {
 
             $user = new User;
+            $user->uuidUser = Str::uuid();
             $user->lastnameUser = $request->input('lastnameUser');
             $user->firstnameUser = $request->input('firstnameUser');
             $user->emailUser = $request->input('emailUser');
