@@ -23,12 +23,16 @@ class RoleController extends Controller
         //validate incoming request
         $this->validate($request, [
             'roleName' => 'required|string',
+            'created_by' => 'required|string',
+            'updated_by' => 'required|string'
         ]);
 
         try {
 
             $role = new Role;
             $role->roleName = $request->input('roleName');
+            $role->created_by = $request->input('created_by');
+            $role->updated_by = $request->input('updated_by');
             $role->save();
 
             //return successful response
