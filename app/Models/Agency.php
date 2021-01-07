@@ -13,7 +13,7 @@ class Agency extends Model implements AuthenticatableContract, AuthorizableContr
 {
     use Authenticatable, Authorizable, HasFactory;
 
-    protected $table = 'Agency'; 
+    protected $table = 'agency'; 
 
     /**
      * The attributes that are mass assignable.
