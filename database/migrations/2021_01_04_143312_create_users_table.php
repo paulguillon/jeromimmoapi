@@ -4,6 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 
 class CreateUsersTable extends Migration
 {
@@ -18,7 +19,7 @@ class CreateUsersTable extends Migration
 
         Schema::create('users', function (Blueprint $table) {
             $table->bigIncrements('idUser')->unique();
-            $table->uuid('uuidUser')->unique();
+            $table->uuid('uuidUser')->unique()->default(Str::uuid());
             $table->string('lastnameUser');
             $table->string('firstnameUser');
             $table->string('emailUser')->notNullable();
