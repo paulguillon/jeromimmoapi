@@ -21,13 +21,13 @@
     if (sessionStorage.token)
         tokenUser = parseJwt(sessionStorage.token);
     else {
-        window.location.href = `${window.location.origin}/public/?e=log`;
+        window.location.href = `${window.location.origin}/?e=log`;
     }
 
     // If token exists
     if (Object.keys(tokenUser).length !== 0) {
         console.log(tokenUser)
-        fetch(`${window.location.origin}/public/api/v1/roles/${tokenUser.idRoleUser}`).then((response) => {
+        fetch(`${window.location.origin}/api/v1/roles/${tokenUser.idRoleUser}`).then((response) => {
             return response.json();
         }).then((data) => {
             console.log(data.role.roleName);
