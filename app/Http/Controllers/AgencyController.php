@@ -14,7 +14,7 @@ class AgencyController extends Controller
      * @param  Request  $request
      * @return Response
      */
-    public function allProperties(Request $request)
+    public function allAgency(Request $request)
     {
         return response()->json(['agency' =>  Agency::all()], 200);
     }

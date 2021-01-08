@@ -48,7 +48,7 @@ $router->group(['prefix' => 'api/v1'], function () use ($router) {
     $router->post('login', 'UserController@login');
 
     // Matches "/api/agency
-    $router->get('agency', 'AgencyController@allAgency');
+    $router->get('/agency', 'AgencyController@allAgency');
 
     // Matches "/api/agency/id
     $router->get('agency/{id}', 'AgencyController@oneAgency');
