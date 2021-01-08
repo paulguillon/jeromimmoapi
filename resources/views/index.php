@@ -1,9 +1,8 @@
 <?php
-
+// From profile when not logged in
 if(isset($_GET['e']))
     if($_GET['e'] == 'log')
         echo 'Connectez-vous pour accéder à votre profil';
-
 ?>
 <!DOCTYPE html>
 <html lang="fr">
@@ -48,7 +47,7 @@ if(isset($_GET['e']))
     }
 
     function login(email, password) {
-        fetch('http://tutolumen/api/v1/login', {
+        fetch(`${window.location.origin}/api/v1/login`, {
             method: 'post',
             headers: {
                 'Accept': 'application/json',

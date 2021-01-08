@@ -1,4 +1,4 @@
 <script>
     delete sessionStorage.token;
-    window.location.href = 'http://tutolumen/';
+    window.location.href = window.location.origin;
 </script>

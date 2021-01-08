@@ -1,14 +1,14 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Profil</title>
 </head>
 
 <body>
-    <h1>PROFILE</h1>
+    <h1>PROFIL</h1>
     <p>Vous êtes connecté.e !!!</p>
     <a href="logout"><button>Se déconnecter</button></a>
 </body>
@@ -21,13 +21,13 @@
     if (sessionStorage.token)
         tokenUser = parseJwt(sessionStorage.token);
     else {
-        window.location.href = 'http://tutolumen/?e=log';
+        window.location.href = `${window.location.origin}/?e=log`;
     }
 
-    // If !empty
+    // If token exists
     if (Object.keys(tokenUser).length !== 0) {
         console.log(tokenUser)
-        fetch(`http://tutolumen/api/v1/roles/${tokenUser.idRoleUser}`).then((response) => {
+        fetch(`${window.location.origin}/api/v1/roles/${tokenUser.idRoleUser}`).then((response) => {
             return response.json();
         }).then((data) => {
             console.log(data.role.roleName);
