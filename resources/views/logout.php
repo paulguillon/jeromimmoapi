@@ -1,4 +1,4 @@
 <script>
     delete sessionStorage.token;
-    window.location.href = window.location.origin;
+    window.location.href = window.location.origin+'/public/';
 </script>

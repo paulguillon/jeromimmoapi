@@ -47,7 +47,7 @@ if(isset($_GET['e']))
     }
 
     function login(email, password) {
-        fetch(`${window.location.origin}/api/v1/login`, {
+        fetch(`${window.location.origin}/public/api/v1/login`, {
             method: 'post',
             headers: {
                 'Accept': 'application/json',
