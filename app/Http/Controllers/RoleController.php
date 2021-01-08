@@ -9,7 +9,14 @@ use App\Models\Role;
 
 class RoleController extends Controller
 {
-
+    /**
+     * Constructor
+     */
+    public function __construct()
+    {
+        // methods with authorization
+        $this->middleware('auth:api');
+    }
 
     /**
      * Create Role

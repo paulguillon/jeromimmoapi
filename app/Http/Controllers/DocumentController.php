@@ -9,6 +9,15 @@ use Illuminate\Http\Request;
 class DocumentController extends Controller
 {
     /**
+     * Constructor
+     */
+    public function __construct()
+    {
+        // methods authorization
+        $this->middleware('auth:api');
+    }
+
+    /**
      * Get all documents
      *
      * @param  Request  $request

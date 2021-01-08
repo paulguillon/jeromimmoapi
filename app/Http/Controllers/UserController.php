@@ -10,6 +10,15 @@ use Illuminate\Support\Str;
 class UserController extends Controller
 {
     /**
+     * Constructor
+     */
+    public function __construct()
+    {
+        // methods without authorization
+        $this->middleware('auth:api', ['except' => ['login']]);
+    }
+    
+    /**
      * Get all users
      *
      * @param  Request  $request
@@ -99,5 +108,15 @@ class UserController extends Controller
             return response()->json(['message' => 'Unauthorized', 'status' => 'failed'], 401);
         }
         return $this->respondWithToken($token);
+    }
+
+    public function logout()
+    {
+        $this->guard()->logout();
+    }
+
+    public function guard()
+    {
+        return Auth::guard();
     }
 }

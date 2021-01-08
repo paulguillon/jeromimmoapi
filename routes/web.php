@@ -19,9 +19,6 @@ $router->get('/', function () use ($router) {
 $router->get('/profile', function () use ($router) {
     return view('profile');
 });
-$router->get('/logout', function () use ($router) {
-    return view('logout');
-});
 
 // API route group
 $router->group(['prefix' => 'api/v1'], function () use ($router) {
@@ -38,6 +35,12 @@ $router->group(['prefix' => 'api/v1'], function () use ($router) {
     // Matches "/api/v1/users/id
     $router->get('users/{id}', 'UserController@oneUser');
 
+    // Matches "/api/v1/login
+    $router->post('login', 'UserController@login');
+
+    // Matches "/api/v1/logout
+    $router->post('logout', 'UserController@logout');
+
     // Matches "/api/v1/register
     $router->post('register', 'UserController@register');
 
@@ -49,9 +52,6 @@ $router->group(['prefix' => 'api/v1'], function () use ($router) {
 
     // Matches "/api/v1/registerProperty
     $router->post('/registerProperty', 'PropertyController@registerProperty');
-
-    // Matches "/api/v1/login
-    $router->post('login', 'UserController@login');
 
     // Matches "/api/agency
     $router->get('/agency', 'AgencyController@allAgency');

@@ -9,6 +9,15 @@ use Illuminate\Http\Request;
 class FaqController extends Controller
 {
     /**
+     * Constructor
+     */
+    public function __construct()
+    {
+        // methods with authorization
+        $this->middleware('auth:api', ['accept' => ['registerFaq']]);
+    }
+
+    /**
      * Get all faq
      *
      * @param  Request  $request

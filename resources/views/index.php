@@ -1,8 +1,12 @@
 <?php
 // From profile when not logged in
-if(isset($_GET['e']))
-    if($_GET['e'] == 'log')
+if (isset($_GET['e']))
+    if ($_GET['e'] == 'log')
         echo 'Connectez-vous pour accéder à votre profil';
+
+if (isset($_GET['logout']))
+    if ($_GET['logout'] == '1')
+        echo 'Vous avez été déconnecté';
 ?>
 <!DOCTYPE html>
 <html lang="fr">

@@ -34,6 +34,12 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
     ];
 
     /**
+     * [$primaryKey description]
+     * @var string
+     */
+    protected $primaryKey = 'uuidUser';
+
+    /**
      * Get the identifier that will be stored in the subject claim of the JWT.
      *
      * @return mixed
@@ -51,7 +57,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
     public function getJWTCustomClaims()
     {
         return [
-            'uuid' => $this->uuidUser,
+            'uuidUser' => $this->uuidUser,
             'idRoleUser' => $this->idRoleUser
         ];
     }

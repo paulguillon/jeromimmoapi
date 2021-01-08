@@ -9,6 +9,15 @@ use Illuminate\Http\Request;
 class VisitController extends Controller
 {
     /**
+     * Constructor
+     */
+    public function __construct()
+    {
+        // methods with authorization
+        $this->middleware('auth:api', ['accept' => ['registerVisit']]);
+    }
+
+    /**
      * Get all visits
      *
      * @param  Request  $request

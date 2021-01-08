@@ -9,6 +9,15 @@ use Illuminate\Http\Request;
 class PropertyController extends Controller
 {
     /**
+     * Constructor
+     */
+    public function __construct()
+    {
+        // methods with authorization
+        $this->middleware('auth:api', ['accept' => ['registerProperty']]);
+    }
+
+    /**
      * Get all properties
      *
      * @param  Request  $request

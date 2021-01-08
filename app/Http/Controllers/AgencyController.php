@@ -9,6 +9,15 @@ use Illuminate\Http\Request;
 class AgencyController extends Controller
 {
     /**
+     * Constructor
+     */
+    public function __construct()
+    {
+        // methods with authorization
+        $this->middleware('auth:api', ['accept' => ['registerAgency']]);
+    }
+
+    /**
      * Get all agency
      *
      * @param  Request  $request

@@ -10,11 +10,28 @@
 <body>
     <h1>PROFIL</h1>
     <p>Vous êtes connecté.e !!!</p>
-    <a href="logout"><button>Se déconnecter</button></a>
+    <button id="logoutBtn">Se déconnecter</button>
 </body>
 
 </html>
 <script>
+console.log(sessionStorage.token)
+    let logoutBtn = document.querySelector('#logoutBtn');
+    logoutBtn.addEventListener('click', function() {
+        fetch(`${window.location.origin}/api/v1/logout`, {
+            method: 'post',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+                'Authorization': `bearer ${sessionStorage.token}`
+            },
+        }).then(() => {
+            delete sessionStorage.token;
+            window.location.href = window.location.origin + '?logout=1';
+        });
+    });
+
+
     let tokenUser = {}
 
     // If Logged in
@@ -27,7 +44,13 @@
     // If token exists
     if (Object.keys(tokenUser).length !== 0) {
         console.log(tokenUser)
-        fetch(`${window.location.origin}/api/v1/roles/${tokenUser.idRoleUser}`).then((response) => {
+        fetch(`${window.location.origin}/api/v1/roles/${tokenUser.idRoleUser}`, {
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+                'Authorization': 'bearer ' + sessionStorage.token
+            },
+        }).then((response) => {
             return response.json();
         }).then((data) => {
             console.log(data.role.roleName);
