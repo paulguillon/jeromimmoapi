@@ -14,7 +14,13 @@
 */
 
 $router->get('/', function () use ($router) {
-    return $router->app->version();
+    return view('index');
+});
+$router->get('/profile', function () use ($router) {
+    return view('profile');
+});
+$router->get('/logout', function () use ($router) {
+    return view('logout');
 });
 
 // API route group
