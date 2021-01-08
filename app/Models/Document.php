@@ -13,7 +13,7 @@ class Document extends Model implements AuthenticatableContract, AuthorizableCon
 {
     use Authenticatable, Authorizable, HasFactory;
 
-    protected $table = 'Document'; 
+    protected $table = 'document'; 
 
     /**
      * The attributes that are mass assignable.

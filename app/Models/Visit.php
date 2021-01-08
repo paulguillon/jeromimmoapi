@@ -13,7 +13,7 @@ class Visit extends Model implements AuthenticatableContract, AuthorizableContra
 {
     use Authenticatable, Authorizable, HasFactory;
 
-    protected $table = 'Visit'; 
+    protected $table = 'visit'; 
 
     /**
      * The attributes that are mass assignable.

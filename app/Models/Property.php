@@ -13,7 +13,7 @@ class Property extends Model implements AuthenticatableContract, AuthorizableCon
 {
     use Authenticatable, Authorizable, HasFactory;
 
-    protected $table = 'Property'; 
+    protected $table = 'property'; 
 
     /**
      * The attributes that are mass assignable.

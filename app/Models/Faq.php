@@ -13,7 +13,7 @@ class Faq extends Model implements AuthenticatableContract, AuthorizableContract
 {
     use Authenticatable, Authorizable, HasFactory;
 
-    protected $table = 'Faq'; 
+    protected $table = 'faq'; 
 
     /**
      * The attributes that are mass assignable.
