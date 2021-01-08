@@ -47,7 +47,7 @@ class VisitController extends Controller
     {
         //validate incoming request
         $this->validate($request, [
-            'dateVisit' => 'required|datetime',
+            'dateVisit' => 'required|date_format:Y-m-d H:i',
             'created_by' => 'required|integer',
             'updated_by' => 'required|integer',
         ]);
