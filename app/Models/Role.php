@@ -15,6 +15,8 @@ class Role extends Model implements AuthenticatableContract, AuthorizableContrac
 
     protected $table = 'roles'; 
 
+    protected $primaryKey = 'idRole';
+
     /**
      * The attributes that are mass assignable.
      *
