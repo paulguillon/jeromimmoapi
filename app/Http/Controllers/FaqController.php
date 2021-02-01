@@ -154,4 +154,5 @@ class FaqController extends Controller
             return response()->json(['message' => 'Faq deletion failed!' . $e->getMessage(), 'status' => 'fail'], 409);
         }
     }
+    
 }
