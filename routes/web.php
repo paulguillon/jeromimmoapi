@@ -41,6 +41,9 @@ $router->group(['prefix' => 'api/v1'], function () use ($router) {
     // Matches "/api/v1/users/id
     $router->patch('users/{id}', 'UserController@update');
 
+    // Matches "/api/v1/users/id
+    $router->delete('users/{id}', 'UserController@delete');
+
     // Matches "/api/v1/login
     $router->post('login', 'UserController@login');
 
