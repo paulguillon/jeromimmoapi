@@ -125,6 +125,9 @@ class AgencyController extends Controller
      * @param  Request  $request
      * @return Response
      */
+
+
+
     public function patch($id, Request $request)
     {
         //validate incoming request
@@ -162,4 +165,18 @@ class AgencyController extends Controller
             return response()->json(['message' => 'Agency Update Failed!' . $e->getMessage(), 'status' => 'fail'], 409);
         }
     }
+
+    public function delete($id)
+    {
+        try {
+            $agency = Agency::findOrFail($id);
+            $agency->delete();
+
+            return response()->json(['agency' => $agency, 'message' => 'DELETED', 'status' => 'success'], 200);
+        } catch (\Exception $e) {
+            //return error message
+            return response()->json(['message' => 'Agency deletion failed!' . $e->getMessage(), 'status' => 'fail'], 409);
+        }
+    }
+
 }
