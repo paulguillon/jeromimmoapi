@@ -68,6 +68,12 @@ $router->group(['prefix' => 'api/v1'], function () use ($router) {
     // Matches "/api/agency/id
     $router->get('agency/{id}', 'AgencyController@oneAgency');
 
+    // Matches "/api/agency/id
+    $router->put('agency/{id}', 'AgencyController@put');
+
+    // Matches "/api/agency/id
+    $router->patch('agency/{id}', 'AgencyController@patch');
+
     // Matches "/api/v1/registerAgency
     $router->post('/registerAgency', 'AgencyController@registerAgency');
 

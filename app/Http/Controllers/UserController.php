@@ -79,7 +79,7 @@ class UserController extends Controller
      * @param  Request  $request
      * @return Response
      */
-    public function updateAll($id, Request $request)
+    public function put($id, Request $request)
     {
         //validate incoming request
         $this->validate($request, [
@@ -120,7 +120,7 @@ class UserController extends Controller
      * @param  Request  $request
      * @return Response
      */
-    public function update($id, Request $request)
+    public function patch($id, Request $request)
     {
         //validate incoming request
         $this->validate($request, [
