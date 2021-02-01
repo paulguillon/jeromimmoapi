@@ -38,6 +38,11 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
      * @var string
      */
     protected $primaryKey = 'uuidUser';
+    /**
+     * PrimaryKey type
+     * @var string
+     */
+    protected $keyType = 'string';
 
     /**
      * Get the identifier that will be stored in the subject claim of the JWT.
