@@ -41,7 +41,6 @@ class AgencyController extends Controller
 
             return response()->json(['agency' => $agency], 200);
         } catch (\Exception $e) {
-
             return response()->json(['message' => 'agency not found!' . $e->getMessage()], 404);
         }
     }
@@ -64,7 +63,6 @@ class AgencyController extends Controller
         ]);
 
         try {
-
             $agency = new Agency;
             $agency->nameAgency = $request->input('nameAgency');
             $agency->zipCodeAgency = $request->input('zipCodeAgency');
@@ -82,7 +80,7 @@ class AgencyController extends Controller
         }
     }
 
-        /**
+    /**
      * Update agency
      *
      * @param  string   $id
@@ -139,19 +137,25 @@ class AgencyController extends Controller
         try {
             $agency = Agency::findOrFail($id);
 
-            if (in_array(null or '', $request->all()))
+            if (in_array(null or '', $request->all())) {
                 return response()->json(['message' => 'Null or empty value', 'status' => 'fail'], 500);
+            }
 
-            if ($request->input('nameAgency') !== null)
+            if ($request->input('nameAgency') !== null) {
                 $agency->nameAgency = $request->input('nameAgency');
-            if ($request->input('zipCodeAgency') !== null)
+            }
+            if ($request->input('zipCodeAgency') !== null) {
                 $agency->zipCodeAgency = $request->input('zipCodeAgency');
-            if ($request->input('cityAgency') !== null)
+            }
+            if ($request->input('cityAgency') !== null) {
                 $agency->cityAgency = $request->input('cityAgency');
-            if ($request->input('created_by') !== null)
+            }
+            if ($request->input('created_by') !== null) {
                 $agency->created_by = $request->input('created_by');
-            if ($request->input('updated_by') !== null)
+            }
+            if ($request->input('updated_by') !== null) {
                 $agency->updated_by = $request->input('updated_by');
+            }
 
             $agency->update();
 
@@ -160,6 +164,25 @@ class AgencyController extends Controller
         } catch (\Exception $e) {
             //return error message
             return response()->json(['message' => 'Agency Update Failed!' . $e->getMessage(), 'status' => 'fail'], 409);
+        }
+    }
+
+    /**
+     * Delete agency function
+     *
+     * @param [integer] $id
+     * @return void
+     */
+    public function delete($id)
+    {
+        try {
+            $agency = Agency::findOrFail($id);
+            $agency->delete();
+
+            return response()->json(['agency' => $agency, 'message' => 'DELETED', 'status' => 'success'], 200);
+        } catch (\Exception $e) {
+            //return error message
+            return response()->json(['message' => 'Agency deletion failed!' . $e->getMessage(), 'status' => 'fail'], 409);
         }
     }
 }
