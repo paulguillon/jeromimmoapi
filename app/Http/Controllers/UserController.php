@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
+use Symfony\Component\VarDumper\VarDumper;
 
 class UserController extends Controller
 {
@@ -70,6 +71,50 @@ class UserController extends Controller
             return response()->json(['message' => 'User Registration Failed!' . $e->getMessage()], 409);
         }
     }
+
+
+
+    /**
+     * Update user.
+     *
+     * @param  string   $id
+     * @param  Request  $request
+     * @return Response
+     */
+    public function updateAll($id, Request $request)
+    {
+        //validate incoming request
+        $this->validate($request, [
+            'lastnameUser' => 'required|string',
+            'firstnameUser' => 'required|string',
+            'emailUser' => 'required|email|unique:users,emailUser,'.$request->id.',uuidUser',
+            'passwordUser' => 'required|confirmed',
+            'idRoleUser' => 'required|integer',
+            'created_by' => 'required|integer',
+            'updated_by' => 'required|integer',
+        ]);
+        
+        try {
+            $user = User::findOrFail($id);
+            $user->lastnameUser = $request->input('lastnameUser');
+            $user->firstnameUser = $request->input('firstnameUser');
+            $user->emailUser = $request->input('emailUser');
+            $plainPassword = $request->input('passwordUser');
+            $user->passwordUser = app('hash')->make($plainPassword);
+            $user->idRoleUser = $request->input('idRoleUser');
+            $user->created_by = $request->input('created_by');
+            $user->updated_by = $request->input('updated_by');
+
+            $user->update();
+
+            //return successful response
+            return response()->json(['user' => $user, 'message' => 'UPDATED'], 200);
+        } catch (\Exception $e) {
+            //return error message
+            return response()->json(['message' => 'User Update Failed!' . $e->getMessage()], 409);
+        }
+    }
+
     /**
      * Get all users
      *
