@@ -13,7 +13,7 @@ class Agency extends Model implements AuthenticatableContract, AuthorizableContr
 {
     use Authenticatable, Authorizable, HasFactory;
 
-    protected $table = 'agency'; 
+    protected $table = 'agency';
 
     /**
      * The attributes that are mass assignable.
@@ -30,6 +30,12 @@ class Agency extends Model implements AuthenticatableContract, AuthorizableContr
      * @var array
      */
     protected $hidden = [
-        
+
     ];
+/**
+ * Primary key agency
+ *
+ * @var string
+ */
+    protected $primaryKey = 'idAgency';
 }
