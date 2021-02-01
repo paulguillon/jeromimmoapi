@@ -26,10 +26,19 @@ $router->group(['prefix' => 'api/v1'], function () use ($router) {
     // Matches "/api/v1/role Post
     $router->post('roles', 'RoleController@createRole');
 
-    // Matches "/api/v1/role/{id} Get
+    // Matches "/api/v1/roles/{id}
     $router->get('roles/{id}', 'RoleController@oneUserRole');
 
-    // Matches "/api/v1/users Get All
+    // Matches "/api/v1/roles/id
+    $router->put('roles/{id}', 'RoleController@updateAll');
+
+    // Matches "/api/v1/roles/id
+    $router->patch('roles/{id}', 'RoleController@update');
+
+    // Matches "/api/v1/roles/id
+    $router->delete('roles/{id}', 'RoleController@delete');
+
+    // Matches "/api/v1/users
     $router->get('users', 'UserController@allUsers');
 
     // Matches "/api/v1/users/id Get One
@@ -58,6 +67,15 @@ $router->group(['prefix' => 'api/v1'], function () use ($router) {
 
     // Matches "/api/properties/id
     $router->get('properties/{id}', 'PropertyController@oneProperty');
+
+    // Matches "/api/v1/properties/id
+    $router->put('properties/{id}', 'PropertyController@updateAll');
+
+    // Matches "/api/v1/properties/id
+    $router->patch('properties/{id}', 'PropertyController@update');
+
+    // Matches "/api/v1/properties/id
+    $router->delete('properties/{id}', 'PropertyController@delete');
 
     // Matches "/api/v1/registerProperty
     $router->post('/registerProperty', 'PropertyController@registerProperty');
@@ -89,11 +107,29 @@ $router->group(['prefix' => 'api/v1'], function () use ($router) {
     // Matches "/api/v1/registerFaq
     $router->post('/registerFaq', 'FaqController@registerFaq');
 
+    // Matches "/api/v1/faq/id
+    $router->put('faq/{id}', 'FaqController@updateAll');
+
+    // Matches "/api/v1/faq/id
+    $router->patch('faq/{id}', 'FaqController@update');
+
+    // Matches "/api/v1/faq/id
+    $router->delete('faq/{id}', 'FaqController@delete');
+
     // Matches "/api/document
     $router->get('document', 'DocumentController@allDocument');
 
     // Matches "/api/document/id
     $router->get('document/{id}', 'DocumentController@oneDocument');
+
+    // Matches "/api/v1/document/id
+    $router->put('document/{id}', 'DocumentController@updateAll');
+
+    // Matches "/api/v1/document/id
+    $router->patch('document/{id}', 'DocumentController@update');
+
+    // Matches "/api/v1/document/id
+    $router->delete('document/{id}', 'DocumentController@delete');
 
     // Matches "/api/v1/registerDocument
     $router->post('/registerDocument', 'DocumentController@registerDocument');
@@ -106,4 +142,13 @@ $router->group(['prefix' => 'api/v1'], function () use ($router) {
 
     // Matches "/api/v1/registerVisit
     $router->post('/registerVisit', 'VisitController@registerVisit');
+
+    // Matches "/api/v1/visit/id
+    $router->put('visit/{id}', 'VisitController@updateAll');
+
+    // Matches "/api/v1/visit/id
+    $router->patch('visit/{id}', 'VisitController@update');
+
+    // Matches "/api/v1/visit/id
+    $router->delete('visit/{id}', 'VisitController@delete');
 });

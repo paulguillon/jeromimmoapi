@@ -15,6 +15,8 @@ class Property extends Model implements AuthenticatableContract, AuthorizableCon
 
     protected $table = 'property'; 
 
+    protected $primaryKey = 'idProperty';
+
     /**
      * The attributes that are mass assignable.
      *

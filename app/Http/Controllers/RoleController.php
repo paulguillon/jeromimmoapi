@@ -63,4 +63,88 @@ class RoleController extends Controller
             return response()->json(['message' => 'role user not found ' . $e->getMessage()], 404);
         }
     }
+
+    /**
+     * Update role
+     *
+     * @param  string   $id
+     * @param  Request  $request
+     * @return Response
+     */
+    public function updateAll($id, Request $request)
+    {
+        //validate incoming request
+        $this->validate($request, [
+            'roleName' => 'required|string',
+            'created_by' => 'integer',
+            'updated_by' => 'required|string'
+        ]);
+
+        try {
+            $role = Role::findOrFail($id);
+            $role->roleName = $request->input('roleName');
+            $role->created_by = $request->input('created_by');
+            $role->updated_by = $request->input('updated_by');
+
+            $role->update();
+
+            //return successful response
+            return response()->json(['role' => $role, 'message' => 'ALL UPDATED'], 200);
+        } catch (\Exception $e) {
+            //return error message
+            return response()->json(['message' => 'Role Update Failed!' . $e->getMessage()], 409);
+        }
+    }
+
+    /**
+     * Update role patch.
+     *
+     * @param  string   $id
+     * @param  Request  $request
+     * @return Response
+     */
+    public function update($id, Request $request)
+    {
+        //validate incoming request
+        $this->validate($request, [
+            'roleName' => 'required|string',
+            'created_by' => 'integer',
+            'updated_by' => 'required|string'
+        ]);
+
+        try {
+            $role = Role::findOrFail($id);
+
+            if (in_array(null or '', $request->all()))
+                return response()->json(['message' => 'Null or empty value', 'status' => 'fail'], 500);
+
+            if ($request->input('roleName') !== null)
+                $role->roleName = $request->input('roleName');
+            if ($request->input('created_by') !== null)
+                $role->created_by = $request->input('created_by');
+            if ($request->input('updated_by') !== null)
+                $role->updated_by = $request->input('updated_by');
+
+            $role->update();
+
+            //return successful response
+            return response()->json(['role' => $role, 'message' => 'PATCHED', 'status' => 'success'], 200);
+        } catch (\Exception $e) {
+            //return error message
+            return response()->json(['message' => 'Role Update Failed!' . $e->getMessage(), 'status' => 'fail'], 409);
+        }
+    }
+
+    public function delete($id)
+    {
+        try {
+            $role = Role::findOrFail($id);
+            $role->delete();
+
+            return response()->json(['role' => $role, 'message' => 'DELETED', 'status' => 'success'], 200);
+        } catch (\Exception $e) {
+            //return error message
+            return response()->json(['message' => 'Role deletion failed!' . $e->getMessage(), 'status' => 'fail'], 409);
+        }
+    }
 }

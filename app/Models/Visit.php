@@ -15,6 +15,8 @@ class Visit extends Model implements AuthenticatableContract, AuthorizableContra
 
     protected $table = 'visit'; 
 
+    protected $primaryKey = 'idVisit';
+
     /**
      * The attributes that are mass assignable.
      *

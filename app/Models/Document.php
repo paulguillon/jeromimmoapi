@@ -15,6 +15,8 @@ class Document extends Model implements AuthenticatableContract, AuthorizableCon
 
     protected $table = 'document'; 
 
+    protected $primaryKey = 'idDocument';
+
     /**
      * The attributes that are mass assignable.
      *

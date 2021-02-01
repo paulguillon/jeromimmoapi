@@ -15,6 +15,8 @@ class Faq extends Model implements AuthenticatableContract, AuthorizableContract
 
     protected $table = 'faq'; 
 
+    protected $primaryKey = 'idFaq';
+
     /**
      * The attributes that are mass assignable.
      *
