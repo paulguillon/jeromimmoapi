@@ -166,6 +166,19 @@ class UserController extends Controller
         }
     }
 
+    public function delete($id)
+    {
+        try {
+            $user = User::findOrFail($id);
+            $user->delete();
+
+            return response()->json(['user' => $user, 'message' => 'DELETED', 'status' => 'success'], 200);
+        } catch (\Exception $e) {
+            //return error message
+            return response()->json(['message' => 'User deletion failed!' . $e->getMessage(), 'status' => 'fail'], 409);
+        }
+    }
+
     /**
      * Get all users
      *
