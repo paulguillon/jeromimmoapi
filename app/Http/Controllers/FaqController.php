@@ -2,8 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Faq;
 use Illuminate\Http\Request;
+use App\Models\Faq;
+use App\Models\FaqData;
 
 
 class FaqController extends Controller
@@ -56,6 +57,8 @@ class FaqController extends Controller
     {
         //validate incoming request
         $this->validate($request, [
+            'keyFaqData' => 'string',
+            'valueFaqData' => 'string',
             'created_by' => 'required|integer',
             'updated_by' => 'required|integer',
         ]);
@@ -66,13 +69,21 @@ class FaqController extends Controller
             $faq->created_by = $request->input('created_by');
             $faq->updated_by = $request->input('updated_by');
 
-            $faq->save();
+            if (!$faq->save())
+            return response()->json(['message' => 'Faq Registration Failed!'], 409);
 
+            $faqData = new FaqData;
+            $faqData->keyFaqData = $request->input('keyFaqData');
+            $faqData->valueFaqData = $request->input('valueFaqData');
+            $faqData->idFaq = $faq->idFaq;
+            $faqData->created_by = $request->input('created_by');
+            $faqData->updated_by = $request->input('updated_by');
+            $faqData->save();
             //return successful response
-            return response()->json(['faq' => $faq, 'message' => 'CREATED'], 201);
+            return response()->json(['faq' => $faq, 'faqData' => $faqData, 'message' => 'CREATED'], 201);
         } catch (\Exception $e) {
             //return error message
-            return response()->json(['message' => 'Faq Registration Failed!' . $e->getMessage()], 409);
+            return response()->json(['message' => 'Faq Data Registration Failed!' . $e->getMessage()], 409);
         }
     }
 
