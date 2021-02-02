@@ -14,7 +14,7 @@ class VisitController extends Controller
     public function __construct()
     {
         // methods with authorization
-        $this->middleware('auth:api', ['accept' => ['registerVisit']]);
+        $this->middleware('auth:api', ['accept' => []]);
     }
 
     /**
