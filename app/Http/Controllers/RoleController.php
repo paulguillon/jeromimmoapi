@@ -50,6 +50,17 @@ class RoleController extends Controller
         }
     }
 
+    /**
+     * Get all roles
+     *
+     * @param  Request  $request
+     * @return Response
+     */
+    public function allRoles(Request $request)
+    {
+        return response()->json(['roles' =>  Role::all()], 200);
+    }
+
     public function oneUserRole($id)
     {
         try {
@@ -71,7 +82,7 @@ class RoleController extends Controller
      * @param  Request  $request
      * @return Response
      */
-    public function updateAll($id, Request $request)
+    public function put($id, Request $request)
     {
         //validate incoming request
         $this->validate($request, [
@@ -103,7 +114,7 @@ class RoleController extends Controller
      * @param  Request  $request
      * @return Response
      */
-    public function update($id, Request $request)
+    public function patch($id, Request $request)
     {
         //validate incoming request
         $this->validate($request, [
