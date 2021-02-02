@@ -16,7 +16,7 @@ class PropertyDataController extends Controller
     public function __construct()
     {
         // methods without authorization
-        $this->middleware('auth:api');
+        $this->middleware('auth:api', ['except' => ['allPropertiesData', 'onePropertyData']]);
     }
 
     /**
