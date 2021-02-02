@@ -2,8 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Property;
 use Illuminate\Http\Request;
+use App\Models\Property;
+use App\Models\PropertyData;
 
 
 class PropertyController extends Controller
@@ -25,7 +26,7 @@ class PropertyController extends Controller
      */
     public function allProperties(Request $request)
     {
-        return response()->json(['property' =>  Property::all()], 200);
+        return response()->json(['property' =>  Property::all(), 'propertyData' => PropertyData::all()], 200);
     }
 
     /**
@@ -60,6 +61,8 @@ class PropertyController extends Controller
             'priceProperty' => 'required|string',
             'zipCodeProperty' => 'required|string|min:5|max:5',
             'cityProperty' => 'required|string',
+            'keyPropertyData' => 'string',
+            'valuePropertyData' => 'string',
             'created_by' => 'required|integer',
             'updated_by' => 'required|integer',
         ]);
@@ -74,13 +77,21 @@ class PropertyController extends Controller
             $property->created_by = $request->input('created_by');
             $property->updated_by = $request->input('updated_by');
 
-            $property->save();
+            if(!$property->save())
+            return response()->json(['message' => 'Property Registration Failed !'], 409);
 
+            $propertyData = new PropertyData;
+            $propertyData->keyPropertyData = $request->input('keyPropertyData');
+            $propertyData->valueProportyData = $request->input('valueProportyData');
+            $propertyData->idProporty = $property->idProporty;
+            $propertyData->created_by = $request->input('created_by');
+            $propertyData->updated_by = $request->input('updated_by');
+            $propertyData->save();
             //return successful response
-            return response()->json(['property' => $property, 'message' => 'CREATED'], 201);
+            return response()->json(['property' => $property, 'propertyData' => $propertyData, 'message' => 'CREATED'], 201);
         } catch (\Exception $e) {
             //return error message
-            return response()->json(['message' => 'Property Registration Failed!' . $e->getMessage()], 409);
+            return response()->json(['message' => 'Property Data Registration Failed!' . $e->getMessage()], 409);
         }
     }
 
