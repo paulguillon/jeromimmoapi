@@ -98,6 +98,9 @@ $router->get('/profile', function () use ($router) {
     // Matches "/api/v1/registerAgency
     $router->post('/registerAgency', 'AgencyController@registerAgency');
 
+    // Matches "/api/v1/agency/id
+    $router->delete('agency/{id}', 'AgencyController@delete');
+
     // Matches "/api/faq
     $router->get('faq', 'FaqController@allFaq');
 

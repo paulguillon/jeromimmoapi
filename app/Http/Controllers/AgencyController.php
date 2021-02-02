@@ -123,6 +123,9 @@ class AgencyController extends Controller
      * @param  Request  $request
      * @return Response
      */
+
+
+
     public function patch($id, Request $request)
     {
         //validate incoming request
@@ -167,12 +170,6 @@ class AgencyController extends Controller
         }
     }
 
-    /**
-     * Delete agency function
-     *
-     * @param [integer] $id
-     * @return void
-     */
     public function delete($id)
     {
         try {
