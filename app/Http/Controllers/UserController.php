@@ -55,7 +55,6 @@ class UserController extends Controller
         try {
 
             $user = new User;
-            $user->uuidUser = Str::uuid();
             $user->lastnameUser = $request->input('lastnameUser');
             $user->firstnameUser = $request->input('firstnameUser');
             $user->emailUser = $request->input('emailUser');
@@ -70,7 +69,7 @@ class UserController extends Controller
             $userData = new UserData;
             $userData->keyUserData = $request->input('keyUserData');
             $userData->valueUserData = $request->input('valueUserData');
-            $userData->idUser = $user->uuidUser;
+            $userData->idUser = $user->idUser;
             $userData->created_by = $request->input('created_by');
             $userData->updated_by = $request->input('updated_by');
             $userData->save();
@@ -95,7 +94,7 @@ class UserController extends Controller
         $this->validate($request, [
             'lastnameUser' => 'required|string',
             'firstnameUser' => 'required|string',
-            'emailUser' => 'required|email|unique:users,emailUser,' . $request->id . ',uuidUser',
+            'emailUser' => 'required|email|unique:users,emailUser,' . $request->id . ',idUser',
             'passwordUser' => 'required|confirmed',
             'idRoleUser' => 'required|integer',
             'created_by' => 'required|integer',
@@ -136,7 +135,7 @@ class UserController extends Controller
         $this->validate($request, [
             'lastnameUser' => 'string',
             'firstnameUser' => 'string',
-            'emailUser' => 'email|unique:users,emailUser,' . $request->id . ',uuidUser',
+            'emailUser' => 'email|unique:users,emailUser,' . $request->id . ',idUser',
             'passwordUser' => 'confirmed',
             'idRoleUser' => 'integer',
             'created_by' => 'integer',
@@ -204,7 +203,7 @@ class UserController extends Controller
     public function oneUser($id)
     {
         try {
-            $user = User::all()->where('uuidUser', $id)->first();
+            $user = User::all()->where('idUser', $id)->first();
 
             return response()->json(['user' => $user], 200);
         } catch (\Exception $e) {
