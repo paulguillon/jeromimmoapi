@@ -23,6 +23,11 @@ $router->get('/profile', function () use ($router) {
 // API route group
 $router->group(['prefix' => 'api/v1'], function () use ($router) {
 
+/*
+|------------------------|
+| Users Routes            |
+|------------------------|
+*/
     // Matches "/api/v1/login
     $router->post('login', 'UserController@login');
 
@@ -32,7 +37,11 @@ $router->group(['prefix' => 'api/v1'], function () use ($router) {
     // Matches "/api/v1/logout
     $router->post('logout', 'UserController@logout');
 
-
+/*
+|------------------------|
+| Roles Routes           |
+|------------------------|
+*/
     //Routes roles
     $router->group(['prefix' => 'roles'], function () use ($router) {
         // Matches "/api/v1/roles/{id}
@@ -99,7 +108,7 @@ $router->group(['prefix' => 'api/v1'], function () use ($router) {
         $router->get('/{id}', 'AgencyController@oneAgency');
 
         // Matches "/api/v1/agency
-        $router->post('/', 'AgencyController@registerAgency');
+        $router->post('/registerAgency', 'AgencyController@registerAgency');
 
         // Matches "/api/agency/id
         $router->put('/{id}', 'AgencyController@put');
