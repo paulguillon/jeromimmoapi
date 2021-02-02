@@ -21,7 +21,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
      * @var array
      */
     protected $fillable = [
-        'uuidUser', 'lastnameUser', 'firstnameUser', 'emailUser', 'idRoleUser', 'created_by', 'updated_by'
+        'lastnameUser', 'firstnameUser', 'emailUser', 'idRoleUser', 'created_by', 'updated_by'
     ];
 
     /**
@@ -32,17 +32,6 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
     protected $hidden = [
         'passwordUser',
     ];
-
-    /**
-     * [$primaryKey description]
-     * @var string
-     */
-    protected $primaryKey = 'uuidUser';
-    /**
-     * PrimaryKey type
-     * @var string
-     */
-    protected $keyType = 'string';
 
     /**
      * Get the identifier that will be stored in the subject claim of the JWT.
@@ -62,7 +51,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
     public function getJWTCustomClaims()
     {
         return [
-            'uuidUser' => $this->uuidUser,
+            'idUser' => $this->idUser,
             'idRoleUser' => $this->idRoleUser
         ];
     }
