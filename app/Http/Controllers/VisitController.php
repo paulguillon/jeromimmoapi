@@ -2,8 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Visit;
 use Illuminate\Http\Request;
+use App\Models\Visit;
+use App\Models\VisitData;
 
 
 class VisitController extends Controller
@@ -25,7 +26,7 @@ class VisitController extends Controller
      */
     public function allVisit(Request $request)
     {
-        return response()->json(['visit' =>  Visit::all()], 200);
+        return response()->json(['visit' =>  Visit::all(), 'visitData' => VisitData::all()], 200);
     }
 
     /**
@@ -57,6 +58,8 @@ class VisitController extends Controller
         //validate incoming request
         $this->validate($request, [
             'dateVisit' => 'required|date_format:Y-m-d H:i',
+            'keyVisitData' => 'string',
+            'valueVisitData' => 'string',
             'created_by' => 'required|integer',
             'updated_by' => 'required|integer',
         ]);
@@ -68,13 +71,21 @@ class VisitController extends Controller
             $visit->created_by = $request->input('created_by');
             $visit->updated_by = $request->input('updated_by');
 
-            $visit->save();
+            if (!$visit->save())
+            return response()->json(['message' => 'Visit Registration Failed !'], 409);
 
+            $visitData = new VisitData;
+            $visitData->keyVisitData = $request->input('keyVisitData');
+            $visitData->valueVisitData = $request->input('valueVisitData');
+            $visitData->idVisit = $visit->idData;
+            $visitData->created_by = $request->input('created_by');
+            $visitData->updated_by = $request->input('updated_by');
+            $visitData->save();
             //return successful response
-            return response()->json(['visit' => $visit, 'message' => 'CREATED'], 201);
+            return response()->json(['visit' => $visit, 'visitData' => $visitData, 'message' => 'CREATED'], 201);
         } catch (\Exception $e) {
             //return error message
-            return response()->json(['message' => 'Visit Registration Failed!' . $e->getMessage()], 409);
+            return response()->json(['message' => 'Visit Data Registration Failed!' . $e->getMessage()], 409);
         }
     }
 
