@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\User;
+use App\Models\UserData;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use Symfony\Component\VarDumper\VarDumper;
@@ -27,7 +28,7 @@ class UserController extends Controller
      */
     public function allUsers(Request $request)
     {
-        return response()->json(['users' =>  User::all()], 200);
+        return response()->json(['users' =>  User::all(), 'usersData' => UserData::all()], 200);
     }
 
     /**
@@ -45,6 +46,8 @@ class UserController extends Controller
             'emailUser' => 'required|email|unique:users',
             'passwordUser' => 'required|confirmed',
             'idRoleUser' => 'required|integer',
+            'keyUserData' => 'string',
+            'valueUserData' => 'string',
             'created_by' => 'required|integer',
             'updated_by' => 'required|integer',
         ]);
@@ -61,14 +64,21 @@ class UserController extends Controller
             $user->idRoleUser = $request->input('idRoleUser');
             $user->created_by = $request->input('created_by');
             $user->updated_by = $request->input('updated_by');
-
-            $user->save();
-
+            if (!$user->save())
+                return response()->json(['message' => 'User Registration Failed!'], 409);
+            
+            $userData = new UserData;
+            $userData->keyUserData = $request->input('keyUserData');
+            $userData->valueUserData = $request->input('valueUserData');
+            $userData->idUser = $user->uuidUser;
+            $userData->created_by = $request->input('created_by');
+            $userData->updated_by = $request->input('updated_by');
+            $userData->save();
             //return successful response
-            return response()->json(['user' => $user, 'message' => 'CREATED'], 201);
+            return response()->json(['user' => $user, 'userData' => $userData, 'message' => 'CREATED'], 201);
         } catch (\Exception $e) {
             //return error message
-            return response()->json(['message' => 'User Registration Failed!' . $e->getMessage()], 409);
+            return response()->json(['message' => 'User Data Registration Failed!' . $e->getMessage()], 409);
         }
     }
 
