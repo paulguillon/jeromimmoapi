@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Faq;
 use Illuminate\Http\Request;
- 
+
 
 class FaqController extends Controller
 {
@@ -51,7 +51,7 @@ class FaqController extends Controller
      * @param  Request  $request
      * @return Response
      */
-    
+
     public function registerFaq(Request $request)
     {
         //validate incoming request
@@ -77,13 +77,13 @@ class FaqController extends Controller
     }
 
     /**
-     * Update faq
+     * Put faq
      *
      * @param  string   $id
      * @param  Request  $request
      * @return Response
      */
-    public function updateAll($id, Request $request)
+    public function put($id, Request $request)
     {
         //validate incoming request
         $this->validate($request, [
@@ -107,18 +107,18 @@ class FaqController extends Controller
     }
 
     /**
-     * Update faq patch.
+     * Patch faq
      *
      * @param  string   $id
      * @param  Request  $request
      * @return Response
      */
-    public function update($id, Request $request)
+    public function patch($id, Request $request)
     {
         //validate incoming request
         $this->validate($request, [
-            'created_by' => 'required|integer',
-            'updated_by' => 'required|integer'
+            'created_by' => 'integer',
+            'updated_by' => 'integer'
         ]);
 
         try {
@@ -154,5 +154,5 @@ class FaqController extends Controller
             return response()->json(['message' => 'Faq deletion failed!' . $e->getMessage(), 'status' => 'fail'], 409);
         }
     }
-    
+
 }

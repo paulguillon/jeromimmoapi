@@ -111,10 +111,10 @@ $router->get('/profile', function () use ($router) {
     $router->post('/registerFaq', 'FaqController@registerFaq');
 
     // Matches "/api/v1/faq/id
-    $router->put('faq/{id}', 'FaqController@updateAll');
+    $router->put('faq/{id}', 'FaqController@put');
 
     // Matches "/api/v1/faq/id
-    $router->patch('faq/{id}', 'FaqController@update');
+    $router->patch('faq/{id}', 'FaqController@patch');
 
     // Matches "/api/v1/faq/id
     $router->delete('faq/{id}', 'FaqController@delete');

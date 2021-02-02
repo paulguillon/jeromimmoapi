@@ -58,7 +58,7 @@ class PropertyController extends Controller
         $this->validate($request, [
             'typeProperty' => 'required|string',
             'priceProperty' => 'required|string',
-            'zipCodeProperty' => 'required|integer',
+            'zipCodeProperty' => 'required|string|min:5|max:5',
             'cityProperty' => 'required|string',
             'created_by' => 'required|integer',
             'updated_by' => 'required|integer',
@@ -97,7 +97,7 @@ class PropertyController extends Controller
         $this->validate($request, [
             'typeProperty' => 'required|string',
             'priceProperty' => 'required|string',
-            'zipCodeProperty' => 'required|integer',
+            'zipCodeProperty' => 'required|string|min:5|max:5',
             'cityProperty' => 'required|string',
             'created_by' => 'required|integer',
             'updated_by' => 'required|integer'
@@ -135,7 +135,7 @@ class PropertyController extends Controller
         $this->validate($request, [
             'typeProperty' => 'required|string',
             'priceProperty' => 'required|string',
-            'zipCodeProperty' => 'required|integer',
+            'zipCodeProperty' => 'required|string|min:5|max:5',
             'cityProperty' => 'required|string',
             'created_by' => 'required|integer',
             'updated_by' => 'required|integer'
