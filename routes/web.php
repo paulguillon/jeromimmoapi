@@ -77,8 +77,8 @@ $router->get('/profile', function () use ($router) {
     // Matches "/api/v1/properties/id
     $router->delete('properties/{id}', 'PropertyController@delete');
 
-    // Matches "/api/v1/registerProperty
-    $router->post('/registerProperty', 'PropertyController@registerProperty');
+    // Matches "/api/v1/property
+    $router->post('/property', 'PropertyController@registerProperty');
 
     // Matches "/api/agency
     $router->get('/agency', 'AgencyController@allAgency');
@@ -95,8 +95,8 @@ $router->get('/profile', function () use ($router) {
     // Matches "/api/agency/id
     $router->patch('agency/{id}', 'AgencyController@delete');
 
-    // Matches "/api/v1/registerAgency
-    $router->post('/registerAgency', 'AgencyController@registerAgency');
+    // Matches "/api/v1/agency
+    $router->post('/agency', 'AgencyController@registerAgency');
 
     // Matches "/api/v1/agency/id
     $router->delete('agency/{id}', 'AgencyController@delete');
@@ -107,8 +107,8 @@ $router->get('/profile', function () use ($router) {
     // Matches "/api/agency/id
     $router->get('faq/{id}', 'FaqController@oneFaq');
 
-    // Matches "/api/v1/registerFaq
-    $router->post('/registerFaq', 'FaqController@registerFaq');
+    // Matches "/api/v1/faq
+    $router->post('/faq', 'FaqController@registerFaq');
 
     // Matches "/api/v1/faq/id
     $router->put('faq/{id}', 'FaqController@updateAll');
@@ -134,8 +134,8 @@ $router->get('/profile', function () use ($router) {
     // Matches "/api/v1/document/id
     $router->delete('document/{id}', 'DocumentController@delete');
 
-    // Matches "/api/v1/registerDocument
-    $router->post('/registerDocument', 'DocumentController@registerDocument');
+    // Matches "/api/v1/document
+    $router->post('/document', 'DocumentController@registerDocument');
 
     // Matches "/api/visit
     $router->get('visit', 'VisitController@allVisit');
@@ -143,8 +143,8 @@ $router->get('/profile', function () use ($router) {
     // Matches "/api/visit/id
     $router->get('visit/{id}', 'VisitController@oneVisit');
 
-    // Matches "/api/v1/registerVisit
-    $router->post('/registerVisit', 'VisitController@registerVisit');
+    // Matches "/api/v1/visit
+    $router->post('/vist', 'VisitController@registerVisit');
 
     // Matches "/api/v1/visit/id
     $router->put('visit/{id}', 'VisitController@updateAll');
