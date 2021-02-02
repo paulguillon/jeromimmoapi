@@ -30,7 +30,23 @@ class UserController extends Controller
     {
         return response()->json(['users' =>  User::all(), 'usersData' => UserData::all()], 200);
     }
+/**
+     * Get one user
+     *
+     * @param  Request  $request
+     * @return Response
+     */
+    public function oneUser($id)
+    {
+        try {
+            $user = User::all()->where('idUser', $id)->first();
 
+            return response()->json(['user' => $user], 200);
+        } catch (\Exception $e) {
+
+            return response()->json(['message' => 'User not found!' . $e->getMessage()], 404);
+        }
+    }
     /**
      * Store a new user.
      *
@@ -53,7 +69,6 @@ class UserController extends Controller
         ]);
 
         try {
-
             $user = new User;
             $user->lastnameUser = $request->input('lastnameUser');
             $user->firstnameUser = $request->input('firstnameUser');
@@ -65,7 +80,7 @@ class UserController extends Controller
             $user->updated_by = $request->input('updated_by');
             if (!$user->save())
                 return response()->json(['message' => 'User Registration Failed!'], 409);
-            
+
             $userData = new UserData;
             $userData->keyUserData = $request->input('keyUserData');
             $userData->valueUserData = $request->input('valueUserData');
@@ -82,7 +97,7 @@ class UserController extends Controller
     }
 
     /**
-     * Update user
+     * Put user
      *
      * @param  string   $id
      * @param  Request  $request
@@ -194,23 +209,7 @@ class UserController extends Controller
         }
     }
 
-    /**
-     * Get one users
-     *
-     * @param  Request  $request
-     * @return Response
-     */
-    public function oneUser($id)
-    {
-        try {
-            $user = User::all()->where('idUser', $id)->first();
 
-            return response()->json(['user' => $user], 200);
-        } catch (\Exception $e) {
-
-            return response()->json(['message' => 'User not found!' . $e->getMessage()], 404);
-        }
-    }
     /**
      * Get a JWT via given credentials.
      *

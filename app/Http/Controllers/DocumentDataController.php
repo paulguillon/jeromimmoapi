@@ -85,7 +85,7 @@ class DocumentDataController extends Controller
     }
 
     /**
-     * Update document data
+     * put document data
      *
      * @param  string   $id
      * @param  Request  $request
@@ -121,7 +121,7 @@ class DocumentDataController extends Controller
     }
 
     /**
-     * Update document patch.
+     * Patch document
      *
      * @param  string   $id
      * @param  Request  $request

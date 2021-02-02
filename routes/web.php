@@ -226,9 +226,9 @@ $router->group(['prefix' => 'api/v1'], function () use ($router) {
         // Matches "/api/v1/document Post register Document
         $router->post('', 'DocumentController@registerDocument');
         // Matches "/api/v1/document/id Put all of one Document
-        $router->put('/{id}', 'DocumentController@updateAll');
+        $router->put('/{id}', 'DocumentController@put');
         // Matches "/api/v1/document/id Patch one element of one Document
-        $router->patch('/{id}', 'DocumentController@update');
+        $router->patch('/{id}', 'DocumentController@patch');
         // Matches "/api/v1/document/id Delete one Document
         $router->delete('/{id}', 'DocumentController@delete');
     });
@@ -246,9 +246,9 @@ $router->group(['prefix' => 'api/v1'], function () use ($router) {
         // Matches "/api/v1/documentData Post register documentData
         $router->post('', 'DocumentDataController@registerDocumentData');
         // Matches "/api/v1/documentData/id Put all of one documentData
-        $router->put('/{id}', 'DocumentDataController@updateAll');
+        $router->put('/{id}', 'DocumentDataController@put');
         // Matches "/api/v1/documentData/id Patch one element of one documentData
-        $router->patch('/{id}', 'DocumentDataController@update');
+        $router->patch('/{id}', 'DocumentDataController@patch');
         // Matches "/api/v1/documentData/id Delete documentData
         $router->delete('/{id}', 'DocumentDataController@delete');
     });

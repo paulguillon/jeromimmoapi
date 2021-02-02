@@ -2,9 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Document;
 use Illuminate\Http\Request;
- 
+use App\Models\Document;
+use App\Models\DocumentData;
+
 
 class DocumentController extends Controller
 {
@@ -25,7 +26,7 @@ class DocumentController extends Controller
      */
     public function allDocument(Request $request)
     {
-        return response()->json(['document' =>  Document::all()], 200);
+        return response()->json(['document' =>  Document::all(), 'documentData' => DocumentData::all()], 200);
     }
 
     /**
@@ -51,12 +52,14 @@ class DocumentController extends Controller
      * @param  Request  $request
      * @return Response
      */
-    
+
     public function registerDocument(Request $request)
     {
         //validate incoming request
         $this->validate($request, [
             'nameDocument' => 'required|string',
+            'keyDocumentData' => 'string',
+            'valueDocumentData' => 'string',
             'created_by' => 'required|integer',
             'updated_by' => 'required|integer',
         ]);
@@ -67,11 +70,18 @@ class DocumentController extends Controller
             $document->nameDocument = $request->input('nameDocument');
             $document->created_by = $request->input('created_by');
             $document->updated_by = $request->input('updated_by');
+            if(!$document->save())
+            return response()->json(['message' => 'Document Registration Failed !'], 409);
 
-            $document->save();
-
+            $documentData = new DocumentData;
+            $documentData->keyDocumentData = $request->input('keyDocumentData');
+            $documentData->valueDocumentData = $request->input('valueDocumentData');
+            $documentData->idDocument = $document->idDocument;
+            $documentData->created_by = $request->input('created_by');
+            $documentData->updated_by = $request->input('updated_by');
+            $documentData->save();
             //return successful response
-            return response()->json(['document' => $document, 'message' => 'CREATED'], 201);
+            return response()->json(['document' => $document, 'documentData' => $documentData, 'message' => 'CREATED'], 201);
         } catch (\Exception $e) {
             //return error message
             return response()->json(['message' => 'Document Registration Failed!' . $e->getMessage()], 409);
@@ -79,13 +89,13 @@ class DocumentController extends Controller
     }
 
     /**
-     * Update document
+     * Put document
      *
      * @param  string   $id
      * @param  Request  $request
      * @return Response
      */
-    public function updateAll($id, Request $request)
+    public function put($id, Request $request)
     {
         //validate incoming request
         $this->validate($request, [
@@ -111,13 +121,13 @@ class DocumentController extends Controller
     }
 
     /**
-     * Update user patch.
+     * Patch user
      *
      * @param  string   $id
      * @param  Request  $request
      * @return Response
      */
-    public function update($id, Request $request)
+    public function patch($id, Request $request)
     {
         //validate incoming request
         $this->validate($request, [

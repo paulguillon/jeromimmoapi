@@ -3,8 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Agency;
+use App\Models\AgencyData;
 use Illuminate\Http\Request;
-
 
 class AgencyController extends Controller
 {
@@ -25,7 +25,7 @@ class AgencyController extends Controller
      */
     public function allAgency(Request $request)
     {
-        return response()->json(['agency' =>  Agency::all()], 200);
+        return response()->json(['agency' =>  Agency::all(), 'agencyData' => AgencyData::all()], 200);
     }
 
     /**
@@ -45,7 +45,7 @@ class AgencyController extends Controller
         }
     }
     /**
-     * Create a new agency.
+     * Store a new agency.
      *
      * @param  Request  $request
      * @return Response
@@ -58,6 +58,8 @@ class AgencyController extends Controller
             'nameAgency' => 'required|string',
             'zipCodeAgency' => 'required|integer',
             'cityAgency' => 'required|string',
+            'keyAgencyData' => 'string',
+            'valueAgencyData' => 'string',
             'created_by' => 'required|integer',
             'updated_by' => 'required|integer',
         ]);
@@ -69,14 +71,21 @@ class AgencyController extends Controller
             $agency->cityAgency = $request->input('cityAgency');
             $agency->created_by = $request->input('created_by');
             $agency->updated_by = $request->input('updated_by');
+            if(!$agency->save())
+            return response()->json(['message' => 'Agency registration failed !'], 409);
 
-            $agency->save();
-
+            $agencyData = new AgencyData;
+            $agencyData->keyAgencyData = $request->input('keyAgencyData');
+            $agencyData->valueAgencyData = $request->input('valueAgencyData');
+            $agencyData->idAgency = $agency->idAgency;
+            $agencyData->created_by = $request->input('created_by');
+            $agencyData->updated_by = $request->input('updated_by');
+            $agencyData->save();
             //return successful response
-            return response()->json(['agency' => $agency, 'message' => 'CREATED'], 201);
+            return response()->json(['agency' => $agency, 'agencyData' => $agencyData, 'message' => 'CREATED'], 201);
         } catch (\Exception $e) {
             //return error message
-            return response()->json(['message' => 'Agency Registration Failed!' . $e->getMessage()], 409);
+            return response()->json(['message' => 'Agency Data Registration Failed!' . $e->getMessage()], 409);
         }
     }
 
