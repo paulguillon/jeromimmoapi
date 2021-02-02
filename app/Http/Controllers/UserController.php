@@ -166,6 +166,12 @@ class UserController extends Controller
         }
     }
 
+    /**
+     * Delete user function
+     *
+     * @param [integer] $id
+     * @return void
+     */
     public function delete($id)
     {
         try {
@@ -180,7 +186,7 @@ class UserController extends Controller
     }
 
     /**
-     * Get all users
+     * Get one users
      *
      * @param  Request  $request
      * @return Response
@@ -193,7 +199,7 @@ class UserController extends Controller
             return response()->json(['user' => $user], 200);
         } catch (\Exception $e) {
 
-            return response()->json(['message' => 'user not found!' . $e->getMessage()], 404);
+            return response()->json(['message' => 'User not found!' . $e->getMessage()], 404);
         }
     }
     /**
