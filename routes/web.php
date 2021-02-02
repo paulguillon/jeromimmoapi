@@ -20,38 +20,8 @@ $router->get('/profile', function () use ($router) {
     return view('profile');
 });
 
-    // API route group
-    $router->group(['prefix' => 'api/v1'], function () use ($router) {
-
-    // Matches "/api/v1/role Post
-    $router->post('roles', 'RoleController@createRole');
-
-    // Matches "/api/v1/roles/{id}
-    $router->get('roles/{id}', 'RoleController@oneUserRole');
-
-    // Matches "/api/v1/roles/id
-    $router->put('roles/{id}', 'RoleController@updateAll');
-
-    // Matches "/api/v1/roles/id
-    $router->patch('roles/{id}', 'RoleController@update');
-
-    // Matches "/api/v1/roles/id
-    $router->delete('roles/{id}', 'RoleController@delete');
-
-    // Matches "/api/v1/users
-    $router->get('users', 'UserController@allUsers');
-
-    // Matches "/api/v1/users/id Get One
-    $router->get('users/{id}', 'UserController@oneUser');
-
-    // Matches "/api/v1/users/id Put all of One User
-    $router->put('users/{id}', 'UserController@put');
-
-    // Matches "/api/v1/users/id
-    $router->patch('users/{id}', 'UserController@patch');
-
-    // Matches "/api/v1/users/id
-    $router->delete('users/{id}', 'UserController@delete');
+// API route group
+$router->group(['prefix' => 'api/v1'], function () use ($router) {
 
     // Matches "/api/v1/login
     $router->post('login', 'UserController@login');
@@ -62,96 +32,145 @@ $router->get('/profile', function () use ($router) {
     // Matches "/api/v1/logout
     $router->post('logout', 'UserController@logout');
 
-    // Matches "/api/properties
-    $router->get('properties', 'PropertyController@allProperties');
 
-    // Matches "/api/properties/id
-    $router->get('properties/{id}', 'PropertyController@oneProperty');
+    //Routes roles
+    $router->group(['prefix' => 'roles'], function () use ($router) {
+        // Matches "/api/v1/roles/{id}
+        $router->get('/{id}', 'RoleController@oneUserRole');
 
-    // Matches "/api/v1/properties/id
-    $router->put('properties/{id}', 'PropertyController@put');
+        // Matches "/api/v1/roles
+        $router->post('/', 'RoleController@createRole');
 
-    // Matches "/api/v1/properties/id
-    $router->patch('properties/{id}', 'PropertyController@patch');
+        // Matches "/api/v1/roles/id
+        $router->put('/{id}', 'RoleController@updateAll');
 
-    // Matches "/api/v1/properties/id
-    $router->delete('properties/{id}', 'PropertyController@delete');
+        // Matches "/api/v1/roles/id
+        $router->patch('/{id}', 'RoleController@update');
 
-    // Matches "/api/v1/property
-    $router->post('/property', 'PropertyController@registerProperty');
+        // Matches "/api/v1/roles/id
+        $router->delete('/{id}', 'RoleController@delete');
+    });
 
-    // Matches "/api/agency
-    $router->get('/agency', 'AgencyController@allAgency');
+    //Routes users
+    $router->group(['prefix' => 'users'], function () use ($router) {
+        // Matches "/api/v1/users
+        $router->get('/', 'UserController@allUsers');
 
-    // Matches "/api/agency/id
-    $router->get('agency/{id}', 'AgencyController@oneAgency');
+        // Matches "/api/v1/users/id Get One
+        $router->get('/{id}', 'UserController@oneUser');
 
-    // Matches "/api/agency/id
-    $router->put('agency/{id}', 'AgencyController@put');
+        // Matches "/api/v1/users/id Put all of One User
+        $router->put('/{id}', 'UserController@put');
 
-    // Matches "/api/agency/id
-    $router->patch('agency/{id}', 'AgencyController@patch');
+        // Matches "/api/v1/users/id
+        $router->patch('/{id}', 'UserController@patch');
 
-    // Matches "/api/agency/id
-    $router->patch('agency/{id}', 'AgencyController@delete');
+        // Matches "/api/v1/users/id
+        $router->delete('/{id}', 'UserController@delete');
+    });
 
-    // Matches "/api/v1/agency
-    $router->post('/agency', 'AgencyController@registerAgency');
+    //Routes properties
+    $router->group(['prefix' => 'properties'], function () use ($router) {
+        // Matches "/api/properties
+        $router->get('/', 'PropertyController@allProperties');
 
-    // Matches "/api/v1/agency/id
-    $router->delete('agency/{id}', 'AgencyController@delete');
+        // Matches "/api/properties/id
+        $router->get('/{id}', 'PropertyController@oneProperty');
 
-    // Matches "/api/faq
-    $router->get('faq', 'FaqController@allFaq');
+        // Matches "/api/v1/properties
+        $router->post('/', 'PropertyController@registerProperty');
 
-    // Matches "/api/agency/id
-    $router->get('faq/{id}', 'FaqController@oneFaq');
+        // Matches "/api/v1/properties/id
+        $router->put('/{id}', 'PropertyController@put');
 
-    // Matches "/api/v1/faq
-    $router->post('/faq', 'FaqController@registerFaq');
+        // Matches "/api/v1/properties/id
+        $router->patch('/{id}', 'PropertyController@patch');
 
-    // Matches "/api/v1/faq/id
-    $router->put('faq/{id}', 'FaqController@updateAll');
+        // Matches "/api/v1/properties/id
+        $router->delete('/{id}', 'PropertyController@delete');
+    });
 
-    // Matches "/api/v1/faq/id
-    $router->patch('faq/{id}', 'FaqController@update');
+    //Routes agency
+    $router->group(['prefix' => 'agency'], function () use ($router) {
+        // Matches "/api/agency
+        $router->get('/', 'AgencyController@allAgency');
 
-    // Matches "/api/v1/faq/id
-    $router->delete('faq/{id}', 'FaqController@delete');
+        // Matches "/api/agency/id
+        $router->get('/{id}', 'AgencyController@oneAgency');
 
-    // Matches "/api/document
-    $router->get('document', 'DocumentController@allDocument');
+        // Matches "/api/v1/agency
+        $router->post('/', 'AgencyController@registerAgency');
 
-    // Matches "/api/document/id
-    $router->get('document/{id}', 'DocumentController@oneDocument');
+        // Matches "/api/agency/id
+        $router->put('/{id}', 'AgencyController@put');
 
-    // Matches "/api/v1/document/id
-    $router->put('document/{id}', 'DocumentController@updateAll');
+        // Matches "/api/agency/id
+        $router->patch('/{id}', 'AgencyController@patch');
 
-    // Matches "/api/v1/document/id
-    $router->patch('document/{id}', 'DocumentController@update');
+        // Matches "/api/v1/agency/id
+        $router->delete('/{id}', 'AgencyController@delete');
+    });
 
-    // Matches "/api/v1/document/id
-    $router->delete('document/{id}', 'DocumentController@delete');
+    //Routes FAQ
+    $router->group(['prefix' => 'faq'], function () use ($router) {
+        // Matches "/api/faq
+        $router->get('/', 'FaqController@allFaq');
 
-    // Matches "/api/v1/document
-    $router->post('/document', 'DocumentController@registerDocument');
+        // Matches "/api/agency/id
+        $router->get('/{id}', 'FaqController@oneFaq');
 
-    // Matches "/api/visit
-    $router->get('visit', 'VisitController@allVisit');
+        // Matches "/api/v1/faq
+        $router->post('/', 'FaqController@registerFaq');
 
-    // Matches "/api/visit/id
-    $router->get('visit/{id}', 'VisitController@oneVisit');
+        // Matches "/api/v1/faq/id
+        $router->put('/{id}', 'FaqController@updateAll');
 
-    // Matches "/api/v1/visit
-    $router->post('/vist', 'VisitController@registerVisit');
+        // Matches "/api/v1/faq/id
+        $router->patch('/{id}', 'FaqController@update');
 
-    // Matches "/api/v1/visit/id
-    $router->put('visit/{id}', 'VisitController@updateAll');
+        // Matches "/api/v1/faq/id
+        $router->delete('/{id}', 'FaqController@delete');
+    });
 
-    // Matches "/api/v1/visit/id
-    $router->patch('visit/{id}', 'VisitController@update');
+    //Routes document
+    $router->group(['prefix' => 'document'], function () use ($router) {
+        // Matches "/api/document
+        $router->get('/', 'DocumentController@allDocument');
 
-    // Matches "/api/v1/visit/id
-    $router->delete('visit/{id}', 'VisitController@delete');
+        // Matches "/api/document/id
+        $router->get('/{id}', 'DocumentController@oneDocument');
+
+        // Matches "/api/v1/document
+        $router->post('/', 'DocumentController@registerDocument');
+
+        // Matches "/api/v1/document/id
+        $router->put('/{id}', 'DocumentController@updateAll');
+
+        // Matches "/api/v1/document/id
+        $router->patch('/{id}', 'DocumentController@update');
+
+        // Matches "/api/v1/document/id
+        $router->delete('/{id}', 'DocumentController@delete');
+    });
+
+    //Routes visit
+    $router->group(['prefix' => 'visit'], function () use ($router) {
+        // Matches "/api/visit
+        $router->get('/', 'VisitController@allVisit');
+
+        // Matches "/api/visit/id
+        $router->get('/{id}', 'VisitController@oneVisit');
+
+        // Matches "/api/v1/visit
+        $router->post('/', 'VisitController@registerVisit');
+
+        // Matches "/api/v1/visit/id
+        $router->put('/{id}', 'VisitController@updateAll');
+
+        // Matches "/api/v1/visit/id
+        $router->patch('/{id}', 'VisitController@update');
+
+        // Matches "/api/v1/visit/id
+        $router->delete('/{id}', 'VisitController@delete');
+    });
 });
