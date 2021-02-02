@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Visit;
 use Illuminate\Http\Request;
- 
+
 
 class VisitController extends Controller
 {
@@ -51,7 +51,7 @@ class VisitController extends Controller
      * @param  Request  $request
      * @return Response
      */
-    
+
     public function registerVisit(Request $request)
     {
         //validate incoming request
@@ -79,13 +79,13 @@ class VisitController extends Controller
     }
 
     /**
-     * Update visit
+     * Put visit
      *
      * @param  string   $id
      * @param  Request  $request
      * @return Response
      */
-    public function updateAll($id, Request $request)
+    public function put($id, Request $request)
     {
         //validate incoming request
         $this->validate($request, [
@@ -111,19 +111,19 @@ class VisitController extends Controller
     }
 
     /**
-     * Update visit patch.
+     * Patch visit
      *
      * @param  string   $id
      * @param  Request  $request
      * @return Response
      */
-    public function update($id, Request $request)
+    public function patch($id, Request $request)
     {
         //validate incoming request
         $this->validate($request, [
-            'dateVisit' => 'required|date_format:Y-m-d H:i',
+            'dateVisit' => 'date_format:Y-m-d H:i',
             'created_by' => 'integer',
-            'updated_by' => 'required|string'
+            'updated_by' => 'string'
         ]);
 
         try {

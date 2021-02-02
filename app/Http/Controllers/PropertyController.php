@@ -133,12 +133,12 @@ class PropertyController extends Controller
     {
         //validate incoming request
         $this->validate($request, [
-            'typeProperty' => 'required|string',
-            'priceProperty' => 'required|string',
-            'zipCodeProperty' => 'required|string|min:5|max:5',
-            'cityProperty' => 'required|string',
-            'created_by' => 'required|integer',
-            'updated_by' => 'required|integer'
+            'typeProperty' => 'string',
+            'priceProperty' => 'string',
+            'zipCodeProperty' => 'string|min:5|max:5',
+            'cityProperty' => 'string',
+            'created_by' => 'integer',
+            'updated_by' => 'integer'
         ]);
 
         try {
