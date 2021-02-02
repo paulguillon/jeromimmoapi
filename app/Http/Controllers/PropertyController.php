@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Property;
 use Illuminate\Http\Request;
- 
+
 
 class PropertyController extends Controller
 {
@@ -51,7 +51,7 @@ class PropertyController extends Controller
      * @param  Request  $request
      * @return Response
      */
-    
+
     public function registerProperty(Request $request)
     {
         //validate incoming request
@@ -91,7 +91,7 @@ class PropertyController extends Controller
      * @param  Request  $request
      * @return Response
      */
-    public function updateAll($id, Request $request)
+    public function put($id, Request $request)
     {
         //validate incoming request
         $this->validate($request, [
@@ -129,7 +129,7 @@ class PropertyController extends Controller
      * @param  Request  $request
      * @return Response
      */
-    public function update($id, Request $request)
+    public function patch($id, Request $request)
     {
         //validate incoming request
         $this->validate($request, [
@@ -146,8 +146,8 @@ class PropertyController extends Controller
 
             if (in_array(null or '', $request->all()))
                 return response()->json(['message' => 'Null or empty value', 'status' => 'fail'], 500);
- 
-            if ($request->input('typeProperty') !== null)    
+
+            if ($request->input('typeProperty') !== null)
                 $property->typeProperty = $request->input('typeProperty');
             if ($request->input('priceProperty') !== null)
                 $property->priceProperty = $request->input('priceProperty');

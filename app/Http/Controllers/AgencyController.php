@@ -45,7 +45,7 @@ class AgencyController extends Controller
         }
     }
     /**
-     * Store a new agency.
+     * Create a new agency.
      *
      * @param  Request  $request
      * @return Response

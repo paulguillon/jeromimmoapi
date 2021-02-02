@@ -20,8 +20,8 @@ $router->get('/profile', function () use ($router) {
     return view('profile');
 });
 
-// API route group
-$router->group(['prefix' => 'api/v1'], function () use ($router) {
+    // API route group
+    $router->group(['prefix' => 'api/v1'], function () use ($router) {
 
     // Matches "/api/v1/role Post
     $router->post('roles', 'RoleController@createRole');
@@ -56,11 +56,11 @@ $router->group(['prefix' => 'api/v1'], function () use ($router) {
     // Matches "/api/v1/login
     $router->post('login', 'UserController@login');
 
-    // Matches "/api/v1/logout
-    $router->post('logout', 'UserController@logout');
-
     // Matches "/api/v1/register
     $router->post('register', 'UserController@register');
+
+    // Matches "/api/v1/logout
+    $router->post('logout', 'UserController@logout');
 
     // Matches "/api/properties
     $router->get('properties', 'PropertyController@allProperties');
@@ -69,10 +69,10 @@ $router->group(['prefix' => 'api/v1'], function () use ($router) {
     $router->get('properties/{id}', 'PropertyController@oneProperty');
 
     // Matches "/api/v1/properties/id
-    $router->put('properties/{id}', 'PropertyController@updateAll');
+    $router->put('properties/{id}', 'PropertyController@put');
 
     // Matches "/api/v1/properties/id
-    $router->patch('properties/{id}', 'PropertyController@update');
+    $router->patch('properties/{id}', 'PropertyController@patch');
 
     // Matches "/api/v1/properties/id
     $router->delete('properties/{id}', 'PropertyController@delete');
