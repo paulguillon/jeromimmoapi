@@ -186,9 +186,9 @@ $router->group(['prefix' => 'api/v1'], function () use ($router) {
         // Matches "/api/v1/faq Post register faq
         $router->post('', 'FaqController@registerFaq');
         // Matches "/api/v1/faq/id Put all of one faq
-        $router->put('/{id}', 'FaqController@updateAll');
+        $router->put('/{id}', 'FaqController@put');
         // Matches "/api/v1/faq/id Patch one element of one faq
-        $router->patch('/{id}', 'FaqController@update');
+        $router->patch('/{id}', 'FaqController@patch');
         // Matches "/api/v1/faq/id delete one faq
         $router->delete('/{id}', 'FaqController@delete');
     });
@@ -266,9 +266,9 @@ $router->group(['prefix' => 'api/v1'], function () use ($router) {
         // Matches "/api/v1/visit Post register Visit
         $router->post('', 'VisitController@registerVisit');
         // Matches "/api/v1/visit/id Put all of one Visit
-        $router->put('/{id}', 'VisitController@updateAll');
+        $router->put('/{id}', 'VisitController@put');
         // Matches "/api/v1/visit/id Patch one element of one Visit
-        $router->patch('/{id}', 'VisitController@update');
+        $router->patch('/{id}', 'VisitController@patch');
         // Matches "/api/v1/visit/id Delete one Visit
         $router->delete('/{id}', 'VisitController@delete');
     });
