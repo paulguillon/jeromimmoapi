@@ -40,9 +40,9 @@ $router->group(['prefix' => 'api/v1'], function () use ($router) {
         // Prefix
         $router->group(['prefix' => 'users'], function () use ($router) {
         // Matches "/api/v1/users Get all
-        $router->get('', 'UserController@allUsers');
+        $router->get('', 'UserController@getUsers');
         // Matches "/api/v1/users/id Get one
-        $router->get('/{id}', 'UserController@oneUser');
+        $router->get('/{id}', 'UserController@getUser');
         // Matches "/api/v1/users Post Register
         $router->post('', 'UserController@register');
         // Matches "/api/v1/users/id Put all of One User
