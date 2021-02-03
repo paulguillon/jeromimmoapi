@@ -18,7 +18,7 @@ class UserController extends Controller
     public function __construct()
     {
         // methods without authorization
-        $this->middleware('auth:api', ['except' => ['login', 'register']]);
+        $this->middleware('auth:api', ['except' => ['login', 'addUser']]);
     }
 
     /**
@@ -29,7 +29,15 @@ class UserController extends Controller
      */
     public function getUsers(Request $request)
     {
-        return response()->json(['users' =>  User::all()], 200);
+        $users = User::all();
+
+        for ($i = 0; $i < count($users); $i++) {
+            $user = $users[$i];
+
+            $user['data'] = $this->getAllData($user->idUser)->original;
+        }
+
+        return response()->json(['users' => $users], 200);
     }
     /**
      * Get one user
@@ -41,6 +49,7 @@ class UserController extends Controller
     {
         try {
             $user = User::all()->where('idUser', $id)->first();
+            $user['data'] = $this->getAllData($user->idUser)->original;
             return response()->json(['user' => $user], 200);
         } catch (\Exception $e) {
 
@@ -115,7 +124,7 @@ class UserController extends Controller
             'idRoleUser' => 'integer',
             'created_by' => 'integer',
             'updated_by' => 'integer',
-            
+
             'data' => 'string',
         ]);
 
