@@ -31,7 +31,7 @@ class UserController extends Controller
     {
         return response()->json(['users' =>  User::all(), 'usersData' => UserData::all()], 200);
     }
-/**
+    /**
      * Get one user
      *
      * @param  Request  $request
@@ -41,7 +41,7 @@ class UserController extends Controller
     {
         try {
             $user = User::all()->where('idUser', $id)->first();
-            $userData = UserData::all()->where('idUser', $id);
+            $userData = UserData::all()->where('idUser', $id)->first();
             return response()->json(['user' => $user, 'userData' => $userData], 200);
         } catch (\Exception $e) {
 
@@ -83,12 +83,13 @@ class UserController extends Controller
                 return response()->json(['message' => 'User Registration Failed!'], 409);
 
             $userData = new UserData;
-            $userData->keyUserData = $request->input('keyUserData');
-            $userData->valueUserData = $request->input('valueUserData');
+            $userData->keyUserData = $request->input('keyUserData') !== null ? $request->input('keyUserData') : '';
+            $userData->valueUserData = $request->input('valueUserData') !== null ? $request->input('valueUserData') : '';
             $userData->idUser = $user->idUser;
             $userData->created_by = $request->input('created_by');
             $userData->updated_by = $request->input('updated_by');
             $userData->save();
+
             //return successful response
             return response()->json(['user' => $user, 'userData' => $userData, 'message' => 'CREATED'], 201);
         } catch (\Exception $e) {
@@ -129,8 +130,9 @@ class UserController extends Controller
             $user->idRoleUser = $request->input('idRoleUser');
             $user->created_by = $request->input('created_by');
             $user->updated_by = $request->input('updated_by');
+
             if (!$user->update())
-                return response()->json(['message' => 'User Updated Failed!'], 409);
+                return response()->json(['message' => 'User Update Failed!', 'status' => 'fail'], 409);
 
             $userData =  UserData::all()->where('idUser', $id)->first();
             $userData->keyUserData = $request->input('keyUserData');
@@ -142,10 +144,10 @@ class UserController extends Controller
 
 
             //return successful response
-            return response()->json(['user' => $user, 'userData' => $userData, 'message' => 'ALL UPDATED'], 200);
+            return response()->json(['user' => $user, 'userData' => $userData, 'message' => 'ALL UPDATED', 'status' => 'success'], 200);
         } catch (\Exception $e) {
             //return error message
-            return response()->json(['message' => 'User Update Failed!' . $e->getMessage()], 409);
+            return response()->json(['message' => 'User Update Failed!' . $e->getMessage(), 'status' => 'fail'], 409);
         }
     }
 
@@ -195,18 +197,18 @@ class UserController extends Controller
                 $user->updated_by = $request->input('updated_by');
 
             if (!$user->update())
-            return response()->json(['message' => 'User Updated Failed!'], 409);
+                return response()->json(['message' => 'User Update Failed!', 'status' => 'fail'], 409);
 
-            $userData =  UserData::all()->where('idUser', $id)->first();
+            $userData = UserData::all()->where('idUser', $id)->first();
             if ($request->input('keyUserData') !== null)
-            $userData->keyUserData = $request->input('keyUserData');
+                $userData->keyUserData = $request->input('keyUserData');
             if ($request->input('valueUserData') !== null)
-            $userData->valueUserData = $request->input('valueUserData');
+                $userData->valueUserData = $request->input('valueUserData');
             $userData->idUser = $user->idUser;
             if ($request->input('created_by') !== null)
-            $userData->created_by = $request->input('created_by');
+                $userData->created_by = $request->input('created_by');
             if ($request->input('updated_by') !== null)
-            $userData->updated_by = $request->input('updated_by');
+                $userData->updated_by = $request->input('updated_by');
             $userData->update();
 
             //return successful response
@@ -220,8 +222,8 @@ class UserController extends Controller
     /**
      * Delete user function
      *
-     * @param [integer] $id
-     * @return void
+     * @param int $id
+     * @return Response
      */
     public function delete($id)
     {

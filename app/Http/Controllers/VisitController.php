@@ -39,11 +39,12 @@ class VisitController extends Controller
     {
         try {
             $visit = Visit::all()->where('idVisit', $id)->first();
+            $visitData = VisitData::all()->where('idVisit', $id)->first();
 
-            return response()->json(['visit' => $visit], 200);
+            return response()->json(['visit' => $visit, 'visitData' => $visitData, 'status' => 'success'], 200);
         } catch (\Exception $e) {
 
-            return response()->json(['message' => 'Visit not found!' . $e->getMessage()], 404);
+            return response()->json(['message' => 'Visit not found!' . $e->getMessage(), 'status' => 'fail'], 404);
         }
     }
     /**
@@ -72,20 +73,21 @@ class VisitController extends Controller
             $visit->updated_by = $request->input('updated_by');
 
             if (!$visit->save())
-            return response()->json(['message' => 'Visit Registration Failed !'], 409);
+                return response()->json(['message' => 'Visit Registration Failed !'], 409);
 
             $visitData = new VisitData;
-            $visitData->keyVisitData = $request->input('keyVisitData');
-            $visitData->valueVisitData = $request->input('valueVisitData');
-            $visitData->idVisit = $visit->idData;
+            $visitData->keyVisitData = $request->input('keyVisitData') !== null ? $request->input('keyVisitData') : '';
+            $visitData->valueVisitData = $request->input('valueVisitData') !== null ? $request->input('valueVisitData') : '';
+            $visitData->idVisit = $visit->idVisit;
             $visitData->created_by = $request->input('created_by');
             $visitData->updated_by = $request->input('updated_by');
             $visitData->save();
+
             //return successful response
-            return response()->json(['visit' => $visit, 'visitData' => $visitData, 'message' => 'CREATED'], 201);
+            return response()->json(['visit' => $visit, 'visitData' => $visitData, 'message' => 'CREATED', 'status' => 'success'], 201);
         } catch (\Exception $e) {
             //return error message
-            return response()->json(['message' => 'Visit Data Registration Failed!' . $e->getMessage()], 409);
+            return response()->json(['message' => 'Visit Data Registration Failed!' . $e->getMessage(), 'status' => 'fail'], 409);
         }
     }
 
@@ -101,6 +103,8 @@ class VisitController extends Controller
         //validate incoming request
         $this->validate($request, [
             'dateVisit' => 'required|date_format:Y-m-d H:i',
+            'keyVisitData' => 'required|string',
+            'valueVisitData' => 'required|string',
             'created_by' => 'required|integer',
             'updated_by' => 'required|integer',
         ]);
@@ -111,13 +115,22 @@ class VisitController extends Controller
             $visit->created_by = $request->input('created_by');
             $visit->updated_by = $request->input('updated_by');
 
-            $visit->update();
+            if (!$visit->update())
+                return response()->json(['message' => 'Visit Update Failed!', 'status' => 'fail'], 409);
+
+            $visitData = VisitData::all()->where('idVisit', $id)->first();
+            $visitData->keyVisitData = $request->input('keyVisitData');
+            $visitData->valueVisitData = $request->input('valueVisitData');
+            $visitData->idVisit = $visit->idVisit;
+            $visitData->created_by = $request->input('created_by');
+            $visitData->updated_by = $request->input('updated_by');
+            $visitData->update();
 
             //return successful response
-            return response()->json(['visit' => $visit, 'message' => 'ALL UPDATED'], 200);
+            return response()->json(['visit' => $visit, 'visitData' => $visitData, 'message' => 'ALL UPDATED', 'status' => 'success'], 200);
         } catch (\Exception $e) {
             //return error message
-            return response()->json(['message' => 'Visit Update Failed!' . $e->getMessage()], 409);
+            return response()->json(['message' => 'Visit Update Failed!' . $e->getMessage(), 'status' => 'fail'], 409);
         }
     }
 
@@ -133,6 +146,8 @@ class VisitController extends Controller
         //validate incoming request
         $this->validate($request, [
             'dateVisit' => 'date_format:Y-m-d H:i',
+            'keyVisitData' => 'string',
+            'valueVisitData' => 'string',
             'created_by' => 'integer',
             'updated_by' => 'string'
         ]);
@@ -150,23 +165,44 @@ class VisitController extends Controller
             if ($request->input('updated_by') !== null)
                 $visit->updated_by = $request->input('updated_by');
 
-            $visit->update();
+            if (!$visit->update())
+                return response()->json(['message' => 'Visit Update Failed!', 'status' => 'fail'], 409);
+
+            $visitData = VisitData::all()->where('idVisit', $id)->first();
+            if ($request->input('keyVisitData') !== null)
+                $visitData->keyVisitData = $request->input('keyVisitData');
+            if ($request->input('valueVisitData') !== null)
+                $visitData->valueVisitData = $request->input('valueVisitData');
+            $visitData->idVisit = $visit->idVisit;
+            if ($request->input('created_by') !== null)
+                $visitData->created_by = $request->input('created_by');
+            if ($request->input('updated_by') !== null)
+                $visitData->updated_by = $request->input('updated_by');
+            $visitData->update();
 
             //return successful response
-            return response()->json(['visit' => $visit, 'message' => 'PATCHED', 'status' => 'success'], 200);
+            return response()->json(['visit' => $visit, 'visitData' => $visitData, 'message' => 'PATCHED', 'status' => 'success'], 200);
         } catch (\Exception $e) {
             //return error message
             return response()->json(['message' => 'Visit Update Failed!' . $e->getMessage(), 'status' => 'fail'], 409);
         }
     }
 
+    /**
+     * Delete Visit
+     * 
+     * @param $id
+     * @return Response
+     */
     public function delete($id)
     {
         try {
             $visit = Visit::findOrFail($id);
+            $visitData =  VisitData::all()->where('idVisit', $id)->first();
+            $visitData->delete();
             $visit->delete();
 
-            return response()->json(['visit' => $visit, 'message' => 'DELETED', 'status' => 'success'], 200);
+            return response()->json(['visit' => $visit, 'visitData' => $visitData, 'message' => 'DELETED', 'status' => 'success'], 200);
         } catch (\Exception $e) {
             //return error message
             return response()->json(['message' => 'Visit deletion failed!' . $e->getMessage(), 'status' => 'fail'], 409);
