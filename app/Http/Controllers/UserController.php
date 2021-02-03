@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\UserData;
 use Illuminate\Support\Facades\Auth;
+
 use Illuminate\Support\Str;
 use Symfony\Component\VarDumper\VarDumper;
 
@@ -40,8 +41,8 @@ class UserController extends Controller
     {
         try {
             $user = User::all()->where('idUser', $id)->first();
-
-            return response()->json(['user' => $user], 200);
+            $userData = UserData::all()->where('idUser', $id);
+            return response()->json(['user' => $user, 'userData' => $userData], 200);
         } catch (\Exception $e) {
 
             return response()->json(['message' => 'User not found!' . $e->getMessage()], 404);
@@ -92,7 +93,7 @@ class UserController extends Controller
             return response()->json(['user' => $user, 'userData' => $userData, 'message' => 'CREATED'], 201);
         } catch (\Exception $e) {
             //return error message
-            return response()->json(['message' => 'User Data Registration Failed!' . $e->getMessage()], 409);
+            return response()->json(['message' => 'User Registration Failed!' . $e->getMessage()], 409);
         }
     }
 
@@ -111,6 +112,8 @@ class UserController extends Controller
             'firstnameUser' => 'required|string',
             'emailUser' => 'required|email|unique:users,emailUser,' . $request->id . ',idUser',
             'passwordUser' => 'required|confirmed',
+            'keyUserData' => 'required|string',
+            'valueUserData' => 'required|string',
             'idRoleUser' => 'required|integer',
             'created_by' => 'required|integer',
             'updated_by' => 'required|integer',
@@ -126,11 +129,20 @@ class UserController extends Controller
             $user->idRoleUser = $request->input('idRoleUser');
             $user->created_by = $request->input('created_by');
             $user->updated_by = $request->input('updated_by');
+            if (!$user->update())
+                return response()->json(['message' => 'User Updated Failed!'], 409);
 
-            $user->update();
+            $userData =  UserData::all()->where('idUser', $id)->first();
+            $userData->keyUserData = $request->input('keyUserData');
+            $userData->valueUserData = $request->input('valueUserData');
+            $userData->idUser = $user->idUser;
+            $userData->created_by = $request->input('created_by');
+            $userData->updated_by = $request->input('updated_by');
+            $userData->update();
+
 
             //return successful response
-            return response()->json(['user' => $user, 'message' => 'ALL UPDATED'], 200);
+            return response()->json(['user' => $user, 'userData' => $userData, 'message' => 'ALL UPDATED'], 200);
         } catch (\Exception $e) {
             //return error message
             return response()->json(['message' => 'User Update Failed!' . $e->getMessage()], 409);
@@ -152,6 +164,8 @@ class UserController extends Controller
             'firstnameUser' => 'string',
             'emailUser' => 'email|unique:users,emailUser,' . $request->id . ',idUser',
             'passwordUser' => 'confirmed',
+            'keyUserData' => 'string',
+            'valueUserData' => 'string',
             'idRoleUser' => 'integer',
             'created_by' => 'integer',
             'updated_by' => 'integer',
@@ -180,10 +194,23 @@ class UserController extends Controller
             if ($request->input('updated_by') !== null)
                 $user->updated_by = $request->input('updated_by');
 
-            $user->update();
+            if (!$user->update())
+            return response()->json(['message' => 'User Updated Failed!'], 409);
+
+            $userData =  UserData::all()->where('idUser', $id)->first();
+            if ($request->input('keyUserData') !== null)
+            $userData->keyUserData = $request->input('keyUserData');
+            if ($request->input('valueUserData') !== null)
+            $userData->valueUserData = $request->input('valueUserData');
+            $userData->idUser = $user->idUser;
+            if ($request->input('created_by') !== null)
+            $userData->created_by = $request->input('created_by');
+            if ($request->input('updated_by') !== null)
+            $userData->updated_by = $request->input('updated_by');
+            $userData->update();
 
             //return successful response
-            return response()->json(['user' => $user, 'message' => 'PATCHED', 'status' => 'success'], 200);
+            return response()->json(['user' => $user, 'userData' => $userData, 'message' => 'PATCHED', 'status' => 'success'], 200);
         } catch (\Exception $e) {
             //return error message
             return response()->json(['message' => 'User Update Failed!' . $e->getMessage(), 'status' => 'fail'], 409);
@@ -200,9 +227,11 @@ class UserController extends Controller
     {
         try {
             $user = User::findOrFail($id);
+            $userData =  UserData::all()->where('idUser', $id)->first();
+            $userData->delete();
             $user->delete();
 
-            return response()->json(['user' => $user, 'message' => 'DELETED', 'status' => 'success'], 200);
+            return response()->json(['user' => $user, 'userData' => $userData, 'message' => 'DELETED', 'status' => 'success'], 200);
         } catch (\Exception $e) {
             //return error message
             return response()->json(['message' => 'User deletion failed!' . $e->getMessage(), 'status' => 'fail'], 409);
