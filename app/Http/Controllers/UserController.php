@@ -2,13 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\UserData;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-
 use Illuminate\Support\Str;
-use Symfony\Component\VarDumper\VarDumper;
 
 class UserController extends Controller
 {
@@ -29,14 +27,14 @@ class UserController extends Controller
      */
     public function allUsers(Request $request)
     {
-        return response()->json(['users' =>  User::all(), 'usersData' => UserData::all()], 200);
+        return response()->json(['users' => User::all(), 'usersData' => UserData::all()], 200);
     }
 /**
-     * Get one user
-     *
-     * @param  Request  $request
-     * @return Response
-     */
+ * Get one user
+ *
+ * @param  Request  $request
+ * @return Response
+ */
     public function oneUser($id)
     {
         try {
@@ -44,7 +42,6 @@ class UserController extends Controller
             $userData = UserData::all()->where('idUser', $id);
             return response()->json(['user' => $user, 'userData' => $userData], 200);
         } catch (\Exception $e) {
-
             return response()->json(['message' => 'User not found!' . $e->getMessage()], 404);
         }
     }
@@ -79,8 +76,9 @@ class UserController extends Controller
             $user->idRoleUser = $request->input('idRoleUser');
             $user->created_by = $request->input('created_by');
             $user->updated_by = $request->input('updated_by');
-            if (!$user->save())
+            if (!$user->save()) {
                 return response()->json(['message' => 'User Registration Failed!'], 409);
+            }
 
             $userData = new UserData;
             $userData->keyUserData = $request->input('keyUserData');
@@ -110,7 +108,7 @@ class UserController extends Controller
         $this->validate($request, [
             'lastnameUser' => 'required|string',
             'firstnameUser' => 'required|string',
-            'emailUser' => 'required|email|unique:users,emailUser,' . $request->id . ',idUser',
+            'emailUser' => 'required|email|unique:users,emailUser,' . $request->id . 'idUser',
             'passwordUser' => 'required|confirmed',
             'keyUserData' => 'required|string',
             'valueUserData' => 'required|string',
@@ -129,17 +127,17 @@ class UserController extends Controller
             $user->idRoleUser = $request->input('idRoleUser');
             $user->created_by = $request->input('created_by');
             $user->updated_by = $request->input('updated_by');
-            if (!$user->update())
+            if (!$user->update()) {
                 return response()->json(['message' => 'User Updated Failed!'], 409);
+            }
 
-            $userData =  UserData::all()->where('idUser', $id)->first();
+            $userData = UserData::all()->where('idUser', $id)->first();
             $userData->keyUserData = $request->input('keyUserData');
             $userData->valueUserData = $request->input('valueUserData');
             $userData->idUser = $user->idUser;
             $userData->created_by = $request->input('created_by');
             $userData->updated_by = $request->input('updated_by');
             $userData->update();
-
 
             //return successful response
             return response()->json(['user' => $user, 'userData' => $userData, 'message' => 'ALL UPDATED'], 200);
@@ -174,39 +172,60 @@ class UserController extends Controller
         try {
             $user = User::findOrFail($id);
 
-            if (in_array(null or '', $request->all()))
+            if (in_array(null or '', $request->all())) {
                 return response()->json(['message' => 'Null or empty value', 'status' => 'fail'], 500);
+            }
 
-            if ($request->input('lastnameUser') !== null)
+            if ($request->input('lastnameUser') !== null) {
                 $user->lastnameUser = $request->input('lastnameUser');
-            if ($request->input('firstnameUser') !== null)
+            }
+
+            if ($request->input('firstnameUser') !== null) {
                 $user->firstnameUser = $request->input('firstnameUser');
-            if ($request->input('emailUser') !== null)
+            }
+
+            if ($request->input('emailUser') !== null) {
                 $user->emailUser = $request->input('emailUser');
+            }
+
             if ($request->input('passwordUser') !== null) {
                 $plainPassword = $request->input('passwordUser');
                 $user->passwordUser = app('hash')->make($plainPassword);
             }
-            if ($request->input('idRoleUser') !== null)
+            if ($request->input('idRoleUser') !== null) {
                 $user->idRoleUser = $request->input('idRoleUser');
-            if ($request->input('created_by') !== null)
+            }
+
+            if ($request->input('created_by') !== null) {
                 $user->created_by = $request->input('created_by');
-            if ($request->input('updated_by') !== null)
+            }
+
+            if ($request->input('updated_by') !== null) {
                 $user->updated_by = $request->input('updated_by');
+            }
 
-            if (!$user->update())
-            return response()->json(['message' => 'User Updated Failed!'], 409);
+            if (!$user->update()) {
+                return response()->json(['message' => 'User Updated Failed!'], 409);
+            }
 
-            $userData =  UserData::all()->where('idUser', $id)->first();
-            if ($request->input('keyUserData') !== null)
-            $userData->keyUserData = $request->input('keyUserData');
-            if ($request->input('valueUserData') !== null)
-            $userData->valueUserData = $request->input('valueUserData');
+            $userData = UserData::all()->where('idUser', $id)->first();
+            if ($request->input('keyUserData') !== null) {
+                $userData->keyUserData = $request->input('keyUserData');
+            }
+
+            if ($request->input('valueUserData') !== null) {
+                $userData->valueUserData = $request->input('valueUserData');
+            }
+
             $userData->idUser = $user->idUser;
-            if ($request->input('created_by') !== null)
-            $userData->created_by = $request->input('created_by');
-            if ($request->input('updated_by') !== null)
-            $userData->updated_by = $request->input('updated_by');
+            if ($request->input('created_by') !== null) {
+                $userData->created_by = $request->input('created_by');
+            }
+
+            if ($request->input('updated_by') !== null) {
+                $userData->updated_by = $request->input('updated_by');
+            }
+
             $userData->update();
 
             //return successful response
@@ -227,7 +246,7 @@ class UserController extends Controller
     {
         try {
             $user = User::findOrFail($id);
-            $userData =  UserData::all()->where('idUser', $id)->first();
+            $userData = UserData::all()->where('idUser', $id)->first();
             $userData->delete();
             $user->delete();
 
@@ -237,7 +256,6 @@ class UserController extends Controller
             return response()->json(['message' => 'User deletion failed!' . $e->getMessage(), 'status' => 'fail'], 409);
         }
     }
-
 
     /**
      * Get a JWT via given credentials.
@@ -254,7 +272,6 @@ class UserController extends Controller
         ]);
 
         $credentials = ['emailUser' => $request->emailUser, 'password' => $request->passwordUser];
-
 
         if (!$token = Auth::attempt($credentials)) {
             return response()->json(['message' => 'Unauthorized', 'status' => 'failed'], 401);
