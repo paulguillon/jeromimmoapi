@@ -18,14 +18,14 @@ class AgencyController extends Controller
     }
 
     /**
-     * Get all agency
+     * Get all agencies
      *
      * @param  Request  $request
      * @return Response
      */
-    public function allAgency(Request $request)
+    public function getAgencies(Request $request)
     {
-        return response()->json(['agency' =>  Agency::all(), 'agencyData' => AgencyData::all()], 200);
+        return response()->json(['agency' =>  Agency::all()], 200);
     }
 
     /**
@@ -34,13 +34,13 @@ class AgencyController extends Controller
      * @param  Request  $request
      * @return Response
      */
-    public function oneAgency($id)
+    public function getAgency($id)
     {
         try {
             $agency = Agency::all()->where('idAgency', $id)->first();
-
             return response()->json(['agency' => $agency], 200);
         } catch (\Exception $e) {
+
             return response()->json(['message' => 'agency not found!' . $e->getMessage()], 404);
         }
     }
@@ -51,7 +51,7 @@ class AgencyController extends Controller
      * @return Response
      */
 
-    public function registerAgency(Request $request)
+    public function addAgency(Request $request)
     {
         //validate incoming request
         $this->validate($request, [
@@ -62,6 +62,7 @@ class AgencyController extends Controller
             'valueAgencyData' => 'string',
             'created_by' => 'required|integer',
             'updated_by' => 'required|integer',
+            'data' => 'string',
         ]);
 
         try {
@@ -71,21 +72,24 @@ class AgencyController extends Controller
             $agency->cityAgency = $request->input('cityAgency');
             $agency->created_by = $request->input('created_by');
             $agency->updated_by = $request->input('updated_by');
-            if(!$agency->save())
-            return response()->json(['message' => 'Agency registration failed !'], 409);
 
-            $agencyData = new AgencyData;
-            $agencyData->keyAgencyData = $request->input('keyAgencyData');
-            $agencyData->valueAgencyData = $request->input('valueAgencyData');
-            $agencyData->idAgency = $agency->idAgency;
-            $agencyData->created_by = $request->input('created_by');
-            $agencyData->updated_by = $request->input('updated_by');
-            $agencyData->save();
-            //return successful response
-            return response()->json(['agency' => $agency, 'agencyData' => $agencyData, 'message' => 'CREATED'], 201);
+            $agency->save();
+
+            if ($request->input('data') !== null) {
+                $data = (array)json_decode($request->input('data'), true);
+
+                foreach ($data as $key => $value) {
+                    if (!$this->addData($agency->idAgency, $key, $value, $request))
+                        return response()->json(['message' => 'Agency data not added!', 'status' => 'fail'], 500);
+
+                }
+            }
+
+            // Return successful response
+            return response()->json(['agency' => $agency, 'message' => 'CREATED', 'status' => 'success'], 201);
         } catch (\Exception $e) {
-            //return error message
-            return response()->json(['message' => 'Agency Data Registration Failed!' . $e->getMessage()], 409);
+            // return error message
+            return response()->json(['message' => 'Agency Registration Failed!', 'status' => 'fail'], 409);
         }
     }
 
@@ -96,7 +100,7 @@ class AgencyController extends Controller
      * @param  Request  $request
      * @return Response
      */
-    public function put($id, Request $request)
+    public function updateagency($id, Request $request)
     {
         //validate incoming request
         $this->validate($request, [
@@ -104,15 +108,23 @@ class AgencyController extends Controller
             'zipCodeAgency' => 'required|string|min:5|max:5',
             'cityAgency' => 'required|string',
             'created_by' => 'required|integer',
-            'updated_by' => 'required|integer'
+            'updated_by' => 'required|integer',
+
+            'data' => 'string',
         ]);
 
         try {
+            // On modifie les infos principales de l'agence
             $agency = Agency::findOrFail($id);
+            if ($request->input('nameAgency') !== null)
             $agency->nameAgency = $request->input('nameAgency');
+            if ($request->input('zipCodeAgency') !== null)
             $agency->zipCodeAgency = $request->input('zipCodeAgency');
+            if ($request->input('cityAgency') !== null)
             $agency->cityAgency = $request->input('cityAgency');
+            if ($request->input('created_by') !== null)
             $agency->created_by = $request->input('created_by');
+            if ($request->input('updated_by') !== null)
             $agency->updated_by = $request->input('updated_by');
 
             $agency->update();
@@ -189,6 +201,26 @@ class AgencyController extends Controller
         } catch (\Exception $e) {
             //return error message
             return response()->json(['message' => 'Agency deletion failed!' . $e->getMessage(), 'status' => 'fail'], 409);
+        }
+    }
+
+    public function addData($idUser, $key, $value, $request)
+    {
+        try {
+            $userData = new AgencyData;
+            $userData->keyUserData = $key;
+            $userData->valueUserData = $value;
+            $userData->created_by = $request->input('created_by');
+            $userData->updated_by = $request->input('updated_by');
+            $userData->idUser = $idUser;
+
+            $userData->save();
+
+            //return successful response
+            return response()->json(['user' => $userData, 'message' => 'CREATED'], 201);
+        } catch (\Exception $e) {
+            //return error message
+            return response()->json(['message' => 'User data not added!' . $e->getMessage()], 409);
         }
     }
 }
