@@ -112,11 +112,11 @@ class AgencyController extends Controller
     {
         //validate incoming request
         $this->validate($request, [
-            'nameAgency' => 'required|string',
-            'zipCodeAgency' => 'required|string|min:5|max:5',
-            'cityAgency' => 'required|string',
-            'created_by' => 'required|integer',
-            'updated_by' => 'required|integer',
+            'nameAgency' => 'string',
+            'zipCodeAgency' => 'string|min:5|max:5',
+            'cityAgency' => 'string',
+            'created_by' => 'integer',
+            'updated_by' => 'integer',
 
             'data' => 'string',
         ]);
@@ -154,61 +154,6 @@ class AgencyController extends Controller
             return response()->json(['message' => 'Agency Update Failed!' . $e->getMessage()], 409);
         }
     }
-
-    // /**
-    //  * Update agency patch.
-    //  *
-    //  * @param  string   $id
-    //  * @param  Request  $request
-    //  * @return Response
-    //  */
-
-
-
-    // public function patch($id, Request $request)
-    // {
-    //     //validate incoming request
-    //     $this->validate($request, [
-    //         'nameAgency' => 'string',
-    //         'zipCodeAgency' => 'string|min:5|max:5',
-    //         'cityAgency' => 'string',
-    //         'created_by' => 'integer',
-    //         'updated_by' => 'integer',
-    //     ]);
-
-    //     try {
-    //         $agency = Agency::findOrFail($id);
-
-    //         if (in_array(null or '', $request->all())) {
-    //             return response()->json(['message' => 'Null or empty value', 'status' => 'fail'], 500);
-    //         }
-
-    //         if ($request->input('nameAgency') !== null) {
-    //             $agency->nameAgency = $request->input('nameAgency');
-    //         }
-    //         if ($request->input('zipCodeAgency') !== null) {
-    //             $agency->zipCodeAgency = $request->input('zipCodeAgency');
-    //         }
-    //         if ($request->input('cityAgency') !== null) {
-    //             $agency->cityAgency = $request->input('cityAgency');
-    //         }
-    //         if ($request->input('created_by') !== null) {
-    //             $agency->created_by = $request->input('created_by');
-    //         }
-    //         if ($request->input('updated_by') !== null) {
-    //             $agency->updated_by = $request->input('updated_by');
-    //         }
-
-    //         $agency->update();
-
-    //         //return successful response
-    //         return response()->json(['agency' => $agency, 'message' => 'PATCHED', 'status' => 'success'], 200);
-    //     } catch (\Exception $e) {
-    //         //return error message
-    //         return response()->json(['message' => 'Agency Update Failed!' . $e->getMessage(), 'status' => 'fail'], 409);
-    //     }
-    // }
-
     /**
      * Delete agency function
      *

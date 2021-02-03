@@ -28,57 +28,55 @@ $router->group(['prefix' => 'api/v1'], function () use ($router) {
     | Users Routes LOG       |
     |------------------------|
     */
-        // Matches "/api/v1/login
-        $router->post('login', 'UserController@login');
-        // Matches "/api/v1/logout
-        $router->post('logout', 'UserController@logout');
+    // Matches "/api/v1/login
+    $router->post('login', 'UserController@login');
+    // Matches "/api/v1/logout
+    $router->post('logout', 'UserController@logout');
     /*
     |---------------------------|
     | Users Routes functions    |
     |---------------------------|
     */
-        // Prefix
-        $router->group(['prefix' => 'users'], function () use ($router) {
+    // Prefix
+    $router->group(['prefix' => 'users'], function () use ($router) {
         // Matches "/api/v1/users Get all
         $router->get('', 'UserController@getUsers');
         // Matches "/api/v1/users/id Get one
         $router->get('/{id}', 'UserController@getUser');
         // Matches "/api/v1/users Post Register
-        $router->post('', 'UserController@register');
-        // Matches "/api/v1/users/id Put all of One User
-        $router->put('/{id}', 'UserController@put');
-        // Matches "/api/v1/users/id Patch one element of One User
-        $router->patch('/{id}', 'UserController@patch');
+        $router->post('', 'UserController@addUser');
+        // Matches "/api/v1/users/id update user
+        $router->patch('/{id}', 'UserController@updateUser');
         // Matches "/api/v1/users/id Delete one User
-        $router->delete('/{id}', 'UserController@delete');
+        $router->delete('/{id}', 'UserController@deleteUser');
     });
-    /*
-    |------------------------|
-    | UserData Routes        |
-    |------------------------|
-    */
-        // Prefix
-        $router->group(['prefix' => 'userData'], function () use ($router) {
-        // Matches "/api/v1/userData Get all
-        $router->get('', 'UserDataController@allUsersData');
-        // Matches "/api/v1/userData/id Get One
-        $router->get('/{id}', 'UserDataController@oneUserData');
-        // Matches "/api/v1/userData Register UsersData
-        $router->post('', 'UserDataController@registerUserData');
-        // Matches "/api/v1/userData/id Put all of One userData
-        $router->put('/{id}', 'UserDataController@put');
-        // Matches "/api/v1/userData/id Patch one element of one userData
-        $router->patch('/{id}', 'UserDataController@patch');
-        // Matches "/api/v1/userData/id Delete one userData
-        $router->delete('/{id}', 'UserDataController@delete');
-    });
+    // /*
+    // |------------------------|
+    // | UserData Routes        |
+    // |------------------------|
+    // */
+    // // Prefix
+    // $router->group(['prefix' => 'userData'], function () use ($router) {
+    //     // Matches "/api/v1/userData Get all
+    //     $router->get('', 'UserDataController@allUsersData');
+    //     // Matches "/api/v1/userData/id Get One
+    //     $router->get('/{id}', 'UserDataController@oneUserData');
+    //     // Matches "/api/v1/userData Register UsersData
+    //     $router->post('', 'UserDataController@registerUserData');
+    //     // Matches "/api/v1/userData/id Put all of One userData
+    //     $router->put('/{id}', 'UserDataController@put');
+    //     // Matches "/api/v1/userData/id Patch one element of one userData
+    //     $router->patch('/{id}', 'UserDataController@patch');
+    //     // Matches "/api/v1/userData/id Delete one userData
+    //     $router->delete('/{id}', 'UserDataController@delete');
+    // });
     /*
     |------------------------|
     | Roles Routes           |
     |------------------------|
     */
-        // Prefix
-        $router->group(['prefix' => 'roles'], function () use ($router) {
+    // Prefix
+    $router->group(['prefix' => 'roles'], function () use ($router) {
         // Matches "/api/v1/roles/ Get all roles
         $router->get('', 'RoleController@allRoles');
         // Matches "/api/v1/roles/{id} Get One role
@@ -97,68 +95,66 @@ $router->group(['prefix' => 'api/v1'], function () use ($router) {
     | Properties Routes      |
     |------------------------|
     */
-        // Prefix
-        $router->group(['prefix' => 'properties'], function () use ($router) {
+    // Prefix
+    $router->group(['prefix' => 'properties'], function () use ($router) {
         // Matches "/api/v1/properties Get all Properties
-        $router->get('', 'PropertyController@allProperties');
+        $router->get('', 'PropertyController@getProperties');
         // Matches "/api/v1/properties/id Get one property
-        $router->get('/{id}', 'PropertyController@oneProperty');
+        $router->get('/{id}', 'PropertyController@getProperty');
         // Matches "/api/v1/properties Post register property
-        $router->post('', 'PropertyController@registerProperty');
+        $router->post('', 'PropertyController@addProperty');
         // Matches "/api/v1/properties/id Put all of One property
-        $router->put('/{id}', 'PropertyController@put');
+        // $router->put('/{id}', 'PropertyController@put');
         // Matches "/api/v1/properties/id Patch one element of one Property
-        $router->patch('/{id}', 'PropertyController@patch');
+        $router->patch('/{id}', 'PropertyController@updateProperty');
         // Matches "/api/v1/properties/id Delete one Property
-        $router->delete('/{id}', 'PropertyController@delete');
+        $router->delete('/{id}', 'PropertyController@deleteProporty');
     });
-    /*
-    |------------------------|
-    | PropertyData Routes    |
-    |------------------------|
-    */
-        // Prefix
-        $router->group(['prefix' => 'propertyData'], function () use ($router) {
-        // Matches "/api/v1/propertyData Get All propertiesData
-        $router->get('', 'PropertyDataController@allPropertiesData');
-        // Matches "/api/v1/propertyData/id Get One PropertyData
-        $router->get('/{id}', 'PropertyDataController@onePropertyData');
-        // Matches "/api/v1/propertyData Register PropertyData
-        $router->post('', 'PropertyDataController@registerPropertyData');
-        // Matches "/api/v1/propertyData/id Put all of one propertyData
-        $router->put('/{id}', 'PropertyDataController@put');
-        // Matches "/api/v1/propertyData/id Patch one element of one propertyData
-        $router->patch('/{id}', 'PropertyDataController@patch');
-        // Matches "/api/v1/propertyData/id Delete one propertyData
-        $router->delete('/{id}', 'PropertyDataController@delete');
-    });
+    // /*
+    // |------------------------|
+    // | PropertyData Routes    |
+    // |------------------------|
+    // */
+    // // Prefix
+    // $router->group(['prefix' => 'propertyData'], function () use ($router) {
+    //     // Matches "/api/v1/propertyData Get All propertiesData
+    //     $router->get('', 'PropertyDataController@allPropertiesData');
+    //     // Matches "/api/v1/propertyData/id Get One PropertyData
+    //     $router->get('/{id}', 'PropertyDataController@onePropertyData');
+    //     // Matches "/api/v1/propertyData Register PropertyData
+    //     $router->post('', 'PropertyDataController@registerPropertyData');
+    //     // Matches "/api/v1/propertyData/id Put all of one propertyData
+    //     $router->put('/{id}', 'PropertyDataController@put');
+    //     // Matches "/api/v1/propertyData/id Patch one element of one propertyData
+    //     $router->patch('/{id}', 'PropertyDataController@patch');
+    //     // Matches "/api/v1/propertyData/id Delete one propertyData
+    //     $router->delete('/{id}', 'PropertyDataController@delete');
+    // });
     /*
     |------------------------|
     | Agency Routes          |
     |------------------------|
     */
-        // Prefix
-        $router->group(['prefix' => 'agency'], function () use ($router) {
+    // Prefix
+    $router->group(['prefix' => 'agency'], function () use ($router) {
         // Matches "/api/v1/agency Get All Agencies
-        $router->get('', 'AgencyController@allAgency');
+        $router->get('', 'AgencyController@getAgencies');
         // Matches "/api/v1/agency/api/v1/id/ Get one agency
-        $router->get('/{id}', 'AgencyController@oneAgency');
+        $router->get('/{id}', 'AgencyController@getAgency');
         // Matches "/api/v1/agency Post register agency
-        $router->post('', 'AgencyController@registerAgency');
-        // Matches "/api/v1/agency/id Put all of one agency
-        $router->put('/{id}', 'AgencyController@put');
+        $router->post('', 'AgencyController@addAgency');
         // Matches "/api/v1/agency/id Patch one element of one agency
-        $router->patch('/{id}', 'AgencyController@patch');
+        $router->patch('/{id}', 'AgencyController@updateAgency');
         // Matches "/api/v1/agency/id Delete one agency
-        $router->delete('/{id}', 'AgencyController@delete');
+        $router->delete('/{id}', 'AgencyController@deleteAgency');
     });
     /*
     |------------------------|
     | AgencyData Routes      |
     |------------------------|
     */
-        // Prefix
-        $router->group(['prefix' => 'agencyData'], function () use ($router) {
+    // Prefix
+    $router->group(['prefix' => 'agencyData'], function () use ($router) {
         // Matches "/api/v1/agencyData Get All agencyData
         $router->get('', 'AgencyDataController@allAgencyData');
         // Matches "/api/v1/agencyData/id Get one agencyData
@@ -177,8 +173,8 @@ $router->group(['prefix' => 'api/v1'], function () use ($router) {
     | FAQ Routes            |
     |-----------------------|
     */
-        // Prefix
-        $router->group(['prefix' => 'faq'], function () use ($router) {
+    // Prefix
+    $router->group(['prefix' => 'faq'], function () use ($router) {
         // Matches "/api/v1/faq Get all faq
         $router->get('', 'FaqController@allFaq');
         // Matches "/api/v1/faq/id Get one faq
@@ -197,8 +193,8 @@ $router->group(['prefix' => 'api/v1'], function () use ($router) {
     | faqData Routes        |
     |-----------------------|
     */
-        // Prefix
-        $router->group(['prefix' => 'faqData'], function () use ($router) {
+    // Prefix
+    $router->group(['prefix' => 'faqData'], function () use ($router) {
         // Matches "/api/v1/faqData Get all faqData
         $router->get('', 'FaqDataController@allFaqData');
         // Matches "/api/v1/faqData/id Get one faqData
@@ -217,8 +213,8 @@ $router->group(['prefix' => 'api/v1'], function () use ($router) {
     | Document Routes       |
     |-----------------------|
     */
-        // Prefix
-        $router->group(['prefix' => 'document'], function () use ($router) {
+    // Prefix
+    $router->group(['prefix' => 'document'], function () use ($router) {
         // Matches "/api/v1/document Get all Document
         $router->get('', 'DocumentController@allDocument');
         // Matches "/api/v1/document/id Get one Document
@@ -237,8 +233,8 @@ $router->group(['prefix' => 'api/v1'], function () use ($router) {
     | documentData Routes   |
     |-----------------------|
     */
-        // Prefix
-        $router->group(['prefix' => 'documentData'], function () use ($router) {
+    // Prefix
+    $router->group(['prefix' => 'documentData'], function () use ($router) {
         // Matches "/api/v1/documentData Get all documentData
         $router->get('', 'DocumentDataController@allDocumentData');
         // Matches "/api/v1/documentData/id Get one documentData
@@ -257,8 +253,8 @@ $router->group(['prefix' => 'api/v1'], function () use ($router) {
     | Visit Routes          |
     |-----------------------|
     */
-        // Prefix
-        $router->group(['prefix' => 'visit'], function () use ($router) {
+    // Prefix
+    $router->group(['prefix' => 'visit'], function () use ($router) {
         // Matches "/api/v1/visit Get all Visit
         $router->get('', 'VisitController@allVisit');
         // Matches "/api/v1/visit/id Get one Visit
@@ -277,8 +273,8 @@ $router->group(['prefix' => 'api/v1'], function () use ($router) {
     | visitData Routes      |
     |-----------------------|
     */
-        // Prefix
-        $router->group(['prefix' => 'visitData'], function () use ($router) {
+    // Prefix
+    $router->group(['prefix' => 'visitData'], function () use ($router) {
         // Matches "/api/v1/visitData Get all visitData
         $router->get('', 'VisitDataController@allVisitData');
         // Matches "/api/visitData/id Get one visitData

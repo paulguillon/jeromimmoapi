@@ -24,9 +24,16 @@ class PropertyController extends Controller
      * @param  Request  $request
      * @return Response
      */
-    public function allProperties(Request $request)
+    public function getProperties(Request $request)
     {
-        return response()->json(['property' =>  Property::all(), 'propertyData' => PropertyData::all()], 200);
+        $properties = Property::all();
+
+        for ($i = 0; $i < count($properties); $i++) {
+            $property = $properties[$i];
+
+            $property['data'] = $this->getAllData($property->idProperty)->original;
+        }
+        return response()->json(['properties' => $properties], 200);
     }
 
     /**
@@ -35,11 +42,11 @@ class PropertyController extends Controller
      * @param  Request  $request
      * @return Response
      */
-    public function oneProperty($id)
+    public function getProperty($id)
     {
         try {
             $property = Property::all()->where('idProperty', $id)->first();
-
+            $property['data'] = $this->getAllData($property->idProperty)->original;
             return response()->json(['property' => $property], 200);
         } catch (\Exception $e) {
 
@@ -53,7 +60,7 @@ class PropertyController extends Controller
      * @return Response
      */
 
-    public function registerProperty(Request $request)
+    public function addProperty(Request $request)
     {
         //validate incoming request
         $this->validate($request, [
@@ -61,14 +68,12 @@ class PropertyController extends Controller
             'priceProperty' => 'required|string',
             'zipCodeProperty' => 'required|string|min:5|max:5',
             'cityProperty' => 'required|string',
-            'keyPropertyData' => 'string',
-            'valuePropertyData' => 'string',
             'created_by' => 'required|integer',
             'updated_by' => 'required|integer',
+            'data' => 'string',
         ]);
 
         try {
-
             $property = new Property;
             $property->typeProperty = $request->input('typeProperty');
             $property->priceProperty = $request->input('priceProperty');
@@ -77,18 +82,18 @@ class PropertyController extends Controller
             $property->created_by = $request->input('created_by');
             $property->updated_by = $request->input('updated_by');
 
-            if(!$property->save())
-            return response()->json(['message' => 'Property Registration Failed !'], 409);
+            $property->save();
 
-            $propertyData = new PropertyData;
-            $propertyData->keyPropertyData = $request->input('keyPropertyData');
-            $propertyData->valueProportyData = $request->input('valueProportyData');
-            $propertyData->idProporty = $property->idProporty;
-            $propertyData->created_by = $request->input('created_by');
-            $propertyData->updated_by = $request->input('updated_by');
-            $propertyData->save();
+            if ($request->input('data') !== null) {
+                $data = (array)json_decode($request->input('data'), true);
+
+                foreach ($data as $key => $value) {
+                    if (!$this->addData($property->idProperty, $key, $value, $request))
+                        return response()->json(['message' => 'Property data not added!', 'status' => 'fail'], 500);
+                }
+            }
             //return successful response
-            return response()->json(['property' => $property, 'propertyData' => $propertyData, 'message' => 'CREATED'], 201);
+            return response()->json(['property' => $property, 'message' => 'CREATED'], 201);
         } catch (\Exception $e) {
             //return error message
             return response()->json(['message' => 'Property Data Registration Failed!' . $e->getMessage()], 409);
@@ -96,51 +101,13 @@ class PropertyController extends Controller
     }
 
     /**
-     * Update property
+     * Patch property
      *
      * @param  string   $id
      * @param  Request  $request
      * @return Response
      */
-    public function put($id, Request $request)
-    {
-        //validate incoming request
-        $this->validate($request, [
-            'typeProperty' => 'required|string',
-            'priceProperty' => 'required|string',
-            'zipCodeProperty' => 'required|string|min:5|max:5',
-            'cityProperty' => 'required|string',
-            'created_by' => 'required|integer',
-            'updated_by' => 'required|integer'
-        ]);
-
-        try {
-            $property = Property::findOrFail($id);
-            $property->typeProperty = $request->input('typeProperty');
-            $property->priceProperty = $request->input('priceProperty');
-            $property->zipCodeProperty = $request->input('zipCodeProperty');
-            $property->cityProperty = $request->input('cityProperty');
-            $property->created_by = $request->input('created_by');
-            $property->updated_by = $request->input('updated_by');
-
-            $property->update();
-
-            //return successful response
-            return response()->json(['property' => $property, 'message' => 'ALL UPDATED'], 200);
-        } catch (\Exception $e) {
-            //return error message
-            return response()->json(['message' => 'Property Update Failed!' . $e->getMessage()], 409);
-        }
-    }
-
-    /**
-     * Update property patch.
-     *
-     * @param  string   $id
-     * @param  Request  $request
-     * @return Response
-     */
-    public function patch($id, Request $request)
+    public function updateProperty($id, Request $request)
     {
         //validate incoming request
         $this->validate($request, [
@@ -149,48 +116,134 @@ class PropertyController extends Controller
             'zipCodeProperty' => 'string|min:5|max:5',
             'cityProperty' => 'string',
             'created_by' => 'integer',
-            'updated_by' => 'integer'
+            'updated_by' => 'integer',
+            'data' => 'string',
         ]);
 
         try {
+            // On modifie les infos principales du bien
             $property = Property::findOrFail($id);
-
-            if (in_array(null or '', $request->all()))
-                return response()->json(['message' => 'Null or empty value', 'status' => 'fail'], 500);
-
             if ($request->input('typeProperty') !== null)
-                $property->typeProperty = $request->input('typeProperty');
+            $property->typeProperty = $request->input('typeProperty');
             if ($request->input('priceProperty') !== null)
-                $property->priceProperty = $request->input('priceProperty');
+            $property->priceProperty = $request->input('priceProperty');
             if ($request->input('zipCodeProperty') !== null)
-                $property->zipCodeProperty = $request->input('zipCodeProperty');
+            $property->zipCodeProperty = $request->input('zipCodeProperty');
             if ($request->input('cityProperty') !== null)
-                $property->cityProperty = $request->input('cityProperty');
+            $property->cityProperty = $request->input('cityProperty');
             if ($request->input('created_by') !== null)
-                $property->created_by = $request->input('created_by');
+            $property->created_by = $request->input('created_by');
             if ($request->input('updated_by') !== null)
-                $property->updated_by = $request->input('updated_by');
+            $property->updated_by = $request->input('updated_by');
 
             $property->update();
 
+            //maj des data
+            if ($request->input('data') !== null) {
+                $data = (array)json_decode($request->input('data'), true);
+
+                foreach ($data as $key => $value) {
+                    if (!$this->updateData($property->idProperty, $key, $value))
+                        return response()->json(['message' => 'Property Update Failed!', 'status' => 'fail'], 500);
+                }
+            }
             //return successful response
-            return response()->json(['property' => $property, 'message' => 'PATCHED', 'status' => 'success'], 200);
+            return response()->json(['proporty' => $property, 'data' => $this->getAllData($property->idProperty)->original, 'message' => 'ALL UPDATED', 'status' => 'success'], 200);
         } catch (\Exception $e) {
             //return error message
             return response()->json(['message' => 'Property Update Failed!' . $e->getMessage(), 'status' => 'fail'], 409);
         }
     }
 
-    public function delete($id)
+/**
+     * Delete property function
+     *
+     * @param int $id
+     * @return Response
+     */
+    public function deleteProperty($id)
     {
         try {
             $property = Property::findOrFail($id);
+            $propertyData = PropertyData::all()->where('idProperty', $id);
+
+            //maj des data
+            if ($propertyData !== null) {
+                foreach ($propertyData as $key => $value) {
+                    if (!$this->deleteData($property->idProperty, $key))
+                    return response()->json(['message' => 'Property Deletion Failed!','status' => 'fail'], 500);
+                }
+            }
             $property->delete();
 
-            return response()->json(['property' => $property, 'message' => 'DELETED', 'status' => 'success'], 200);
+            return response()->json(['property' => $property, 'data' => $propertyData, 'message' => 'DELETED', 'status' => 'success'], 200);
         } catch (\Exception $e) {
             //return error message
             return response()->json(['message' => 'Property deletion failed!' . $e->getMessage(), 'status' => 'fail'], 409);
+        }
+    }
+
+    public function addData($idProperty, $key, $value, $request)
+    {
+        try {
+            $propertyData = new PropertyData;
+            $propertyData->keyPropertyData = $key;
+            $propertyData->valuePropertyData = $value;
+            $propertyData->created_by = $request->input('created_by');
+            $propertyData->updated_by = $request->input('updated_by');
+            $propertyData->idProperty = $idProperty;
+
+            $propertyData->save();
+
+            //return successful response
+            return response()->json(['property' => $propertyData, 'message' => 'CREATED'], 201);
+        } catch (\Exception $e) {
+            //return error message
+            return response()->json(['message' => 'Property data not added!' . $e->getMessage()], 409);
+        }
+    }
+
+    public function getAllData($idProperty)
+    {
+        return response()->json(PropertyData::all()->where('idProperty', $idProperty), 200);
+    }
+
+    public function getData($idProperty, $key)
+    {
+        return response()->json(PropertyData::all()->where('idProperty', $idProperty)->where('keyPropertyData', $key), 200);
+    }
+
+    public function updateData($idProperty, $key, $value)
+    {
+        try {
+            $propertyData = PropertyData::all()->where('idProperty', $idProperty)->where('keyPropertyData', $key)->first();
+
+            if ($propertyData == null)
+                return false;
+
+            $propertyData->valuePropertyData = $value;
+
+            $propertyData->update();
+
+            return true;
+        } catch (\Exception $e) {
+            return false;
+        }
+    }
+
+    public function deleteData($idProperty, $key)
+    {
+        try {
+            $propertyData = PropertyData::all()->where('idProperty', $idProperty)->where('keyPropertyData', $key)->first();
+
+            if ($propertyData == null)
+                return false;
+
+            $propertyData->delete();
+
+            return true;
+        } catch (\Exception $e) {
+            return false;
         }
     }
 }
