@@ -34,7 +34,7 @@ class UserController extends Controller
         for ($i = 0; $i < count($users); $i++) {
             $user = $users[$i];
 
-            $user['data'] = $this->getAllData($user->idUser)->original;
+            $user['data'] = $this->getAllData($user->idUser);
         }
 
         return response()->json(['users' => $users], 200);
@@ -49,7 +49,7 @@ class UserController extends Controller
     {
         try {
             $user = User::all()->where('idUser', $id)->first();
-            $user['data'] = $this->getAllData($id)->original;
+            $user['data'] = $this->getAllData($id);
             return response()->json(['user' => $user], 200);
         } catch (\Exception $e) {
 
@@ -157,7 +157,7 @@ class UserController extends Controller
             }
 
             //return successful response
-            return response()->json(['user' => $user, 'data' => $this->getAllData($user->idUser)->original, 'message' => 'ALL UPDATED', 'status' => 'success'], 200);
+            return response()->json(['user' => $user, 'data' => $this->getAllData($user->idUser), 'message' => 'ALL UPDATED', 'status' => 'success'], 200);
         } catch (\Exception $e) {
             //return error message
             return response()->json(['message' => 'User Update Failed!' . $e->getMessage(), 'status' => 'fail'], 409);
@@ -174,14 +174,12 @@ class UserController extends Controller
     {
         try {
             $user = User::findOrFail($id);
-            $userData = UserData::all()->where('idUser', $id);
+            $userData = $this->getAllData($id);
 
-            //maj des data
+            //delete les data
             if ($userData !== null) {
-                foreach ($userData as $key => $value) {
-                    if (!$this->deleteData($user->idUser, $key))
-                        return response()->json(['message' => 'User Deletion Failed!', 'status' => 'fail'], 500);
-                }
+                if (!$this->deleteData($id))
+                    return response()->json(['message' => 'User Deletion Failed!', 'status' => 'fail'], 500);
             }
 
             $user->delete();
@@ -201,7 +199,7 @@ class UserController extends Controller
                 return response()->json(['message' => 'Not all data has been added', 'status' => 'fail'], 409);
 
             //return successful response
-            return response()->json(['data' => $this->getAllData($id)->original, 'message' => 'Data created', 'status' => 'success'], 201);
+            return response()->json(['data' => $this->getAllData($id), 'message' => 'Data created', 'status' => 'success'], 201);
         } catch (\Exception $e) {
             //return error message
             return response()->json(['message' => 'User data not added!', 'status' => 'fail'], 409);
@@ -240,7 +238,7 @@ class UserController extends Controller
         foreach (UserData::all()->where('idUser', $idUser) as $value) {
             array_push($data, $value);
         }
-        return response()->json($data, 200);
+        return response()->json($data, 200)->original;
     }
 
     public function getData($idUser, $key)
@@ -273,15 +271,14 @@ class UserController extends Controller
         }
     }
 
-    public function deleteData($idUser, $key)
+    public function deleteData($idUser)
     {
         try {
-            $userData = UserData::all()->where('idUser', $idUser)->where('keyUserData', $key)->first();
+            $userData = UserData::all()->where('idUser', $idUser);
 
-            if ($userData == null)
-                return false;
-
-            $userData->delete();
+            foreach ($userData as $data) {
+                $data->delete();
+            }
 
             return true;
         } catch (\Exception $e) {
