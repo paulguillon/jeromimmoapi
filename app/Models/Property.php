@@ -13,8 +13,7 @@ class Property extends Model implements AuthenticatableContract, AuthorizableCon
 {
     use Authenticatable, Authorizable, HasFactory;
 
-    protected $table = 'property'; 
-
+    protected $table = 'property';
     protected $primaryKey = 'idProperty';
 
     /**
@@ -32,6 +31,6 @@ class Property extends Model implements AuthenticatableContract, AuthorizableCon
      * @var array
      */
     protected $hidden = [
-        
+
     ];
 }

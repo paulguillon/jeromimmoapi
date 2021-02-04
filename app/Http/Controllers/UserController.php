@@ -97,7 +97,6 @@ class UserController extends Controller
                         return response()->json(['message' => 'User data not added!', 'status' => 'fail'], 500);
                 }
             }
-
             //return successful response
             return response()->json(['user' => $user, 'message' => 'CREATED', 'status' => 'success'], 201);
         } catch (\Exception $e) {
@@ -107,7 +106,7 @@ class UserController extends Controller
     }
 
     /**
-     * Put user
+     * Patch user
      *
      * @param  string   $id
      * @param  Request  $request
@@ -124,7 +123,6 @@ class UserController extends Controller
             'idRoleUser' => 'integer',
             'created_by' => 'integer',
             'updated_by' => 'integer',
-
             'data' => 'string',
         ]);
 
@@ -159,7 +157,6 @@ class UserController extends Controller
                         return response()->json(['message' => 'User Update Failed!', 'status' => 'fail'], 500);
                 }
             }
-
             //return successful response
             return response()->json(['user' => $user, 'data' => $this->getAllData($user->idUser)->original, 'message' => 'ALL UPDATED', 'status' => 'success'], 200);
         } catch (\Exception $e) {
