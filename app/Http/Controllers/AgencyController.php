@@ -27,7 +27,7 @@ class AgencyController extends Controller
     {
         $agencies = Agency::all();
 
-        for ($i = 0; $i < count($agencies); $i++){
+        for ($i = 0; $i < count($agencies); $i++) {
             $agency = $agencies[$i];
 
             $agency['data'] = $this->getAllData($agency->idAgency)->original;
@@ -45,11 +45,11 @@ class AgencyController extends Controller
     {
         try {
             $agency = Agency::all()->where('idAgency', $id)->first();
-            $agency['data'] = $this->getAllData($agency->idAgency)->original;
+            $agency['data'] = $this->getAllData($id)->original;
             return response()->json(['agency' => $agency], 200);
         } catch (\Exception $e) {
 
-            return response()->json(['message' => 'agency not found!' . $e->getMessage()], 404);
+            return response()->json(['message' => 'Agency not found!' . $e->getMessage()], 404);
         }
     }
     /**
@@ -84,13 +84,8 @@ class AgencyController extends Controller
             $agency->save();
 
             if ($request->input('data') !== null) {
-                $data = (array)json_decode($request->input('data'), true);
-
-                foreach ($data as $key => $value) {
-                    if (!$this->addData($agency->idAgency, $key, $value, $request))
-                        return response()->json(['message' => 'Agency data not added!', 'status' => 'fail'], 500);
-
-                }
+                if (!$this->_addData($agency->idAgency, $request))
+                    return response()->json(['message' => 'Agency data not added!', 'status' => 'fail'], 500);
             }
 
             // Return successful response
@@ -125,15 +120,15 @@ class AgencyController extends Controller
             // Update
             $agency = Agency::findOrFail($id);
             if ($request->input('nameAgency') !== null)
-            $agency->nameAgency = $request->input('nameAgency');
+                $agency->nameAgency = $request->input('nameAgency');
             if ($request->input('zipCodeAgency') !== null)
-            $agency->zipCodeAgency = $request->input('zipCodeAgency');
+                $agency->zipCodeAgency = $request->input('zipCodeAgency');
             if ($request->input('cityAgency') !== null)
-            $agency->cityAgency = $request->input('cityAgency');
+                $agency->cityAgency = $request->input('cityAgency');
             if ($request->input('created_by') !== null)
-            $agency->created_by = $request->input('created_by');
+                $agency->created_by = $request->input('created_by');
             if ($request->input('updated_by') !== null)
-            $agency->updated_by = $request->input('updated_by');
+                $agency->updated_by = $request->input('updated_by');
 
             $agency->update();
 
@@ -143,7 +138,7 @@ class AgencyController extends Controller
 
                 foreach ($data as $key => $value) {
                     if (!$this->updateData($agency->idAgency, $key, $value))
-                    return response()->json(['message' => 'Agency Update Failed!', 'status' => 'fail'], 500);
+                        return response()->json(['message' => 'Agency Update Failed!', 'status' => 'fail'], 500);
                 }
             }
 
@@ -182,54 +177,71 @@ class AgencyController extends Controller
             return response()->json(['message' => 'Agency deletion failed!' . $e->getMessage(), 'status' => 'fail'], 409);
         }
     }
-/**
- * Add data
- *
- * @param [int] $idAgency
- * @param [string] $key
- * @param [string] $value
- * @param request $request
- * @return void
- */
-    public function addData($idAgency, $key, $value, $request)
+    //route
+    public function addData($id, Request $request)
     {
         try {
-            $agencyData = new AgencyData;
-            $agencyData->keyAgencyData = $key;
-            $agencyData->valueAgencyData = $value;
-            $agencyData->created_by = $request->input('created_by');
-            $agencyData->updated_by = $request->input('updated_by');
-            $agencyData->idAgency = $idAgency;
+            if (!$this->_addData($id, $request))
+                return response()->json(['message' => 'Not all data has been added', 'status' => 'fail'], 409);
 
-            $agencyData->save();
-
-            //return successful response
-            return response()->json(['agency' => $agencyData, 'message' => 'CREATED'], 201);
+            // Return successful response
+            return response()->json(['data' => $this->getAllData($id)->original, 'message' => 'Data created', 'status' => 'success'], 201);
         } catch (\Exception $e) {
-            //return error message
-            return response()->json(['message' => 'Agency data not added!' . $e->getMessage()], 409);
+            // Return error message
+            return response()->json(['message' => 'Agency data not added!', 'status' => 'fail'], 409);
         }
     }
-/**
- * Get all data
- *
- * @param [int] $idAgency
- * @return void
- */
+    //fonction utilisée par la route et lors de la creation de agency pour ajouter toutes les data
+    public function _addData($idAgency, $request)
+    {
+        $data = (array)json_decode($request->input('data'), true);
+
+        try {
+            foreach ($data as $key => $value) {
+
+                $agencyData = new AgencyData;
+                $agencyData->keyAgencyData = $key;
+                $agencyData->valueAgencyData = $value;
+                $agencyData->created_by = $request->input('created_by');
+                $agencyData->updated_by = $request->input('updated_by');
+                $agencyData->idAgency = $idAgency;
+
+                $agencyData->save();
+            }
+            // Return successful response
+            return true;
+        } catch (\Exception $e) {
+            // Return error message
+            return false;
+        }
+    }
+
     public function getAllData($idAgency)
     {
-        return response()->json(AgencyData::all()->where('idAgency', $idAgency), 200);
+        $data = array();
+        foreach (AgencyData::all()->where('idAgency', $idAgency) as $value) {
+            array_push($data, $value);
+        }
+        return response()->json($data, 200);
     }
 
     public function getData($idAgency, $key)
     {
-        return response()->json(AgencyData::all()->where('idAgency', $idAgency)->where('keyAgencyData', $key), 200);
+        return response()->json(
+            AgencyData::all()
+                ->where('idAgency', $idAgency)
+                ->where('keyAgencyData', $key),
+            200
+        );
     }
 
     public function updateData($idAgency, $key, $value)
     {
         try {
-            $agencyData = AgencyData::all()->where('idAgency', $idAgency)->where('keyAgencyData', $key)->first();
+            $agencyData = AgencyData::all()
+            ->where('idAgency', $idAgency)
+            ->where('keyAgencyData', $key)
+            ->first();
 
             if ($agencyData == null)
                 return false;
@@ -242,17 +254,20 @@ class AgencyController extends Controller
             return false;
         }
     }
-/**
- * Delete data
- *
- * @param [int] $idAgency
- * @param [string] $key
- * @return void
- */
+    /**
+     * Delete data
+     *
+     * @param [int] $idAgency
+     * @param [string] $key
+     * @return void
+     */
     public function deleteData($idAgency, $key)
     {
         try {
-            $agencyData = AgencyData::all()->where('idAgency', $idAgency)->where('keyAgencyData', $key)->first();
+            $agencyData = AgencyData::all()
+            ->where('idAgency', $idAgency)
+            ->where('keyAgencyData', $key)
+            ->first();
 
             if ($agencyData == null)
                 return false;

@@ -48,7 +48,9 @@ class UserController extends Controller
     public function getUser($id)
     {
         try {
-            $user = User::all()->where('idUser', $id)->first();
+            $user = User::all()
+            ->where('idUser', $id)
+            ->first();
             $user['data'] = $this->getAllData($id)->original;
             return response()->json(['user' => $user], 200);
         } catch (\Exception $e) {
@@ -94,16 +96,16 @@ class UserController extends Controller
                     return response()->json(['message' => 'User data not added!', 'status' => 'fail'], 500);
             }
 
-            //return successful response
+            // Return successful response
             return response()->json(['user' => $user, 'message' => 'CREATED', 'status' => 'success'], 201);
         } catch (\Exception $e) {
-            //return error message
+            // Return error message
             return response()->json(['message' => 'User Registration Failed!', 'status' => 'fail'], 409);
         }
     }
 
     /**
-     * Put user
+     * Update user
      *
      * @param  string   $id
      * @param  Request  $request
@@ -111,7 +113,7 @@ class UserController extends Controller
      */
     public function updateUser($id, Request $request)
     {
-        //validate incoming request
+        // Validate incoming request
         $this->validate($request, [
             'lastnameUser' => 'string',
             'firstnameUser' => 'string',
@@ -125,7 +127,7 @@ class UserController extends Controller
         ]);
 
         try {
-            // On modifie les infos principales du user
+            // Update
             $user = User::findOrFail($id);
             if ($request->input('lastnameUser') !== null)
                 $user->lastnameUser = $request->input('lastnameUser');
@@ -146,7 +148,7 @@ class UserController extends Controller
 
             $user->update();
 
-            //maj des data
+            // Update data
             if ($request->input('data') !== null) {
                 $data = (array)json_decode($request->input('data'), true);
 
@@ -156,10 +158,10 @@ class UserController extends Controller
                 }
             }
 
-            //return successful response
+            // Return successful response
             return response()->json(['user' => $user, 'data' => $this->getAllData($user->idUser)->original, 'message' => 'ALL UPDATED', 'status' => 'success'], 200);
         } catch (\Exception $e) {
-            //return error message
+            // Return error message
             return response()->json(['message' => 'User Update Failed!' . $e->getMessage(), 'status' => 'fail'], 409);
         }
     }
@@ -176,7 +178,7 @@ class UserController extends Controller
             $user = User::findOrFail($id);
             $userData = UserData::all()->where('idUser', $id);
 
-            //maj des data
+            // Update data
             if ($userData !== null) {
                 foreach ($userData as $key => $value) {
                     if (!$this->deleteData($user->idUser, $key))
@@ -188,22 +190,22 @@ class UserController extends Controller
 
             return response()->json(['user' => $user, 'data' => $userData, 'message' => 'DELETED', 'status' => 'success'], 200);
         } catch (\Exception $e) {
-            //return error message
+            // Return error message
             return response()->json(['message' => 'User deletion failed!' . $e->getMessage(), 'status' => 'fail'], 409);
         }
     }
 
-    //route
+    // Route
     public function addData($id, Request $request)
     {
         try {
             if (!$this->_addData($id, $request))
                 return response()->json(['message' => 'Not all data has been added', 'status' => 'fail'], 409);
 
-            //return successful response
+            // Return successful response
             return response()->json(['data' => $this->getAllData($id)->original, 'message' => 'Data created', 'status' => 'success'], 201);
         } catch (\Exception $e) {
-            //return error message
+            // Return error message
             return response()->json(['message' => 'User data not added!', 'status' => 'fail'], 409);
         }
     }
@@ -226,10 +228,10 @@ class UserController extends Controller
                 $userData->save();
             }
 
-            //return successful response
+            // Return successful response
             return true;
         } catch (\Exception $e) {
-            //return error message
+            // Return error message
             return false;
         }
     }

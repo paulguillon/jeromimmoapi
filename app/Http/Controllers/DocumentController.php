@@ -46,8 +46,10 @@ class DocumentController extends Controller
     public function getDocument($id)
     {
         try {
-            $document = Document::all()->where('idDocument', $id)->first();
-            $document['data'] = $this->getAllData($document->idDocument)->original;
+            $document = Document::all()
+                ->where('idDocument', $id)
+                ->first();
+            $document['data'] = $this->getAllData($id)->original;
             return response()->json(['document' => $document], 200);
         } catch (\Exception $e) {
 
@@ -80,23 +82,20 @@ class DocumentController extends Controller
             $document->save();
 
             if ($request->input('data') !== null) {
-                $data = (array)json_decode($request->input('data'), true);
-
-                foreach ($data as $key => $value) {
-                    if (!$this->addData($document->idDocument, $key, $value, $request))
-                        return response()->json(['message' => 'Document data not added!', 'status' => 'fail'], 500);
-                }
+                if (!$this->_addData($document->idDocument, $request))
+                    return response()->json(['message' => 'Document data not added!', 'status' => 'fail'], 500);
             }
-            //return successful response
+
+            // Return successful response
             return response()->json(['document' => $document, 'message' => 'CREATED', 'status' => 'success'], 201);
         } catch (\Exception $e) {
-            //return error message
+            // Return error message
             return response()->json(['message' => 'Document Registration Failed!', 'status' => 'fail'], 409);
         }
     }
 
     /**
-     * Patch document
+     * Update document
      *
      * @param  string   $id
      * @param  Request  $request
@@ -104,7 +103,7 @@ class DocumentController extends Controller
      */
     public function updateDocument($id, Request $request)
     {
-        //validate incoming request
+        // Validate incoming request
         $this->validate($request, [
             'nameDocument' => 'required|string',
             'created_by' => 'required|integer',
@@ -113,7 +112,7 @@ class DocumentController extends Controller
         ]);
 
         try {
-            // On modifie les infos principales du document
+            // Update
             $document = Document::findOrFail($id);
             if ($request->input('nameDocument') !== null)
                 $document->nameDocument = $request->input('nameDocument');
@@ -124,7 +123,7 @@ class DocumentController extends Controller
 
             $document->update();
 
-            //maj des data
+            // Updatedata
             if ($request->input('data') !== null) {
                 $data = (array)json_decode($request->input('data'), true);
 
@@ -133,10 +132,10 @@ class DocumentController extends Controller
                         return response()->json(['message' => 'Document Update Failed!', 'status' => 'fail'], 500);
                 }
             }
-            //return successful response
+            // Return successful response
             return response()->json(['document' => $document, 'data' => $this->getAllData($document->idDocument)->original, 'message' => 'ALL UPDATED', 'status' => 'success'], 200);
         } catch (\Exception $e) {
-            //return error message
+            // Return error message
             return response()->json(['message' => 'Document Update Failed!' . $e->getMessage(), 'status' => 'fail'], 409);
         }
     }
@@ -153,7 +152,7 @@ class DocumentController extends Controller
             $document = Document::findOrFail($id);
             $documentData = DocumentData::all()->where('idDocument', $id);
 
-            //maj des data
+            // Update data
             if ($documentData !== null) {
                 foreach ($documentData as $key => $value) {
                     if (!$this->deleteData($document->idDocument, $key))
@@ -170,46 +169,79 @@ class DocumentController extends Controller
         }
     }
 
-    public function addData($idDocument, $key, $value, $request)
+    // Route
+    public function addData($id, Request $request)
     {
         try {
-            $documentData = new DocumentData;
-            $documentData->keydocumentData = $key;
-            $documentData->valuedocumentData = $value;
-            $documentData->created_by = $request->input('created_by');
-            $documentData->updated_by = $request->input('updated_by');
-            $documentData->idDocument = $idDocument;
+            if (!$this->_addData($id, $request))
+                return response()->json(['message' => 'Not all data has been added', 'status' => 'fail'], 409);
 
-            $documentData->save();
-
-            //return successful response
-            return response()->json(['document' => $documentData, 'message' => 'CREATED'], 201);
+            // Return successful response
+            return response()->json(['data' => $this->getAllData($id)->original, 'message' => 'Data created', 'status' => 'success'], 201);
         } catch (\Exception $e) {
-            //return error message
-            return response()->json(['message' => 'Document data not added!' . $e->getMessage()], 409);
+            // Return error message
+            return response()->json(['message' => 'User data not added!', 'status' => 'fail'], 409);
+        }
+    }
+    // fonction utilisée par la route et lors de la creation de user pour ajouter toutes les data
+    public function _addData($idDocument, $request)
+    {
+        $data = (array)json_decode($request->input('data'), true);
+
+        try {
+            foreach ($data as $key => $value) {
+
+                $documentData = new DocumentData;
+                $documentData->keydocumentData = $key;
+                $documentData->valuedocumentData = $value;
+                $documentData->created_by = $request->input('created_by');
+                $documentData->updated_by = $request->input('updated_by');
+                $documentData->idDocument = $idDocument;
+
+                $documentData->save();
+            }
+
+            // Return successful response
+            return true;
+        } catch (\Exception $e) {
+            // Return error message
+            return false;
         }
     }
 
     public function getAllData($idDocument)
     {
-        return response()->json(DocumentData::all()->where('idDocument', $idDocument), 200);
+        $data = array();
+        foreach (DocumentData::all()->where('idDocument', $idDocument) as $value) {
+            array_push($data, $value);
+        }
+        return response()->json($data, 200);
     }
 
     public function getData($idDocument, $key)
     {
-        return response()->json(DocumentData::all()->where('idDocument', $idDocument)->where('keyDocumentData', $key), 200);
+        return response()->json(
+            DocumentData::all()
+            ->where('idDocument', $idDocument)
+            ->where('keyDocumentData', $key),
+            200
+            );
     }
 
     public function updateData($idDocument, $key, $value)
     {
         try {
-            $documentData = DocumentData::all()->where('idDocument', $idDocument)->where('keyDocumentData', $key)->first();
+            $documentData = DocumentData::all()
+            ->where('idDocument', $idDocument)
+            ->where('keyDocumentData', $key)
+            ->first();
 
             if ($documentData == null)
                 return false;
 
             $documentData->valueDocumentData = $value;
             $documentData->update();
+
             return true;
         } catch (\Exception $e) {
             return false;
@@ -219,7 +251,10 @@ class DocumentController extends Controller
     public function deleteData($idDocument, $key)
     {
         try {
-            $documentData = DocumentData::all()->where('idDocument', $idDocument)->where('keyDocumentData', $key)->first();
+            $documentData = DocumentData::all()
+            ->where('idDocument', $idDocument)
+            ->where('keyDocumentData', $key)
+            ->first();
 
             if ($documentData == null)
                 return false;

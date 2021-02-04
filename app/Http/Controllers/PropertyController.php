@@ -46,11 +46,11 @@ class PropertyController extends Controller
     {
         try {
             $property = Property::all()->where('idProperty', $id)->first();
-            $property['data'] = $this->getAllData($property->idProperty)->original;
+            $property['data'] = $this->getAllData($id)->original;
             return response()->json(['property' => $property], 200);
         } catch (\Exception $e) {
 
-            return response()->json(['message' => 'property not found!' . $e->getMessage()], 404);
+            return response()->json(['message' => 'Property not found!' . $e->getMessage()], 404);
         }
     }
     /**
@@ -85,23 +85,20 @@ class PropertyController extends Controller
             $property->save();
 
             if ($request->input('data') !== null) {
-                $data = (array)json_decode($request->input('data'), true);
-
-                foreach ($data as $key => $value) {
-                    if (!$this->addData($property->idProperty, $key, $value, $request))
-                        return response()->json(['message' => 'Property data not added!', 'status' => 'fail'], 500);
-                }
+                if (!$this->_addData($property->idProperty, $request))
+                    return response()->json(['message' => 'Property data not added!', 'status' => 'fail'], 500);
             }
-            //return successful response
-            return response()->json(['property' => $property, 'message' => 'CREATED'], 201);
+
+            // Return successful response
+            return response()->json(['property' => $property, 'message' => 'CREATED', 'status' => 'success'], 201);
         } catch (\Exception $e) {
             //return error message
-            return response()->json(['message' => 'Property Data Registration Failed!' . $e->getMessage()], 409);
+            return response()->json(['message' => 'Property Data Registration Failed!', 'status' => 'fail'], 409);
         }
     }
 
     /**
-     * Patch property
+     * Update property
      *
      * @param  string   $id
      * @param  Request  $request
@@ -109,7 +106,7 @@ class PropertyController extends Controller
      */
     public function updateProperty($id, Request $request)
     {
-        //validate incoming request
+        // Validate incoming request
         $this->validate($request, [
             'typeProperty' => 'string',
             'priceProperty' => 'string',
@@ -117,28 +114,29 @@ class PropertyController extends Controller
             'cityProperty' => 'string',
             'created_by' => 'integer',
             'updated_by' => 'integer',
+
             'data' => 'string',
         ]);
 
         try {
-            // On modifie les infos principales du bien
+            // Update
             $property = Property::findOrFail($id);
             if ($request->input('typeProperty') !== null)
-            $property->typeProperty = $request->input('typeProperty');
+                $property->typeProperty = $request->input('typeProperty');
             if ($request->input('priceProperty') !== null)
-            $property->priceProperty = $request->input('priceProperty');
+                $property->priceProperty = $request->input('priceProperty');
             if ($request->input('zipCodeProperty') !== null)
-            $property->zipCodeProperty = $request->input('zipCodeProperty');
+                $property->zipCodeProperty = $request->input('zipCodeProperty');
             if ($request->input('cityProperty') !== null)
-            $property->cityProperty = $request->input('cityProperty');
+                $property->cityProperty = $request->input('cityProperty');
             if ($request->input('created_by') !== null)
-            $property->created_by = $request->input('created_by');
+                $property->created_by = $request->input('created_by');
             if ($request->input('updated_by') !== null)
-            $property->updated_by = $request->input('updated_by');
+                $property->updated_by = $request->input('updated_by');
 
             $property->update();
 
-            //maj des data
+            // Update data
             if ($request->input('data') !== null) {
                 $data = (array)json_decode($request->input('data'), true);
 
@@ -147,15 +145,15 @@ class PropertyController extends Controller
                         return response()->json(['message' => 'Property Update Failed!', 'status' => 'fail'], 500);
                 }
             }
-            //return successful response
+            // Return successful response
             return response()->json(['proporty' => $property, 'data' => $this->getAllData($property->idProperty)->original, 'message' => 'ALL UPDATED', 'status' => 'success'], 200);
         } catch (\Exception $e) {
-            //return error message
+            // Return error message
             return response()->json(['message' => 'Property Update Failed!' . $e->getMessage(), 'status' => 'fail'], 409);
         }
     }
 
-/**
+    /**
      * Delete property function
      *
      * @param int $id
@@ -167,62 +165,91 @@ class PropertyController extends Controller
             $property = Property::findOrFail($id);
             $propertyData = PropertyData::all()->where('idProperty', $id);
 
-            //maj des data
+            // Update data
             if ($propertyData !== null) {
                 foreach ($propertyData as $key => $value) {
                     if (!$this->deleteData($property->idProperty, $key))
-                    return response()->json(['message' => 'Property Deletion Failed!','status' => 'fail'], 500);
+                        return response()->json(['message' => 'Property Deletion Failed!', 'status' => 'fail'], 500);
                 }
             }
             $property->delete();
 
             return response()->json(['property' => $property, 'data' => $propertyData, 'message' => 'DELETED', 'status' => 'success'], 200);
         } catch (\Exception $e) {
-            //return error message
+            // Return error message
             return response()->json(['message' => 'Property deletion failed!' . $e->getMessage(), 'status' => 'fail'], 409);
         }
     }
-
-    public function addData($idProperty, $key, $value, $request)
+    // Route
+    public function addData($id, Request $request)
     {
         try {
-            $propertyData = new PropertyData;
-            $propertyData->keyPropertyData = $key;
-            $propertyData->valuePropertyData = $value;
-            $propertyData->created_by = $request->input('created_by');
-            $propertyData->updated_by = $request->input('updated_by');
-            $propertyData->idProperty = $idProperty;
+            if (!$this->_addData($id, $request))
+                return response()->json(['message' => 'Not all data has been added', 'status' => 'fail'], 409);
 
-            $propertyData->save();
-
-            //return successful response
-            return response()->json(['property' => $propertyData, 'message' => 'CREATED'], 201);
+            // Return successful response
+            return response()->json(['data' => $this->getAllData($id)->original, 'message' => 'Data created', 'status' => 'success'], 201);
         } catch (\Exception $e) {
-            //return error message
-            return response()->json(['message' => 'Property data not added!' . $e->getMessage()], 409);
+            // Return error message
+            return response()->json(['message' => 'Property data not added!', 'status' => 'fail'], 409);
+        }
+    }
+    // Fonction utilisée par la route et lors de la creation de user pour ajouter toutes les data
+    public function _addData($idProperty, $request)
+    {
+        $data = (array)json_decode($request->input('data'), true);
+
+        try {
+            foreach ($data as $key => $value) {
+                $propertyData = new PropertyData;
+                $propertyData->keyPropertyData = $key;
+                $propertyData->valuePropertyData = $value;
+                $propertyData->created_by = $request->input('created_by');
+                $propertyData->updated_by = $request->input('updated_by');
+                $propertyData->idProperty = $idProperty;
+
+                $propertyData->save();
+            }
+
+            // Return successful response
+            return true;
+        } catch (\Exception $e) {
+            // Return error message
+            return false;
         }
     }
 
     public function getAllData($idProperty)
     {
-        return response()->json(PropertyData::all()->where('idProperty', $idProperty), 200);
+        $data = array();
+        foreach (PropertyData::all()->where('idProperty', $idProperty) as $value) {
+            array_push($data, $value);
+        }
+        return response()->json($data, 200);
     }
 
     public function getData($idProperty, $key)
     {
-        return response()->json(PropertyData::all()->where('idProperty', $idProperty)->where('keyPropertyData', $key), 200);
+        return response()->json(
+            PropertyData::all()
+            ->where('idProperty', $idProperty)
+            ->where('keyPropertyData', $key),
+            200
+            );
     }
 
     public function updateData($idProperty, $key, $value)
     {
         try {
-            $propertyData = PropertyData::all()->where('idProperty', $idProperty)->where('keyPropertyData', $key)->first();
+            $propertyData = PropertyData::all()
+            ->where('idProperty', $idProperty)
+            ->where('keyPropertyData', $key)
+            ->first();
 
             if ($propertyData == null)
                 return false;
 
             $propertyData->valuePropertyData = $value;
-
             $propertyData->update();
 
             return true;
@@ -234,7 +261,10 @@ class PropertyController extends Controller
     public function deleteData($idProperty, $key)
     {
         try {
-            $propertyData = PropertyData::all()->where('idProperty', $idProperty)->where('keyPropertyData', $key)->first();
+            $propertyData = PropertyData::all()
+            ->where('idProperty', $idProperty)
+            ->where('keyPropertyData', $key)
+            ->first();
 
             if ($propertyData == null)
                 return false;
