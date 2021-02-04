@@ -158,16 +158,16 @@ $router->group(['prefix' => 'api/v1'], function () use ($router) {
     // Prefix
     $router->group(['prefix' => 'visit'], function () use ($router) {
         // Matches "/api/v1/visit Get all Visit
-        $router->get('', 'VisitController@allVisit');
+        $router->get('', 'VisitController@getVisits');
         // Matches "/api/v1/visit/id Get one Visit
-        $router->get('/{id}', 'VisitController@oneVisit');
+        $router->get('/{id}', 'VisitController@getVisit');
         // Matches "/api/v1/visit Post register Visit
-        $router->post('', 'VisitController@registerVisit');
-        // Matches "/api/v1/visit/id Put all of one Visit
-        $router->put('/{id}', 'VisitController@put');
+        $router->post('', 'VisitController@addVisit');
+        // Matches "/api/v1/users/data/idVisit Post Register
+        $router->post('/data/{id}', 'VisitController@addData');
         // Matches "/api/v1/visit/id Patch one element of one Visit
-        $router->patch('/{id}', 'VisitController@patch');
+        $router->patch('/{id}', 'VisitController@updateVisit');
         // Matches "/api/v1/visit/id Delete one Visit
-        $router->delete('/{id}', 'VisitController@delete');
+        $router->delete('/{id}', 'VisitController@deleteVisit');
     });
 });

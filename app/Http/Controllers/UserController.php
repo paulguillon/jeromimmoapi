@@ -34,7 +34,7 @@ class UserController extends Controller
         for ($i = 0; $i < count($users); $i++) {
             $user = $users[$i];
 
-            $user['data'] = $this->getAllData($user->idUser)->original;
+            $user['data'] = $this->getAllData($user->idUser);
         }
 
         return response()->json(['users' => $users], 200);
@@ -48,10 +48,15 @@ class UserController extends Controller
     public function getUser($id)
     {
         try {
+<<<<<<< HEAD
             $user = User::all()
             ->where('idUser', $id)
             ->first();
             $user['data'] = $this->getAllData($id)->original;
+=======
+            $user = User::all()->where('idUser', $id)->first();
+            $user['data'] = $this->getAllData($id);
+>>>>>>> 2baaebd1f8bd59f230bf2e903cd71b1356c57c76
             return response()->json(['user' => $user], 200);
         } catch (\Exception $e) {
 
@@ -158,8 +163,13 @@ class UserController extends Controller
                 }
             }
 
+<<<<<<< HEAD
             // Return successful response
             return response()->json(['user' => $user, 'data' => $this->getAllData($user->idUser)->original, 'message' => 'ALL UPDATED', 'status' => 'success'], 200);
+=======
+            //return successful response
+            return response()->json(['user' => $user, 'data' => $this->getAllData($user->idUser), 'message' => 'ALL UPDATED', 'status' => 'success'], 200);
+>>>>>>> 2baaebd1f8bd59f230bf2e903cd71b1356c57c76
         } catch (\Exception $e) {
             // Return error message
             return response()->json(['message' => 'User Update Failed!' . $e->getMessage(), 'status' => 'fail'], 409);
@@ -176,14 +186,16 @@ class UserController extends Controller
     {
         try {
             $user = User::findOrFail($id);
-            $userData = UserData::all()->where('idUser', $id);
+            $userData = $this->getAllData($id);
 
+<<<<<<< HEAD
             // Update data
+=======
+            //delete les data
+>>>>>>> 2baaebd1f8bd59f230bf2e903cd71b1356c57c76
             if ($userData !== null) {
-                foreach ($userData as $key => $value) {
-                    if (!$this->deleteData($user->idUser, $key))
-                        return response()->json(['message' => 'User Deletion Failed!', 'status' => 'fail'], 500);
-                }
+                if (!$this->deleteData($id))
+                    return response()->json(['message' => 'User Deletion Failed!', 'status' => 'fail'], 500);
             }
 
             $user->delete();
@@ -202,8 +214,13 @@ class UserController extends Controller
             if (!$this->_addData($id, $request))
                 return response()->json(['message' => 'Not all data has been added', 'status' => 'fail'], 409);
 
+<<<<<<< HEAD
             // Return successful response
             return response()->json(['data' => $this->getAllData($id)->original, 'message' => 'Data created', 'status' => 'success'], 201);
+=======
+            //return successful response
+            return response()->json(['data' => $this->getAllData($id), 'message' => 'Data created', 'status' => 'success'], 201);
+>>>>>>> 2baaebd1f8bd59f230bf2e903cd71b1356c57c76
         } catch (\Exception $e) {
             // Return error message
             return response()->json(['message' => 'User data not added!', 'status' => 'fail'], 409);
@@ -242,7 +259,7 @@ class UserController extends Controller
         foreach (UserData::all()->where('idUser', $idUser) as $value) {
             array_push($data, $value);
         }
-        return response()->json($data, 200);
+        return response()->json($data, 200)->original;
     }
 
     public function getData($idUser, $key)
@@ -275,9 +292,10 @@ class UserController extends Controller
         }
     }
 
-    public function deleteData($idUser, $key)
+    public function deleteData($idUser)
     {
         try {
+<<<<<<< HEAD
             $userData = UserData::all()
             ->where('idUser', $idUser)
             ->where('keyUserData', $key)
@@ -285,8 +303,13 @@ class UserController extends Controller
 
             if ($userData == null)
                 return false;
+=======
+            $userData = UserData::all()->where('idUser', $idUser);
+>>>>>>> 2baaebd1f8bd59f230bf2e903cd71b1356c57c76
 
-            $userData->delete();
+            foreach ($userData as $data) {
+                $data->delete();
+            }
 
             return true;
         } catch (\Exception $e) {

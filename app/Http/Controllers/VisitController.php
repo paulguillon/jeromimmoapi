@@ -24,9 +24,17 @@ class VisitController extends Controller
      * @param  Request  $request
      * @return Response
      */
-    public function allVisit(Request $request)
+    public function getVisits(Request $request)
     {
-        return response()->json(['visit' =>  Visit::all(), 'visitData' => VisitData::all()], 200);
+        $visits = Visit::all();
+
+        for ($i = 0; $i < count($visits); $i++) {
+            $visit = $visits[$i];
+
+            $visit['data'] = $this->getAllData($visit->idVisit);
+        }
+
+        return response()->json(['visits' => $visits], 200);
     }
 
     /**
@@ -35,15 +43,14 @@ class VisitController extends Controller
      * @param  Request  $request
      * @return Response
      */
-    public function oneVisit($id)
+    public function getVisit($id)
     {
         try {
             $visit = Visit::all()->where('idVisit', $id)->first();
-            $visitData = VisitData::all()->where('idVisit', $id)->first();
+            $visit['data'] = $this->getAllData($id);
 
-            return response()->json(['visit' => $visit, 'visitData' => $visitData, 'status' => 'success'], 200);
+            return response()->json(['visit' => $visit, 'status' => 'success'], 200);
         } catch (\Exception $e) {
-
             return response()->json(['message' => 'Visit not found!' . $e->getMessage(), 'status' => 'fail'], 404);
         }
     }
@@ -54,7 +61,7 @@ class VisitController extends Controller
      * @return Response
      */
 
-    public function registerVisit(Request $request)
+    public function addVisit(Request $request)
     {
         //validate incoming request
         $this->validate($request, [
@@ -72,19 +79,15 @@ class VisitController extends Controller
             $visit->created_by = $request->input('created_by');
             $visit->updated_by = $request->input('updated_by');
 
-            if (!$visit->save())
-                return response()->json(['message' => 'Visit Registration Failed !'], 409);
+            $visit->save();
 
-            $visitData = new VisitData;
-            $visitData->keyVisitData = $request->input('keyVisitData') !== null ? $request->input('keyVisitData') : '';
-            $visitData->valueVisitData = $request->input('valueVisitData') !== null ? $request->input('valueVisitData') : '';
-            $visitData->idVisit = $visit->idVisit;
-            $visitData->created_by = $request->input('created_by');
-            $visitData->updated_by = $request->input('updated_by');
-            $visitData->save();
+            if ($request->input('data') !== null) {
+                if (!$this->_addData($visit->idVisit, $request))
+                    return response()->json(['message' => 'Visit data not added!', 'status' => 'fail'], 500);
+            }
 
             //return successful response
-            return response()->json(['visit' => $visit, 'visitData' => $visitData, 'message' => 'CREATED', 'status' => 'success'], 201);
+            return response()->json(['visit' => $visit, 'data' => $this->getAllData($visit->idVisit), 'message' => 'CREATED', 'status' => 'success'], 201);
         } catch (\Exception $e) {
             //return error message
             return response()->json(['message' => 'Visit Data Registration Failed!' . $e->getMessage(), 'status' => 'fail'], 409);
@@ -98,50 +101,7 @@ class VisitController extends Controller
      * @param  Request  $request
      * @return Response
      */
-    public function put($id, Request $request)
-    {
-        //validate incoming request
-        $this->validate($request, [
-            'dateVisit' => 'required|date_format:Y-m-d H:i',
-            'keyVisitData' => 'required|string',
-            'valueVisitData' => 'required|string',
-            'created_by' => 'required|integer',
-            'updated_by' => 'required|integer',
-        ]);
-
-        try {
-            $visit = Visit::findOrFail($id);
-            $visit->dateVisit = $request->input('dateVisit');
-            $visit->created_by = $request->input('created_by');
-            $visit->updated_by = $request->input('updated_by');
-
-            if (!$visit->update())
-                return response()->json(['message' => 'Visit Update Failed!', 'status' => 'fail'], 409);
-
-            $visitData = VisitData::all()->where('idVisit', $id)->first();
-            $visitData->keyVisitData = $request->input('keyVisitData');
-            $visitData->valueVisitData = $request->input('valueVisitData');
-            $visitData->idVisit = $visit->idVisit;
-            $visitData->created_by = $request->input('created_by');
-            $visitData->updated_by = $request->input('updated_by');
-            $visitData->update();
-
-            //return successful response
-            return response()->json(['visit' => $visit, 'visitData' => $visitData, 'message' => 'ALL UPDATED', 'status' => 'success'], 200);
-        } catch (\Exception $e) {
-            //return error message
-            return response()->json(['message' => 'Visit Update Failed!' . $e->getMessage(), 'status' => 'fail'], 409);
-        }
-    }
-
-    /**
-     * Patch visit
-     *
-     * @param  string   $id
-     * @param  Request  $request
-     * @return Response
-     */
-    public function patch($id, Request $request)
+    public function updateVisit($id, Request $request)
     {
         //validate incoming request
         $this->validate($request, [
@@ -149,39 +109,37 @@ class VisitController extends Controller
             'keyVisitData' => 'string',
             'valueVisitData' => 'string',
             'created_by' => 'integer',
-            'updated_by' => 'string'
+            'updated_by' => 'integer',
         ]);
 
         try {
+            // On modifie les infos principales du visit
             $visit = Visit::findOrFail($id);
-
-            if (in_array(null or '', $request->all()))
-                return response()->json(['message' => 'Null or empty value', 'status' => 'fail'], 500);
-
             if ($request->input('dateVisit') !== null)
                 $visit->dateVisit = $request->input('dateVisit');
+            if ($request->input('keyVisitData') !== null)
+                $visit->keyVisitData = $request->input('keyVisitData');
+            if ($request->input('valueVisitData') !== null)
+                $visit->valueVisitData = $request->input('valueVisitData');
             if ($request->input('created_by') !== null)
                 $visit->created_by = $request->input('created_by');
             if ($request->input('updated_by') !== null)
                 $visit->updated_by = $request->input('updated_by');
 
-            if (!$visit->update())
-                return response()->json(['message' => 'Visit Update Failed!', 'status' => 'fail'], 409);
+            $visit->update();
 
-            $visitData = VisitData::all()->where('idVisit', $id)->first();
-            if ($request->input('keyVisitData') !== null)
-                $visitData->keyVisitData = $request->input('keyVisitData');
-            if ($request->input('valueVisitData') !== null)
-                $visitData->valueVisitData = $request->input('valueVisitData');
-            $visitData->idVisit = $visit->idVisit;
-            if ($request->input('created_by') !== null)
-                $visitData->created_by = $request->input('created_by');
-            if ($request->input('updated_by') !== null)
-                $visitData->updated_by = $request->input('updated_by');
-            $visitData->update();
+            //maj des data
+            if ($request->input('data') !== null) {
+                $data = (array)json_decode($request->input('data'), true);
+
+                foreach ($data as $key => $value) {
+                    if (!$this->updateData($visit->idVisit, $key, $value))
+                        return response()->json(['message' => 'Visit Update Failed!', 'status' => 'fail'], 500);
+                }
+            }
 
             //return successful response
-            return response()->json(['visit' => $visit, 'visitData' => $visitData, 'message' => 'PATCHED', 'status' => 'success'], 200);
+            return response()->json(['visit' => $visit, 'data' => $this->getAllData($visit->idVisit), 'message' => 'ALL UPDATED', 'status' => 'success'], 200);
         } catch (\Exception $e) {
             //return error message
             return response()->json(['message' => 'Visit Update Failed!' . $e->getMessage(), 'status' => 'fail'], 409);
@@ -189,23 +147,124 @@ class VisitController extends Controller
     }
 
     /**
-     * Delete Visit
-     * 
-     * @param $id
+     * Delete visit function
+     *
+     * @param int $id
      * @return Response
      */
-    public function delete($id)
+    public function deleteVisit($id)
     {
         try {
             $visit = Visit::findOrFail($id);
-            $visitData =  VisitData::all()->where('idVisit', $id)->first();
-            $visitData->delete();
+            $visitData = VisitData::all()->where('idVisit', $id);
+
+            //delete les data
+            if ($visitData !== null) {
+                if (!$this->deleteData($id))
+                    return response()->json(['message' => 'Visit Deletion Failed!', 'status' => 'fail'], 500);
+            }
+
             $visit->delete();
 
-            return response()->json(['visit' => $visit, 'visitData' => $visitData, 'message' => 'DELETED', 'status' => 'success'], 200);
+            return response()->json(['visit' => $visit, 'data' => $visitData, 'message' => 'DELETED', 'status' => 'success'], 200);
         } catch (\Exception $e) {
             //return error message
             return response()->json(['message' => 'Visit deletion failed!' . $e->getMessage(), 'status' => 'fail'], 409);
+        }
+    }
+
+    //route
+    public function addData($id, Request $request)
+    {
+        try {
+            if (!$this->_addData($id, $request))
+                return response()->json(['message' => 'Not all data has been added', 'status' => 'fail'], 409);
+
+            //return successful response
+            return response()->json(['data' => $this->getAllData($id), 'message' => 'Data created', 'status' => 'success'], 201);
+        } catch (\Exception $e) {
+            //return error message
+            return response()->json(['message' => 'Visit data not added!', 'status' => 'fail'], 409);
+        }
+    }
+
+    //fonction utilisée par la route et lors de la creation de visit pour ajouter toutes les data
+    public function _addData($idVisit, $request)
+    {
+        $data = (array)json_decode($request->input('data'), true);
+
+        try {
+            foreach ($data as $key => $value) {
+
+                $visitData = new VisitData;
+                $visitData->keyVisitData = $key;
+                $visitData->valueVisitData = $value;
+                $visitData->created_by = $request->input('created_by');
+                $visitData->updated_by = $request->input('updated_by');
+                $visitData->idVisit = $idVisit;
+
+                $visitData->save();
+            }
+
+            //return successful response
+            return true;
+        } catch (\Exception $e) {
+            //return error message
+            return false;
+        }
+    }
+
+    public function getAllData($idVisit)
+    {
+        $data = array();
+        foreach (VisitData::all()->where('idVisit', $idVisit) as $value) {
+            array_push($data, $value);
+        }
+        return response()->json($data, 200)->original;
+    }
+
+    public function getData($idVisit, $key)
+    {
+        return response()->json(
+            VisitData::all()
+                ->where('idVisit', $idVisit)
+                ->where('keyVisitData', $key),
+            200
+        );
+    }
+
+    public function updateData($idVisit, $key, $value)
+    {
+        try {
+            $visitData = VisitData::all()
+                ->where('idVisit', $idVisit)
+                ->where('keyVisitData', $key)
+                ->first();
+
+            if ($visitData == null)
+                return false;
+
+            $visitData->valueVisitData = $value;
+            $visitData->update();
+
+            return true;
+        } catch (\Exception $e) {
+            return false;
+        }
+    }
+
+    public function deleteData($idVisit)
+    {
+        try {
+            $visitData = VisitData::all()->where('idVisit', $idVisit);
+
+            foreach ($visitData as $data) {
+                $data->delete();
+            }
+
+            return true;
+        } catch (\Exception $e) {
+            return false;
         }
     }
 }
