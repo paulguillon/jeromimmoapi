@@ -102,7 +102,7 @@ class AgencyController extends Controller
     }
 
     /**
-     * Put agency
+     * Update agency
      *
      * @param  string   $id
      * @param  Request  $request
@@ -122,7 +122,7 @@ class AgencyController extends Controller
         ]);
 
         try {
-            // On modifie les infos principales de l'agence
+            // Update
             $agency = Agency::findOrFail($id);
             if ($request->input('nameAgency') !== null)
             $agency->nameAgency = $request->input('nameAgency');
@@ -137,7 +137,7 @@ class AgencyController extends Controller
 
             $agency->update();
 
-            // maj des data
+            // Update data
             if ($request->input('data') !== null) {
                 $data = (array)json_decode($request->input('data'), true);
 
@@ -166,7 +166,7 @@ class AgencyController extends Controller
             $agency = Agency::findOrFail($id);
             $agencyData = AgencyData::all()->where('idAgency', $id);
 
-            // Maj des data
+            // Update data
             if ($agencyData !== null) {
                 foreach ($agencyData as $key => $value) {
                     if (!$this->deleteData($agency->idAgency, $key))
@@ -182,7 +182,15 @@ class AgencyController extends Controller
             return response()->json(['message' => 'Agency deletion failed!' . $e->getMessage(), 'status' => 'fail'], 409);
         }
     }
-
+/**
+ * Add data
+ *
+ * @param [int] $idAgency
+ * @param [string] $key
+ * @param [string] $value
+ * @param request $request
+ * @return void
+ */
     public function addData($idAgency, $key, $value, $request)
     {
         try {
@@ -202,7 +210,12 @@ class AgencyController extends Controller
             return response()->json(['message' => 'Agency data not added!' . $e->getMessage()], 409);
         }
     }
-
+/**
+ * Get all data
+ *
+ * @param [int] $idAgency
+ * @return void
+ */
     public function getAllData($idAgency)
     {
         return response()->json(AgencyData::all()->where('idAgency', $idAgency), 200);
@@ -229,7 +242,13 @@ class AgencyController extends Controller
             return false;
         }
     }
-
+/**
+ * Delete data
+ *
+ * @param [int] $idAgency
+ * @param [string] $key
+ * @return void
+ */
     public function deleteData($idAgency, $key)
     {
         try {
