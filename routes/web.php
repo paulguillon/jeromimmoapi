@@ -176,37 +176,15 @@ $router->group(['prefix' => 'api/v1'], function () use ($router) {
     // Prefix
     $router->group(['prefix' => 'faq'], function () use ($router) {
         // Matches "/api/v1/faq Get all faq
-        $router->get('', 'FaqController@allFaq');
+        $router->get('', 'FaqController@getAllFaq');
         // Matches "/api/v1/faq/id Get one faq
-        $router->get('/{id}', 'FaqController@oneFaq');
-        // Matches "/api/v1/faq Post register faq
-        $router->post('', 'FaqController@registerFaq');
-        // Matches "/api/v1/faq/id Put all of one faq
-        $router->put('/{id}', 'FaqController@put');
+        $router->get('/{id}', 'FaqController@getFaq');
+        // Matches "/api/v1/faq Post add faq
+        $router->post('', 'FaqController@addFaq');
         // Matches "/api/v1/faq/id Patch one element of one faq
-        $router->patch('/{id}', 'FaqController@patch');
+        $router->patch('/{id}', 'FaqController@updateFaq');
         // Matches "/api/v1/faq/id delete one faq
-        $router->delete('/{id}', 'FaqController@delete');
-    });
-    /*
-    |-----------------------|
-    | faqData Routes        |
-    |-----------------------|
-    */
-    // Prefix
-    $router->group(['prefix' => 'faqData'], function () use ($router) {
-        // Matches "/api/v1/faqData Get all faqData
-        $router->get('', 'FaqDataController@allFaqData');
-        // Matches "/api/v1/faqData/id Get one faqData
-        $router->get('/{id}', 'FaqDataController@oneFaqData');
-        // Matches "/api/v1/faqData Post register faqData
-        $router->post('', 'FaqDataController@registerFaqData');
-        // Matches "/api/v1/faqData/id Put all of one faqData
-        $router->put('/{id}', 'FaqDataController@updateAll');
-        // Matches "/api/v1/faqData/id Patch one element of one faqData
-        $router->patch('/{id}', 'FaqDataController@update');
-        // Matches "/api/v1/faqData/id Delete one faqData
-        $router->delete('/{id}', 'FaqDataController@delete');
+        $router->delete('/{id}', 'FaqController@deleteFaq');
     });
     /*
     |-----------------------|
