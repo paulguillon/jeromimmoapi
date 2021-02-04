@@ -276,7 +276,10 @@ class UserController extends Controller
     public function deleteData($idUser, $key)
     {
         try {
-            $userData = UserData::all()->where('idUser', $idUser)->where('keyUserData', $key)->first();
+            $userData = UserData::all()
+            ->where('idUser', $idUser)
+            ->where('keyUserData', $key)
+            ->first();
 
             if ($userData == null)
                 return false;
