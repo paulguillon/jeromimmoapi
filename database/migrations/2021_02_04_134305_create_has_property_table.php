@@ -22,7 +22,7 @@ class CreateHasPropertyTable extends Migration
             $table->foreignId('updated_by')->constrained('users', 'idUser');
             $table->string('action', 255);
             $table->foreignId('idPropertyData')->constrained('propertyData', 'idPropertyData');
-            $table->foreignId('idPropertyData')->constrained('userData', 'idUserData');
+            $table->foreignId('idUserData')->constrained('userData', 'idUserData');
         });
     }
 
