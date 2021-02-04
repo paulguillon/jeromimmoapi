@@ -105,6 +105,8 @@ $router->group(['prefix' => 'api/v1'], function () use ($router) {
         $router->get('/{id}', 'AgencyController@getAgency');
         // Matches "/api/v1/agency Post register agency
         $router->post('', 'AgencyController@addAgency');
+        // Matches "/api/v1/agency/data/idAgency Post Register
+        $router->post('/data/{id}', 'AgencyController@addData');
         // Matches "/api/v1/agency/id Patch one element of one agency
         $router->patch('/{id}', 'AgencyController@updateAgency');
         // Matches "/api/v1/agency/id Delete one agency
@@ -123,6 +125,8 @@ $router->group(['prefix' => 'api/v1'], function () use ($router) {
         $router->get('/{id}', 'FaqController@getFaq');
         // Matches "/api/v1/faq Post add faq
         $router->post('', 'FaqController@addFaq');
+        // Matches "/api/v1/agency/data/idFaq Post Register
+        $router->post('/data/{id}', 'FaqController@addFaq');
         // Matches "/api/v1/faq/id Patch one element of one faq
         $router->patch('/{id}', 'FaqController@updateFaq');
         // Matches "/api/v1/faq/id delete one faq

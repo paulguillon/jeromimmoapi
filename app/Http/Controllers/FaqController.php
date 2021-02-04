@@ -31,7 +31,7 @@ class FaqController extends Controller
         for ($i = 0; $i < count($faqs); $i++) {
             $faq = $faqs[$i];
 
-            $faq['data'] = $this->getAllData($faq->idFaq)->original;
+            $faq['data'] = $this->getAllData($faq->idFaq);
         }
 
         return response()->json(['faq' => $faqs], 200);
@@ -47,7 +47,7 @@ class FaqController extends Controller
     {
         try {
             $faq = Faq::all()->where('idFaq', $id)->first();
-            $faq['data'] = $this->getAllData($id)->original;
+            $faq['data'] = $this->getAllData($id);
             return response()->json(['faq' => $faq], 200);
         } catch (\Exception $e) {
 
@@ -83,7 +83,7 @@ class FaqController extends Controller
                     return response()->json(['message' => 'Faq data not added!', 'status' => 'fail'], 500);
             }
             //return successful response
-            return response()->json(['faq' => $faq, 'data' => $this->getAllData($faq->idFaq)->original, 'message' => 'CREATED', 'status' => 'success'], 201);
+            return response()->json(['faq' => $faq, 'data' => $this->getAllData($faq->idFaq), 'message' => 'CREATED', 'status' => 'success'], 201);
         } catch (\Exception $e) {
             //return error message
             return response()->json(['message' => 'Faq Registration Failed!' . $e->getMessage()], 409);
@@ -130,7 +130,7 @@ class FaqController extends Controller
             }
 
             //return successful response
-            return response()->json(['faq' => $faq, 'data' => $this->getAllData($faq->idFaq)->original, 'message' => 'ALL UPDATED', 'status' => 'success'], 200);
+            return response()->json(['faq' => $faq, 'data' => $this->getAllData($faq->idFaq), 'message' => 'ALL UPDATED', 'status' => 'success'], 200);
         } catch (\Exception $e) {
             //return error message
             return response()->json(['message' => 'Faq Update Failed!' . $e->getMessage(), 'status' => 'fail'], 409);
@@ -147,14 +147,14 @@ class FaqController extends Controller
     {
         try {
             $faq = Faq::findOrFail($id);
-            $faqData = FaqData::all()->where('idFaq', $id);
+            $faqData = $this->getAllData($id);
 
+            //delete data
             if ($faqData !== null) {
-                foreach ($faqData as $key) {
-                    if (!$this->deleteData($faq->idFaq, $key))
-                        return response()->json(['message' => 'Faq Deletion Failed!', 'status' => 'fail'], 500);
-                }
+                if (!$this->deleteData($id))
+                    return response()->json(['message' => 'Faq Deletion Failed!', 'status' => 'fail'], 500);
             }
+
             $faq->delete();
 
             return response()->json(['faq' => $faq, 'data' => $faqData, 'message' => 'DELETED', 'status' => 'success'], 200);
@@ -164,14 +164,14 @@ class FaqController extends Controller
         }
     }
 
-    public function addData($idFaq, $key, $value, $request)
+    public function addData($idFaq, Request $request)
     {
         try {
             if (!$this->_addData($idFaq, $request))
                 return response()->json(['message' => 'Not all data has been added', 'status' => 'fail'], 409);
 
             //return successful response
-            return response()->json(['faq' => $this->getAllData($idFaq)->original, 'message' => 'CREATED'], 201);
+            return response()->json(['faq' => $this->getAllData($idFaq), 'message' => 'CREATED'], 201);
         } catch (\Exception $e) {
             //return error message
             return response()->json(['message' => 'Faq data not added!' . $e->getMessage()], 409);
@@ -210,7 +210,7 @@ class FaqController extends Controller
         foreach (FaqData::all()->where('idFaq', $idFaq) as $value) {
             array_push($data, $value);
         }
-        return response()->json($data, 200);
+        return response()->json($data, 200)->original;
     }
 
     public function getData($idFaq, $key)
@@ -243,15 +243,14 @@ class FaqController extends Controller
         }
     }
 
-    public function deleteData($idFaq, $key)
+    public function deleteData($idFaq)
     {
         try {
-            $faqData = FaqData::all()->where('idFaq', $idFaq)->where('keyFaqData', $key)->first();
+            $faqData = FaqData::all()->where('idFaq', $idFaq);
 
-            if ($faqData == null)
-                return false;
-
-            $faqData->delete();
+            foreach ($faqData as $data) {
+                $data->delete();
+            }
 
             return true;
         } catch (\Exception $e) {
