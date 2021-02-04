@@ -15,7 +15,7 @@ class FaqController extends Controller
     public function __construct()
     {
         // methods with authorization
-        $this->middleware('auth:api', ['accept' => ['registerFaq']]);
+        $this->middleware('auth:api', ['accept' => ['addFaq']]);
     }
 
     /**
@@ -79,18 +79,14 @@ class FaqController extends Controller
             $faq->save();
 
             if ($request->input('data') !== null) {
-                $data = (array)json_decode($request->input('data'), true);
-
-                foreach ($data as $key => $value) {
-                    if (!$this->addData($faq->idFaq, $key, $value, $request))
-                        return response()->json(['message' => 'Faq data not added!', 'status' => 'fail'], 500);
-                }
+                if (!$this->_addData($faq->idFaq, $request))
+                    return response()->json(['message' => 'Faq data not added!', 'status' => 'fail'], 500);
             }
             //return successful response
             return response()->json(['faq' => $faq, 'data' => $this->getAllData($faq->idFaq)->original, 'message' => 'CREATED', 'status' => 'success'], 201);
         } catch (\Exception $e) {
             //return error message
-            return response()->json(['message' => 'Faq Data Registration Failed!' . $e->getMessage()], 409);
+            return response()->json(['message' => 'Faq Registration Failed!' . $e->getMessage()], 409);
         }
     }
 
@@ -154,7 +150,7 @@ class FaqController extends Controller
             $faqData = FaqData::all()->where('idFaq', $id);
 
             if ($faqData !== null) {
-                foreach ($faqData as $key => $value) {
+                foreach ($faqData as $key) {
                     if (!$this->deleteData($faq->idFaq, $key))
                         return response()->json(['message' => 'Faq Deletion Failed!', 'status' => 'fail'], 500);
                 }
@@ -171,37 +167,69 @@ class FaqController extends Controller
     public function addData($idFaq, $key, $value, $request)
     {
         try {
-            $faqData = new FaqData;
-            $faqData->keyFaqData = $key;
-            $faqData->valueFaqData = $value;
-            $faqData->created_by = $request->input('created_by');
-            $faqData->updated_by = $request->input('updated_by');
-            $faqData->idFaq = $idFaq;
-
-            $faqData->save();
+            if (!$this->_addData($idFaq, $request))
+                return response()->json(['message' => 'Not all data has been added', 'status' => 'fail'], 409);
 
             //return successful response
-            return response()->json(['faq' => $faqData, 'message' => 'CREATED'], 201);
+            return response()->json(['faq' => $this->getAllData($idFaq)->original, 'message' => 'CREATED'], 201);
         } catch (\Exception $e) {
             //return error message
             return response()->json(['message' => 'Faq data not added!' . $e->getMessage()], 409);
         }
     }
 
+    //fonction utilisée par la route et lors de la creation de user pour ajouter toutes les data
+    public function _addData($idFaq, $request)
+    {
+        $data = (array)json_decode($request->input('data'), true);
+
+        try {
+            foreach ($data as $key => $value) {
+
+                $faqData = new FaqData;
+                $faqData->keyFaqData = $key;
+                $faqData->valueFaqData = $value;
+                $faqData->created_by = $request->input('created_by');
+                $faqData->updated_by = $request->input('updated_by');
+                $faqData->idFaq = $idFaq;
+
+                $faqData->save();
+            }
+
+            //return successful response
+            return true;
+        } catch (\Exception $e) {
+            //return error message
+            return false;
+        }
+    }
+
     public function getAllData($idFaq)
     {
-        return response()->json(FaqData::all()->where('idFaq', $idFaq), 200);
+        $data = array();
+        foreach (FaqData::all()->where('idFaq', $idFaq) as $value) {
+            array_push($data, $value);
+        }
+        return response()->json($data, 200);
     }
 
     public function getData($idFaq, $key)
     {
-        return response()->json(FaqData::all()->where('idFaq', $idFaq)->where('keyFaqData', $key), 200);
+        return response()->json(
+            FaqData::all()
+                ->where('idFaq', $idFaq)
+                ->where('keyFaqData', $key),
+            200
+        );
     }
 
     public function updateData($idFaq, $key, $value)
     {
         try {
-            $faqData = FaqData::all()->where('idFaq', $idFaq)->where('keyFaqData', $key)->first();
+            $faqData = FaqData::all()
+                ->where('idFaq', $idFaq)
+                ->where('keyFaqData', $key)
+                ->first();
 
             if ($faqData == null)
                 return false;
