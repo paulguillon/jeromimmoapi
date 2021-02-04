@@ -24,9 +24,17 @@ class DocumentController extends Controller
      * @param  Request  $request
      * @return Response
      */
-    public function allDocument(Request $request)
+    public function getDocuments(Request $request)
     {
-        return response()->json(['document' =>  Document::all(), 'documentData' => DocumentData::all()], 200);
+        $documents = Document::all();
+
+        for ($i = 0; $i < count($documents); $i++) {
+            $document = $documents[$i];
+
+            $document['data'] = $this->getAllData($document->idDocument)->original;
+        }
+
+        return response()->json(['documents' =>  $documents], 200);
     }
 
     /**
@@ -35,11 +43,13 @@ class DocumentController extends Controller
      * @param  Request  $request
      * @return Response
      */
-    public function oneDocument($id)
+    public function getDocument($id)
     {
         try {
-            $document = Document::all()->where('idDocument', $id)->first();
-
+            $document = Document::all()
+                ->where('idDocument', $id)
+                ->first();
+            $document['data'] = $this->getAllData($id)->original;
             return response()->json(['document' => $document], 200);
         } catch (\Exception $e) {
 
@@ -53,95 +63,57 @@ class DocumentController extends Controller
      * @return Response
      */
 
-    public function registerDocument(Request $request)
+    public function addDocument(Request $request)
     {
         //validate incoming request
         $this->validate($request, [
             'nameDocument' => 'required|string',
-            'keyDocumentData' => 'string',
-            'valueDocumentData' => 'string',
             'created_by' => 'required|integer',
             'updated_by' => 'required|integer',
+            'data' => 'string',
         ]);
 
         try {
-
             $document = new Document;
             $document->nameDocument = $request->input('nameDocument');
             $document->created_by = $request->input('created_by');
             $document->updated_by = $request->input('updated_by');
-            if(!$document->save())
-            return response()->json(['message' => 'Document Registration Failed !'], 409);
 
-            $documentData = new DocumentData;
-            $documentData->keyDocumentData = $request->input('keyDocumentData');
-            $documentData->valueDocumentData = $request->input('valueDocumentData');
-            $documentData->idDocument = $document->idDocument;
-            $documentData->created_by = $request->input('created_by');
-            $documentData->updated_by = $request->input('updated_by');
-            $documentData->save();
-            //return successful response
-            return response()->json(['document' => $document, 'documentData' => $documentData, 'message' => 'CREATED'], 201);
+            $document->save();
+
+            if ($request->input('data') !== null) {
+                if (!$this->_addData($document->idDocument, $request))
+                    return response()->json(['message' => 'Document data not added!', 'status' => 'fail'], 500);
+            }
+
+            // Return successful response
+            return response()->json(['document' => $document, 'message' => 'CREATED', 'status' => 'success'], 201);
         } catch (\Exception $e) {
-            //return error message
-            return response()->json(['message' => 'Document Registration Failed!' . $e->getMessage()], 409);
+            // Return error message
+            return response()->json(['message' => 'Document Registration Failed!', 'status' => 'fail'], 409);
         }
     }
 
     /**
-     * Put document
+     * Update document
      *
      * @param  string   $id
      * @param  Request  $request
      * @return Response
      */
-    public function put($id, Request $request)
+    public function updateDocument($id, Request $request)
     {
-        //validate incoming request
+        // Validate incoming request
         $this->validate($request, [
             'nameDocument' => 'required|string',
             'created_by' => 'required|integer',
-            'updated_by' => 'required|integer'
+            'updated_by' => 'required|integer',
+            'data' => 'string',
         ]);
 
         try {
+            // Update
             $document = Document::findOrFail($id);
-            $document->nameDocument = $request->input('nameDocument');
-            $document->created_by = $request->input('created_by');
-            $document->updated_by = $request->input('updated_by');
-
-            $document->update();
-
-            //return successful response
-            return response()->json(['document' => $document, 'message' => 'ALL UPDATED'], 200);
-        } catch (\Exception $e) {
-            //return error message
-            return response()->json(['message' => 'Document Update Failed!' . $e->getMessage()], 409);
-        }
-    }
-
-    /**
-     * Patch user
-     *
-     * @param  string   $id
-     * @param  Request  $request
-     * @return Response
-     */
-    public function patch($id, Request $request)
-    {
-        //validate incoming request
-        $this->validate($request, [
-            'nameDocument' => 'required|string',
-            'created_by' => 'required|integer',
-            'updated_by' => 'required|integer'
-        ]);
-
-        try {
-            $document = Document::findOrFail($id);
-
-            if (in_array(null or '', $request->all()))
-                return response()->json(['message' => 'Null or empty value', 'status' => 'fail'], 500);
-
             if ($request->input('nameDocument') !== null)
                 $document->nameDocument = $request->input('nameDocument');
             if ($request->input('created_by') !== null)
@@ -151,24 +123,147 @@ class DocumentController extends Controller
 
             $document->update();
 
-            //return successful response
-            return response()->json(['document' => $document, 'message' => 'PATCHED', 'status' => 'success'], 200);
+            // Updatedata
+            if ($request->input('data') !== null) {
+                $data = (array)json_decode($request->input('data'), true);
+
+                foreach ($data as $key => $value) {
+                    if (!$this->updateData($document->idDocument, $key, $value))
+                        return response()->json(['message' => 'Document Update Failed!', 'status' => 'fail'], 500);
+                }
+            }
+            // Return successful response
+            return response()->json(['document' => $document, 'data' => $this->getAllData($document->idDocument)->original, 'message' => 'ALL UPDATED', 'status' => 'success'], 200);
         } catch (\Exception $e) {
-            //return error message
+            // Return error message
             return response()->json(['message' => 'Document Update Failed!' . $e->getMessage(), 'status' => 'fail'], 409);
         }
     }
 
-    public function delete($id)
+    /**
+     * Delete document function
+     *
+     * @param int $id
+     * @return Response
+     */
+    public function deleteDocument($id)
     {
         try {
             $document = Document::findOrFail($id);
+            $documentData = DocumentData::all()->where('idDocument', $id);
+
+            // Update data
+            if ($documentData !== null) {
+                foreach ($documentData as $key => $value) {
+                    if (!$this->deleteData($document->idDocument, $key))
+                        return response()->json(['message' => 'Document Deletion Failed!', 'status' => 'fail'], 500);
+                }
+            }
+
             $document->delete();
 
-            return response()->json(['document' => $document, 'message' => 'DELETED', 'status' => 'success'], 200);
+            return response()->json(['document' => $document, 'data' => $documentData, 'message' => 'DELETED', 'status' => 'success'], 200);
         } catch (\Exception $e) {
             //return error message
             return response()->json(['message' => 'Document deletion failed!' . $e->getMessage(), 'status' => 'fail'], 409);
+        }
+    }
+
+    // Route
+    public function addData($id, Request $request)
+    {
+        try {
+            if (!$this->_addData($id, $request))
+                return response()->json(['message' => 'Not all data has been added', 'status' => 'fail'], 409);
+
+            // Return successful response
+            return response()->json(['data' => $this->getAllData($id)->original, 'message' => 'Data created', 'status' => 'success'], 201);
+        } catch (\Exception $e) {
+            // Return error message
+            return response()->json(['message' => 'User data not added!', 'status' => 'fail'], 409);
+        }
+    }
+    // fonction utilisée par la route et lors de la creation de user pour ajouter toutes les data
+    public function _addData($idDocument, $request)
+    {
+        $data = (array)json_decode($request->input('data'), true);
+
+        try {
+            foreach ($data as $key => $value) {
+
+                $documentData = new DocumentData;
+                $documentData->keydocumentData = $key;
+                $documentData->valuedocumentData = $value;
+                $documentData->created_by = $request->input('created_by');
+                $documentData->updated_by = $request->input('updated_by');
+                $documentData->idDocument = $idDocument;
+
+                $documentData->save();
+            }
+
+            // Return successful response
+            return true;
+        } catch (\Exception $e) {
+            // Return error message
+            return false;
+        }
+    }
+
+    public function getAllData($idDocument)
+    {
+        $data = array();
+        foreach (DocumentData::all()->where('idDocument', $idDocument) as $value) {
+            array_push($data, $value);
+        }
+        return response()->json($data, 200);
+    }
+
+    public function getData($idDocument, $key)
+    {
+        return response()->json(
+            DocumentData::all()
+            ->where('idDocument', $idDocument)
+            ->where('keyDocumentData', $key),
+            200
+            );
+    }
+
+    public function updateData($idDocument, $key, $value)
+    {
+        try {
+            $documentData = DocumentData::all()
+            ->where('idDocument', $idDocument)
+            ->where('keyDocumentData', $key)
+            ->first();
+
+            if ($documentData == null)
+                return false;
+
+            $documentData->valueDocumentData = $value;
+            $documentData->update();
+
+            return true;
+        } catch (\Exception $e) {
+            return false;
+        }
+    }
+
+    public function deleteData($idDocument, $key)
+    {
+        try {
+            $documentData = DocumentData::all()
+            ->where('idDocument', $idDocument)
+            ->where('keyDocumentData', $key)
+            ->first();
+
+            if ($documentData == null)
+                return false;
+
+            $documentData->delete();
+
+            return true;
+        } catch (\Exception $e) {
+            return false;
         }
     }
 }

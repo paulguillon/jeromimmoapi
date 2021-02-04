@@ -140,17 +140,17 @@ $router->group(['prefix' => 'api/v1'], function () use ($router) {
     // Prefix
     $router->group(['prefix' => 'document'], function () use ($router) {
         // Matches "/api/v1/document Get all Document
-        $router->get('', 'DocumentController@allDocument');
+        $router->get('', 'DocumentController@getDocuments');
         // Matches "/api/v1/document/id Get one Document
-        $router->get('/{id}', 'DocumentController@oneDocument');
+        $router->get('/{id}', 'DocumentController@getDocument');
         // Matches "/api/v1/document Post register Document
-        $router->post('', 'DocumentController@registerDocument');
+        $router->post('', 'DocumentController@addDocument');
         // Matches "/api/v1/document/id Put all of one Document
-        $router->put('/{id}', 'DocumentController@put');
+        // $router->put('/{id}', 'DocumentController@put');
         // Matches "/api/v1/document/id Patch one element of one Document
-        $router->patch('/{id}', 'DocumentController@patch');
+        $router->patch('/{id}', 'DocumentController@updateDocument');
         // Matches "/api/v1/document/id Delete one Document
-        $router->delete('/{id}', 'DocumentController@delete');
+        $router->delete('/{id}', 'DocumentController@deleteDocument');
     });
     /*
     |-----------------------|
