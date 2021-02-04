@@ -47,7 +47,7 @@ class FaqController extends Controller
     {
         try {
             $faq = Faq::all()->where('idFaq', $id)->first();
-            $faq['data'] = $this->getAllData($faq->idFaq)->original;
+            $faq['data'] = $this->getAllData($id)->original;
             return response()->json(['faq' => $faq], 200);
         } catch (\Exception $e) {
 
