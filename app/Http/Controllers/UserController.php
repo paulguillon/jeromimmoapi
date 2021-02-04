@@ -93,10 +93,11 @@ class UserController extends Controller
                 $data = (array)json_decode($request->input('data'), true);
 
                 foreach ($data as $key => $value) {
-                    if (!$this->addData($user->idUser, $key, $value, $request))
+                    if (!$this->_addData($user->idUser, $key, $value, $request))
                         return response()->json(['message' => 'User data not added!', 'status' => 'fail'], 500);
                 }
             }
+
             //return successful response
             return response()->json(['user' => $user, 'message' => 'CREATED', 'status' => 'success'], 201);
         } catch (\Exception $e) {
@@ -106,13 +107,13 @@ class UserController extends Controller
     }
 
     /**
-     * Patch user
+     * Put user
      *
      * @param  string   $id
      * @param  Request  $request
      * @return Response
      */
-    public function updateUser($id, Request $request)
+    public function put($id, Request $request)
     {
         //validate incoming request
         $this->validate($request, [
@@ -123,6 +124,7 @@ class UserController extends Controller
             'idRoleUser' => 'integer',
             'created_by' => 'integer',
             'updated_by' => 'integer',
+
             'data' => 'string',
         ]);
 
@@ -157,6 +159,7 @@ class UserController extends Controller
                         return response()->json(['message' => 'User Update Failed!', 'status' => 'fail'], 500);
                 }
             }
+
             //return successful response
             return response()->json(['user' => $user, 'data' => $this->getAllData($user->idUser)->original, 'message' => 'ALL UPDATED', 'status' => 'success'], 200);
         } catch (\Exception $e) {
@@ -194,7 +197,27 @@ class UserController extends Controller
         }
     }
 
-    public function addData($idUser, $key, $value, $request)
+    //route
+    public function addData($id, Request $request)
+    {
+        $data = (array)json_decode($request->input('data'), true);
+
+        try {
+            foreach ($data as $key => $value) {
+                if (!$this->_addData($id, $key, $value, $request))
+                    return response()->json(['message' => 'User data creation failed!', 'status' => 'fail'], 500);
+            }
+
+            //return successful response
+            return response()->json(['data' => $this->getAllData($id)->original, 'message' => 'Data created'], 201);
+        } catch (\Exception $e) {
+            //return error message
+            return response()->json(['message' => 'User data not added!' . $e->getMessage()], 409);
+        }
+    }
+
+    //fonction utilisée par la route et lors de la creation de user
+    public function _addData($idUser, $key, $value, $request)
     {
         try {
             $userData = new UserData;
@@ -207,10 +230,10 @@ class UserController extends Controller
             $userData->save();
 
             //return successful response
-            return response()->json(['user' => $userData, 'message' => 'CREATED'], 201);
+            return true;
         } catch (\Exception $e) {
             //return error message
-            return response()->json(['message' => 'User data not added!' . $e->getMessage()], 409);
+            return false;
         }
     }
 
