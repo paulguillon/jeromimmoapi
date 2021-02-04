@@ -49,7 +49,7 @@ class UserController extends Controller
     {
         try {
             $user = User::all()->where('idUser', $id)->first();
-            $user['data'] = $this->getAllData($user->idUser)->original;
+            $user['data'] = $this->getAllData($id)->original;
             return response()->json(['user' => $user], 200);
         } catch (\Exception $e) {
 
@@ -219,18 +219,30 @@ class UserController extends Controller
 
     public function getAllData($idUser)
     {
-        return response()->json(UserData::all()->where('idUser', $idUser), 200);
+        $data = array();
+        foreach (UserData::all()->where('idUser', $idUser) as $value) {
+            array_push($data, $value);
+        }
+        return response()->json($data, 200);
     }
 
     public function getData($idUser, $key)
     {
-        return response()->json(UserData::all()->where('idUser', $idUser)->where('keyUserData', $key), 200);
+        return response()->json(
+            UserData::all()
+                ->where('idUser', $idUser)
+                ->where('keyUserData', $key),
+            200
+        );
     }
 
     public function updateData($idUser, $key, $value)
     {
         try {
-            $userData = UserData::all()->where('idUser', $idUser)->where('keyUserData', $key)->first();
+            $userData = UserData::all()
+                ->where('idUser', $idUser)
+                ->where('keyUserData', $key)
+                ->first();
 
             if ($userData == null)
                 return false;
