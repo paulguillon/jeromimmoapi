@@ -6,7 +6,26 @@ use Illuminate\Http\Request;
 use App\Models\Property;
 use App\Models\PropertyData;
 
-
+/**
+ * @OA\Parameter(
+ *   parameter="get_property_request_parameter_limit",
+ *   name="limit",
+ *   description="Limit the number of results",
+ *   in="query",
+ *   @OA\Schema(
+ *     type="number", default=10
+ *   )
+ * ),
+ * @OA\SecurityScheme(
+ *     type="http",
+ *     description="Login with email and password to get the authentication token",
+ *     name="Token based Based",
+ *     in="header",
+ *     scheme="bearer",
+ *     bearerFormat="JWT",
+ *     securityScheme="apiAuth",
+ * )
+ */
 class PropertyController extends Controller
 {
     /**
@@ -19,10 +38,77 @@ class PropertyController extends Controller
     }
 
     /**
-     * Get all properties
-     *
-     * @param  Request  $request
-     * @return Response
+     * @OA\Get(
+     *   path="/api/v1/properties",
+     *   summary="Return all properties",
+     *   tags={"Property Controller"},
+     *   security={{ "apiAuth": {} }},
+     *   @OA\Parameter(ref="#/components/parameters/get_property_request_parameter_limit"),
+     *   @OA\Response(
+     *       response=401,
+     *       description="Unauthenticated",
+     *   ),
+     *   @OA\Response(
+     *       response=404,
+     *       description="Resource Not Found"
+     *   ),
+     *   @OA\Response(
+     *     response=200,
+     *     description="List of properties",
+     *     @OA\JsonContent(
+     *       @OA\Property(
+     *         property="idProperty",
+     *         default="Property id",
+     *         description="Id of the property",
+     *       ),
+     *       @OA\Property(
+     *         property="typeProperty",
+     *         default="Property type",
+     *         description="Type of the property",
+     *       ),
+     *       @OA\Property(
+     *         property="priceProperty",
+     *         default="Property price",
+     *         description="Price of the property",
+     *       ),
+     *       @OA\Property(
+     *         property="zipCodeProperty",
+     *         default="Property zipcode",
+     *         description="Zipcode of the property",
+     *       ),
+     *       @OA\Property(
+     *         property="cityProperty",
+     *         default="Property city",
+     *         description="City of the property",
+     *       ),
+     *       @OA\Property(
+     *         property="created_at",
+     *         default="2021-02-05T09:00:57.000000Z",
+     *         description="Timestamp of the property creation",
+     *       ),
+     *       @OA\Property(
+     *         property="created_by",
+     *         default="1",
+     *         description="Id of user who created this one",
+     *       ),
+     *       @OA\Property(
+     *         property="updated_at",
+     *         default="2021-02-05T09:00:57.000000Z",
+     *         description="Timestamp of the property last update",
+     *       ),
+     *       @OA\Property(
+     *         property="updated_by",
+     *         default="1",
+     *         description="Id of user who modified this one",
+     *       ),
+     *       @OA\Property(
+     *         property="data",
+     *         default="["keyPropertyData": "key", "valuePropertyData": "value"]",
+     *         description="Property data",
+     *       ),
+     *     )
+     *   )
+     * )
      */
     public function getProperties(Request $request)
     {
@@ -37,10 +123,101 @@ class PropertyController extends Controller
     }
 
     /**
-     * Get one property
-     *
-     * @param  Request  $request
-     * @return Response
+     * @OA\Get(
+     *   path="/api/v1/properties/{id}",
+     *   summary="Return a property",
+     *   tags={"Property Controller"},
+     *   security={{ "apiAuth": {} }},
+     *   @OA\Parameter(
+     *     name="id",
+     *     in="path",
+     *     required=true,
+     *     description="ID of the property to get",
+     *     @OA\Schema(
+     *       type="number", default=1
+     *     )
+     *   ),
+     *   @OA\Response(
+     *       response=401,
+     *       description="Unauthenticated",
+     *   ),
+     *   @OA\Response(
+     *       response=404,
+     *       description="Resource Not Found"
+     *   ),
+     *   @OA\Response(
+     *       response=500,
+     *       description="Property not found",
+     *       @OA\JsonContent(
+     *        @OA\Property(
+     *          property="message",
+     *          default="The property ? doesn't exist",
+     *          description="Message",
+     *        ),
+     *        @OA\Property(
+     *          property="status",
+     *          default="fail",
+     *          description="Status",
+     *        ),
+     *       ),
+     *   ),
+     *   @OA\Response(
+     *     response=200,
+     *     description="One user",
+     *     @OA\JsonContent(
+     *       @OA\Property(
+     *         property="idProperty",
+     *         default="Property id",
+     *         description="Id of the property",
+     *       ),
+     *       @OA\Property(
+     *         property="typeProperty",
+     *         default="Property type",
+     *         description="Type of the property",
+     *       ),
+     *       @OA\Property(
+     *         property="priceProperty",
+     *         default="Property price",
+     *         description="Price of the property",
+     *       ),
+     *       @OA\Property(
+     *         property="zipCodeProperty",
+     *         default="Property zipcode",
+     *         description="Zipcode of the property",
+     *       ),
+     *       @OA\Property(
+     *         property="cityProperty",
+     *         default="Property city",
+     *         description="City of the property",
+     *       ),
+     *       @OA\Property(
+     *         property="created_at",
+     *         default="2021-02-05T09:00:57.000000Z",
+     *         description="Timestamp of the property creation",
+     *       ),
+     *       @OA\Property(
+     *         property="created_by",
+     *         default="1",
+     *         description="Id of user who created this one",
+     *       ),
+     *       @OA\Property(
+     *         property="updated_at",
+     *         default="2021-02-05T09:00:57.000000Z",
+     *         description="Timestamp of the property last update",
+     *       ),
+     *       @OA\Property(
+     *         property="updated_by",
+     *         default="1",
+     *         description="Id of user who modified this one",
+     *       ),
+     *       @OA\Property(
+     *         property="data",
+     *         default="["keyPropertyData": "key", "valuePropertyData": "value"]",
+     *         description="Property data",
+     *       ),
+     *     )
+     *   ),
+     * )
      */
     public function getProperty($id)
     {
@@ -53,13 +230,129 @@ class PropertyController extends Controller
             return response()->json(['message' => 'Property not found!' . $e->getMessage()], 404);
         }
     }
+    
     /**
-     * Store a new property.
-     *
-     * @param  Request  $request
-     * @return Response
+     * @OA\Post(
+     *   path="/api/v1/properties",
+     *   summary="Add a property",
+     *   tags={"Property Controller"},
+     *       @OA\Property(
+     *         property="typeProperty",
+     *         default="Property type",
+     *         description="Type of the property",
+     *       ),
+     *       @OA\Property(
+     *         property="priceProperty",
+     *         default="Property price",
+     *         description="Price of the property",
+     *       ),
+     *       @OA\Property(
+     *         property="zipCodeProperty",
+     *         default="Property zipcode",
+     *         description="Zipcode of the property",
+     *       ),
+     *       @OA\Property(
+     *         property="cityProperty",
+     *         default="Property city",
+     *         description="City of the property",
+     *       ),
+     *       @OA\Property(
+     *         property="created_by",
+     *         default="1",
+     *         description="Id of user who created this one",
+     *       ),
+     *       @OA\Property(
+     *         property="updated_by",
+     *         default="1",
+     *         description="Id of user who modified this one",
+     *       ),
+     *       @OA\Property(
+     *         property="data",
+     *         default="["keyPropertyData": "key", "valuePropertyData": "value"]",
+     *         description="Property data",
+     *       ),
+     *   @OA\Response(
+     *       response=409,
+     *       description="Not created",
+     *   ),
+     *   @OA\Response(
+     *       response=404,
+     *       description="Resource Not Found",
+     *   ),
+     *   @OA\Response(
+     *       response=500,
+     *       description="Property data not added",
+     *       @OA\JsonContent(
+     *        @OA\Property(
+     *          property="message",
+     *          default="Property data not added",
+     *          description="Message",
+     *        ),
+     *        @OA\Property(
+     *          property="status",
+     *          default="fail",
+     *          description="Status",
+     *        ),
+     *       ),
+     *   ),
+     *   @OA\Response(
+     *     response=201,
+     *     description="Property created",
+     *     @OA\JsonContent(
+     *       @OA\Property(
+     *         property="idProperty",
+     *         default="Property id",
+     *         description="Id of the property",
+     *       ),
+     *       @OA\Property(
+     *         property="typeProperty",
+     *         default="Property type",
+     *         description="Type of the property",
+     *       ),
+     *       @OA\Property(
+     *         property="priceProperty",
+     *         default="Property price",
+     *         description="Price of the property",
+     *       ),
+     *       @OA\Property(
+     *         property="zipCodeProperty",
+     *         default="Property zipcode",
+     *         description="Zipcode of the property",
+     *       ),
+     *       @OA\Property(
+     *         property="cityProperty",
+     *         default="Property city",
+     *         description="City of the property",
+     *       ),
+     *       @OA\Property(
+     *         property="created_at",
+     *         default="2021-02-05T09:00:57.000000Z",
+     *         description="Timestamp of the property creation",
+     *       ),
+     *       @OA\Property(
+     *         property="created_by",
+     *         default="1",
+     *         description="Id of user who created this one",
+     *       ),
+     *       @OA\Property(
+     *         property="updated_at",
+     *         default="2021-02-05T09:00:57.000000Z",
+     *         description="Timestamp of the property last update",
+     *       ),
+     *       @OA\Property(
+     *         property="updated_by",
+     *         default="1",
+     *         description="Id of user who modified this one",
+     *       ),
+     *       @OA\Property(
+     *         property="data",
+     *         default="["keyPropertyData": "key", "valuePropertyData": "value"]",
+     *         description="Property data",
+     *       ),
+     *     )
+     *   ),
+     * )
      */
-
     public function addProperty(Request $request)
     {
         //validate incoming request
@@ -98,11 +391,136 @@ class PropertyController extends Controller
     }
 
     /**
-     * Update property
-     *
-     * @param  string   $id
-     * @param  Request  $request
-     * @return Response
+     * @OA\Patch(
+     *   path="/api/v1/properties/{id}",
+     *   summary="Update a property",
+     *   tags={"Property Controller"},
+     *   security={{ "apiAuth": {} }},
+     *   @OA\Parameter(
+     *     name="id",
+     *     in="path",
+     *     required=true,
+     *     description="ID of the property to update",
+     *     @OA\Schema(
+     *       type="number", default="1"
+     *     )
+     *   ),
+     *       @OA\Property(
+     *         property="typeProperty",
+     *         default="Property type",
+     *         description="Type of the property",
+     *       ),
+     *       @OA\Property(
+     *         property="priceProperty",
+     *         default="Property price",
+     *         description="Price of the property",
+     *       ),
+     *       @OA\Property(
+     *         property="zipCodeProperty",
+     *         default="Property zipcode",
+     *         description="Zipcode of the property",
+     *       ),
+     *       @OA\Property(
+     *         property="cityProperty",
+     *         default="Property city",
+     *         description="City of the property",
+     *       ),
+     *       @OA\Property(
+     *         property="created_by",
+     *         default="1",
+     *         description="Id of user who created this one",
+     *       ),
+     *       @OA\Property(
+     *         property="updated_by",
+     *         default="1",
+     *         description="Id of user who modified this one",
+     *       ),
+     *       @OA\Property(
+     *         property="data",
+     *         default="["keyPropertyData": "key", "valuePropertyData": "value"]",
+     *         description="Property data",
+     *       ),
+     *   @OA\Response(
+     *       response=409,
+     *       description="Not updated",
+     *   ),
+     *   @OA\Response(
+     *       response=404,
+     *       description="Resource Not Found",
+     *   ),
+     *   @OA\Response(
+     *       response=500,
+     *       description="Property data not updated",
+     *       @OA\JsonContent(
+     *        @OA\Property(
+     *          property="message",
+     *          default="Property data not updated",
+     *          description="Message",
+     *        ),
+     *        @OA\Property(
+     *          property="status",
+     *          default="fail",
+     *          description="Status",
+     *        ),
+     *       ),
+     *   ),
+     *   @OA\Response(
+     *     response=200,
+     *     description="Property updated",
+     *     @OA\JsonContent(
+     *       @OA\Property(
+     *         property="idProperty",
+     *         default="Property id",
+     *         description="Id of the property",
+     *       ),
+     *       @OA\Property(
+     *         property="typeProperty",
+     *         default="Property type",
+     *         description="Type of the property",
+     *       ),
+     *       @OA\Property(
+     *         property="priceProperty",
+     *         default="Property price",
+     *         description="Price of the property",
+     *       ),
+     *       @OA\Property(
+     *         property="zipCodeProperty",
+     *         default="Property zipcode",
+     *         description="Zipcode of the property",
+     *       ),
+     *       @OA\Property(
+     *         property="cityProperty",
+     *         default="Property city",
+     *         description="City of the property",
+     *       ),
+     *       @OA\Property(
+     *         property="created_at",
+     *         default="2021-02-05T09:00:57.000000Z",
+     *         description="Timestamp of the property creation",
+     *       ),
+     *       @OA\Property(
+     *         property="created_by",
+     *         default="1",
+     *         description="Id of user who created this one",
+     *       ),
+     *       @OA\Property(
+     *         property="updated_at",
+     *         default="2021-02-05T09:00:57.000000Z",
+     *         description="Timestamp of the property last update",
+     *       ),
+     *       @OA\Property(
+     *         property="updated_by",
+     *         default="1",
+     *         description="Id of user who modified this one",
+     *       ),
+     *       @OA\Property(
+     *         property="data",
+     *         default="["keyPropertyData": "key", "valuePropertyData": "value"]",
+     *         description="Property data",
+     *       ),
+     *     )
+     *   ),
+     * )
      */
     public function updateProperty($id, Request $request)
     {
@@ -154,10 +572,89 @@ class PropertyController extends Controller
     }
 
     /**
-     * Delete property function
-     *
-     * @param int $id
-     * @return Response
+     * @OA\Delete(
+     *   path="/api/v1/properties/{id}",
+     *   summary="Delete a property",
+     *   tags={"Property Controller"},
+     *   security={{ "apiAuth": {} }},
+     *   @OA\Parameter(
+     *     name="id",
+     *     in="path",
+     *     required=true,
+     *     description="ID of the user to delete",
+     *     @OA\Schema(
+     *       type="number", default="1"
+     *     )
+     *   ),
+     *   @OA\Response(
+     *       response=409,
+     *       description="Not deleted",
+     *   ),
+     *   @OA\Response(
+     *       response=404,
+     *       description="Resource Not Found"
+     *   ),
+     *   @OA\Response(
+     *       response=500,
+     *       description="User data not deleted"
+     *   ),
+     *   @OA\Response(
+     *     response=200,
+     *     description="User deleted",
+     *     @OA\JsonContent(
+     *       @OA\Property(
+     *         property="lastnameUser",
+     *         default="lastname",
+     *         description="Last name of the user",
+     *       ),
+     *       @OA\Property(
+     *         property="firstnameUser",
+     *         default="firstname",
+     *         description="First name of the user",
+     *       ),
+     *       @OA\Property(
+     *         property="emailUser",
+     *         default="test@test.fr",
+     *         description="Email address of the user",
+     *       ),
+     *       @OA\Property(
+     *         property="passwordUser",
+     *         default="1234",
+     *         description="Password of the user",
+     *       ),
+     *       @OA\Property(
+     *         property="idRoleUser",
+     *         default="1",
+     *         description="Id of the user's role",
+     *       ),
+     *       @OA\Property(
+     *         property="created_at",
+     *         default="2021-02-05T09:00:57.000000Z",
+     *         description="Id of user who created this one",
+     *       ),
+     *       @OA\Property(
+     *         property="created_by",
+     *         default="1",
+     *         description="Id of user who created this one",
+     *       ),
+     *       @OA\Property(
+     *         property="updated_at",
+     *         default="2021-02-05T09:00:57.000000Z",
+     *         description="Id of user who modified this one",
+     *       ),
+     *       @OA\Property(
+     *         property="updated_by",
+     *         default="1",
+     *         description="Id of user who modified this one",
+     *       ),
+     *       @OA\Property(
+     *         property="data",
+     *         default="[]",
+     *         description="User data",
+     *       ),
+     *     )
+     *   ),
+     * )
      */
     public function deleteProperty($id)
     {

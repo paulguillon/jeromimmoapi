@@ -18,17 +18,7 @@ use Illuminate\Support\Facades\Auth;
  */
 class Controller extends BaseController
 {
-    /**
-     * @OA\Info(
-     *   title="Jeromimmo API",
-     *  version="1.0.0",
-     *  @OA\Contact(
-     *    email="developers@module.com",
-     *    name="Developer Team"
-     *  )
-     * )
-     */
-     
+        
     //Add this method to the Controller class
     protected function respondWithToken($token)
     {
