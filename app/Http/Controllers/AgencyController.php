@@ -5,9 +5,10 @@ namespace App\Http\Controllers;
 use App\Models\Agency;
 use App\Models\AgencyData;
 use Illuminate\Http\Request;
+
 /**
  * @OA\Parameter(
- *   parameter="get_users_request_parameter_limit",
+ *   parameter="get_agencies_request_parameter_limit",
  *   name="limit",
  *   description="Limit the number of results",
  *   in="query",
@@ -37,11 +38,79 @@ class AgencyController extends Controller
     }
 
     /**
-     * Get all agencies
-     *
-     * @param  Request  $request
-     * @return Response
+     * @OA\Get(
+     *   path="/api/v1/users",
+     *   summary="Return all users",
+     *   tags={"User Controller"},
+     *   security={{ "apiAuth": {} }},
+     *   @OA\Parameter(ref="#/components/parameters/get_users_request_parameter_limit"),
+     *   @OA\Response(
+     *       response=401,
+     *       description="Unauthenticated",
+     *   ),
+     *   @OA\Response(
+     *       response=404,
+     *       description="Resource Not Found"
+     *   ),
+     *   @OA\Response(
+     *     response=200,
+     *     description="List of users",
+     *     @OA\JsonContent(
+     *       @OA\Property(
+     *         property="lastnameUser",
+     *         default="lastname",
+     *         description="Last name of the user",
+     *       ),
+     *       @OA\Property(
+     *         property="firstnameUser",
+     *         default="firstname",
+     *         description="First name of the user",
+     *       ),
+     *       @OA\Property(
+     *         property="emailUser",
+     *         default="test@test.fr",
+     *         description="Email address of the user",
+     *       ),
+     *       @OA\Property(
+     *         property="passwordUser",
+     *         default="1234",
+     *         description="Password of the user",
+     *       ),
+     *       @OA\Property(
+     *         property="idRoleUser",
+     *         default="1",
+     *         description="Id of the user's role",
+     *       ),
+     *       @OA\Property(
+     *         property="created_at",
+     *         default="2021-02-05T09:00:57.000000Z",
+     *         description="Id of user who created this one",
+     *       ),
+     *       @OA\Property(
+     *         property="created_by",
+     *         default="1",
+     *         description="Id of user who created this one",
+     *       ),
+     *       @OA\Property(
+     *         property="updated_at",
+     *         default="2021-02-05T09:00:57.000000Z",
+     *         description="Id of user who modified this one",
+     *       ),
+     *       @OA\Property(
+     *         property="updated_by",
+     *         default="1",
+     *         description="Id of user who modified this one",
+     *       ),
+     *       @OA\Property(
+     *         property="data",
+     *         default="[]",
+     *         description="User data",
+     *       ),
+     *     )
+     *   )
+     * )
      */
+
     public function getAgencies(Request $request)
     {
         $agencies = Agency::all();
@@ -55,10 +124,101 @@ class AgencyController extends Controller
         return response()->json(['agencies' => $agencies], 200);
     }
     /**
-     * Get one agency
-     *
-     * @param  Request  $request
-     * @return Response
+     * @OA\Get(
+     *   path="/api/v1/users/{id}",
+     *   summary="Return a user",
+     *   tags={"User Controller"},
+     *   security={{ "apiAuth": {} }},
+     *   @OA\Parameter(
+     *     name="id",
+     *     in="path",
+     *     required=true,
+     *     description="ID of the user to get",
+     *     @OA\Schema(
+     *       type="number", default=1
+     *     )
+     *   ),
+     *   @OA\Response(
+     *       response=401,
+     *       description="Unauthenticated",
+     *   ),
+     *   @OA\Response(
+     *       response=404,
+     *       description="Resource Not Found"
+     *   ),
+     *   @OA\Response(
+     *       response=500,
+     *       description="User not found",
+     *       @OA\JsonContent(
+     *        @OA\Property(
+     *          property="message",
+     *          default="The user ? doesn't exist",
+     *          description="Message",
+     *        ),
+     *        @OA\Property(
+     *          property="status",
+     *          default="fail",
+     *          description="Status",
+     *        ),
+     *       ),
+     *   ),
+     *   @OA\Response(
+     *     response=200,
+     *     description="One user",
+     *     @OA\JsonContent(
+     *       @OA\Property(
+     *         property="lastnameUser",
+     *         default="lastname",
+     *         description="Last name of the user",
+     *       ),
+     *       @OA\Property(
+     *         property="firstnameUser",
+     *         default="firstname",
+     *         description="First name of the user",
+     *       ),
+     *       @OA\Property(
+     *         property="emailUser",
+     *         default="test@test.fr",
+     *         description="Email address of the user",
+     *       ),
+     *       @OA\Property(
+     *         property="passwordUser",
+     *         default="1234",
+     *         description="Password of the user",
+     *       ),
+     *       @OA\Property(
+     *         property="idRoleUser",
+     *         default="1",
+     *         description="Id of the user's role",
+     *       ),
+     *       @OA\Property(
+     *         property="created_at",
+     *         default="2021-02-05T09:00:57.000000Z",
+     *         description="Id of user who created this one",
+     *       ),
+     *       @OA\Property(
+     *         property="created_by",
+     *         default="1",
+     *         description="Id of user who created this one",
+     *       ),
+     *       @OA\Property(
+     *         property="updated_at",
+     *         default="2021-02-05T09:00:57.000000Z",
+     *         description="Id of user who modified this one",
+     *       ),
+     *       @OA\Property(
+     *         property="updated_by",
+     *         default="1",
+     *         description="Id of user who modified this one",
+     *       ),
+     *       @OA\Property(
+     *         property="data",
+     *         default="[]",
+     *         description="User data",
+     *       ),
+     *     )
+     *   ),
+     * )
      */
     public function getAgency($id)
     {
@@ -71,11 +231,174 @@ class AgencyController extends Controller
             return response()->json(['message' => 'Agency not found!' . $e->getMessage()], 404);
         }
     }
-    /**
-     * Store a new agency.
-     *
-     * @param  Request  $request
-     * @return Response
+
+/**
+     * @OA\Post(
+     *   path="/api/v1/users",
+     *   summary="Add a user",
+     *   tags={"User Controller"},
+     *   @OA\Parameter(
+     *     name="firstnameUser",
+     *     in="query",
+     *     required=true,
+     *     description="First name of the user to add",
+     *     @OA\Schema(
+     *       type="string", default="first"
+     *     )
+     *   ),
+     *   @OA\Parameter(
+     *     name="lastnameUser",
+     *     in="query",
+     *     required=true,
+     *     description="Last name of the user to add",
+     *     @OA\Schema(
+     *       type="string", default="last"
+     *     )
+     *   ),
+     *   @OA\Parameter(
+     *     name="emailUser",
+     *     in="query",
+     *     required=true,
+     *     description="Email of the user to add",
+     *     @OA\Schema(
+     *       type="string", default="test@test.fr"
+     *     )
+     *   ),
+     *   @OA\Parameter(
+     *     name="passwordUser",
+     *     in="query",
+     *     required=true,
+     *     description="password of the user to add",
+     *     @OA\Schema(
+     *       type="string", default="test"
+     *     )
+     *   ),
+     *   @OA\Parameter(
+     *     name="passwordUser_confirmation",
+     *     in="query",
+     *     required=true,
+     *     description="Confirmation password of the user to add",
+     *     @OA\Schema(
+     *       type="string", default="test"
+     *     )
+     *   ),
+     *   @OA\Parameter(
+     *     name="idRoleUser",
+     *     in="query",
+     *     required=true,
+     *     description="Role id of the user to add",
+     *     @OA\Schema(
+     *       type="number", default="1"
+     *     )
+     *   ),
+     *   @OA\Parameter(
+     *     name="created_by",
+     *     in="query",
+     *     required=true,
+     *     description="ID of the logged user",
+     *     @OA\Schema(
+     *       type="number", default="1"
+     *     )
+     *   ),
+     *   @OA\Parameter(
+     *     name="updated_by",
+     *     in="query",
+     *     required=true,
+     *     description="ID of the logged user",
+     *     @OA\Schema(
+     *       type="number", default="1"
+     *     )
+     *   ),
+     *   @OA\Parameter(
+     *     name="data",
+     *     in="query",
+     *     required=true,
+     *     description="First name of the user to add",
+     *     @OA\Schema(
+     *       type="string", default="{'cle':'valeur','deuxiemecle':'deuxiemevaleur'}"
+     *     )
+     *   ),
+     *   @OA\Response(
+     *       response=409,
+     *       description="Not created",
+     *   ),
+     *   @OA\Response(
+     *       response=404,
+     *       description="Resource Not Found",
+     *   ),
+     *   @OA\Response(
+     *       response=500,
+     *       description="User data not added",
+     *       @OA\JsonContent(
+     *        @OA\Property(
+     *          property="message",
+     *          default="User data not added",
+     *          description="Message",
+     *        ),
+     *        @OA\Property(
+     *          property="status",
+     *          default="fail",
+     *          description="Status",
+     *        ),
+     *       ),
+     *   ),
+     *   @OA\Response(
+     *     response=201,
+     *     description="User created",
+     *     @OA\JsonContent(
+     *       @OA\Property(
+     *         property="lastnameUser",
+     *         default="lastname",
+     *         description="Last name of the user",
+     *       ),
+     *       @OA\Property(
+     *         property="firstnameUser",
+     *         default="firstname",
+     *         description="First name of the user",
+     *       ),
+     *       @OA\Property(
+     *         property="emailUser",
+     *         default="test@test.fr",
+     *         description="Email address of the user",
+     *       ),
+     *       @OA\Property(
+     *         property="passwordUser",
+     *         default="1234",
+     *         description="Password of the user",
+     *       ),
+     *       @OA\Property(
+     *         property="idRoleUser",
+     *         default="1",
+     *         description="Id of the user's role",
+     *       ),
+     *       @OA\Property(
+     *         property="created_at",
+     *         default="2021-02-05T09:00:57.000000Z",
+     *         description="Id of user who created this one",
+     *       ),
+     *       @OA\Property(
+     *         property="created_by",
+     *         default="1",
+     *         description="Id of user who created this one",
+     *       ),
+     *       @OA\Property(
+     *         property="updated_at",
+     *         default="2021-02-05T09:00:57.000000Z",
+     *         description="Id of user who modified this one",
+     *       ),
+     *       @OA\Property(
+     *         property="updated_by",
+     *         default="1",
+     *         description="Id of user who modified this one",
+     *       ),
+     *       @OA\Property(
+     *         property="data",
+     *         default="[]",
+     *         description="User data",
+     *       ),
+     *     )
+     *   ),
+     * )
      */
 
     public function addAgency(Request $request)
@@ -116,11 +439,173 @@ class AgencyController extends Controller
     }
 
     /**
-     * Update agency
-     *
-     * @param  string   $id
-     * @param  Request  $request
-     * @return Response
+     * @OA\Patch(
+     *   path="/api/v1/users/{id}",
+     *   summary="Update a user",
+     *   tags={"User Controller"},
+     *   security={{ "apiAuth": {} }},
+     *   @OA\Parameter(
+     *     name="id",
+     *     in="path",
+     *     required=true,
+     *     description="ID of the user to update",
+     *     @OA\Schema(
+     *       type="number", default="1"
+     *     )
+     *   ),
+     *   @OA\Parameter(
+     *     name="firstnameUser",
+     *     in="query",
+     *     description="First name of the user to add",
+     *     @OA\Schema(
+     *       type="string", default="first"
+     *     )
+     *   ),
+     *   @OA\Parameter(
+     *     name="lastnameUser",
+     *     in="query",
+     *     description="Last name of the user to add",
+     *     @OA\Schema(
+     *       type="string", default="last"
+     *     )
+     *   ),
+     *   @OA\Parameter(
+     *     name="emailUser",
+     *     in="query",
+     *     description="Email of the user to add",
+     *     @OA\Schema(
+     *       type="string", default="test@test.fr"
+     *     )
+     *   ),
+     *   @OA\Parameter(
+     *     name="passwordUser",
+     *     in="query",
+     *     description="password of the user to add",
+     *     @OA\Schema(
+     *       type="string", default="test"
+     *     )
+     *   ),
+     *   @OA\Parameter(
+     *     name="passwordUser_confirmation",
+     *     in="query",
+     *     description="Confirmation password of the user to add",
+     *     @OA\Schema(
+     *       type="string", default="test"
+     *     )
+     *   ),
+     *   @OA\Parameter(
+     *     name="idRoleUser",
+     *     in="query",
+     *     description="Role id of the user to add",
+     *     @OA\Schema(
+     *       type="number", default="1"
+     *     )
+     *   ),
+     *   @OA\Parameter(
+     *     name="created_by",
+     *     in="query",
+     *     description="ID of the logged user",
+     *     @OA\Schema(
+     *       type="number", default="1"
+     *     )
+     *   ),
+     *   @OA\Parameter(
+     *     name="updated_by",
+     *     in="query",
+     *     description="ID of the logged user",
+     *     @OA\Schema(
+     *       type="number", default="1"
+     *     )
+     *   ),
+     *   @OA\Parameter(
+     *     name="data",
+     *     in="query",
+     *     description="First name of the user to add",
+     *     @OA\Schema(
+     *       type="string", default="{'cle':'valeur','deuxiemecle':'deuxiemevaleur'}"
+     *     )
+     *   ),
+     *   @OA\Response(
+     *       response=409,
+     *       description="Not updated",
+     *   ),
+     *   @OA\Response(
+     *       response=404,
+     *       description="Resource Not Found",
+     *   ),
+     *   @OA\Response(
+     *       response=500,
+     *       description="User data not updated",
+     *       @OA\JsonContent(
+     *        @OA\Property(
+     *          property="message",
+     *          default="User data not updated",
+     *          description="Message",
+     *        ),
+     *        @OA\Property(
+     *          property="status",
+     *          default="fail",
+     *          description="Status",
+     *        ),
+     *       ),
+     *   ),
+     *   @OA\Response(
+     *     response=200,
+     *     description="User updated",
+     *     @OA\JsonContent(
+     *       @OA\Property(
+     *         property="lastnameUser",
+     *         default="lastname",
+     *         description="Last name of the user",
+     *       ),
+     *       @OA\Property(
+     *         property="firstnameUser",
+     *         default="firstname",
+     *         description="First name of the user",
+     *       ),
+     *       @OA\Property(
+     *         property="emailUser",
+     *         default="test@test.fr",
+     *         description="Email address of the user",
+     *       ),
+     *       @OA\Property(
+     *         property="passwordUser",
+     *         default="1234",
+     *         description="Password of the user",
+     *       ),
+     *       @OA\Property(
+     *         property="idRoleUser",
+     *         default="1",
+     *         description="Id of the user's role",
+     *       ),
+     *       @OA\Property(
+     *         property="created_at",
+     *         default="2021-02-05T09:00:57.000000Z",
+     *         description="Id of user who created this one",
+     *       ),
+     *       @OA\Property(
+     *         property="created_by",
+     *         default="1",
+     *         description="Id of user who created this one",
+     *       ),
+     *       @OA\Property(
+     *         property="updated_at",
+     *         default="2021-02-05T09:00:57.000000Z",
+     *         description="Id of user who modified this one",
+     *       ),
+     *       @OA\Property(
+     *         property="updated_by",
+     *         default="1",
+     *         description="Id of user who modified this one",
+     *       ),
+     *       @OA\Property(
+     *         property="data",
+     *         default="[]",
+     *         description="User data",
+     *       ),
+     *     )
+     *   ),
+     * )
      */
     public function updateAgency($id, Request $request)
     {
@@ -168,11 +653,91 @@ class AgencyController extends Controller
             return response()->json(['message' => 'Agency Update Failed!' . $e->getMessage()], 409);
         }
     }
+
     /**
-     * Delete agency function
-     *
-     * @param int $id
-     * @return Response
+     * @OA\Delete(
+     *   path="/api/v1/users/{id}",
+     *   summary="Delete a user",
+     *   tags={"User Controller"},
+     *   security={{ "apiAuth": {} }},
+     *   @OA\Parameter(
+     *     name="id",
+     *     in="path",
+     *     required=true,
+     *     description="ID of the user to delete",
+     *     @OA\Schema(
+     *       type="number", default="1"
+     *     )
+     *   ),
+     *   @OA\Response(
+     *       response=409,
+     *       description="Not deleted",
+     *   ),
+     *   @OA\Response(
+     *       response=404,
+     *       description="Resource Not Found"
+     *   ),
+     *   @OA\Response(
+     *       response=500,
+     *       description="User data not deleted"
+     *   ),
+     *   @OA\Response(
+     *     response=200,
+     *     description="User deleted",
+     *     @OA\JsonContent(
+     *       @OA\Property(
+     *         property="lastnameUser",
+     *         default="lastname",
+     *         description="Last name of the user",
+     *       ),
+     *       @OA\Property(
+     *         property="firstnameUser",
+     *         default="firstname",
+     *         description="First name of the user",
+     *       ),
+     *       @OA\Property(
+     *         property="emailUser",
+     *         default="test@test.fr",
+     *         description="Email address of the user",
+     *       ),
+     *       @OA\Property(
+     *         property="passwordUser",
+     *         default="1234",
+     *         description="Password of the user",
+     *       ),
+     *       @OA\Property(
+     *         property="idRoleUser",
+     *         default="1",
+     *         description="Id of the user's role",
+     *       ),
+     *       @OA\Property(
+     *         property="created_at",
+     *         default="2021-02-05T09:00:57.000000Z",
+     *         description="Id of user who created this one",
+     *       ),
+     *       @OA\Property(
+     *         property="created_by",
+     *         default="1",
+     *         description="Id of user who created this one",
+     *       ),
+     *       @OA\Property(
+     *         property="updated_at",
+     *         default="2021-02-05T09:00:57.000000Z",
+     *         description="Id of user who modified this one",
+     *       ),
+     *       @OA\Property(
+     *         property="updated_by",
+     *         default="1",
+     *         description="Id of user who modified this one",
+     *       ),
+     *       @OA\Property(
+     *         property="data",
+     *         default="[]",
+     *         description="User data",
+     *       ),
+     *     )
+     *   ),
+     * )
      */
     public function deleteAgency($id)
     {
@@ -194,7 +759,72 @@ class AgencyController extends Controller
             return response()->json(['message' => 'Agency deletion failed!' . $e->getMessage(), 'status' => 'fail'], 409);
         }
     }
-    //route
+    /**
+     * @OA\Post(
+     *   path="/api/v1/users/data/{id}",
+     *   summary="Add user data",
+     *   tags={"User Controller"},
+     *   security={{ "apiAuth": {} }},
+     *   @OA\Parameter(
+     *     name="id",
+     *     in="path",
+     *     required=true,
+     *     description="ID of the user",
+     *     @OA\Schema(
+     *       type="number", default="1"
+     *     )
+     *   ),
+     *   @OA\Parameter(
+     *     name="data",
+     *     in="query",
+     *     required=true,
+     *     description="data to add",
+     *     @OA\Schema(
+     *       type="string", default="{}"
+     *     )
+     *   ),
+     *   @OA\Response(
+     *       response=409,
+     *       description="Data not created",
+     *   ),
+     *   @OA\Response(
+     *       response=404,
+     *       description="Resource Not Found",
+     *   ),
+     *   @OA\Response(
+     *       response=500,
+     *       description="User data not added",
+     *       @OA\JsonContent(
+     *        @OA\Property(
+     *          property="message",
+     *          default="User data not added",
+     *          description="Message",
+     *        ),
+     *        @OA\Property(
+     *          property="status",
+     *          default="fail",
+     *          description="Status",
+     *        ),
+     *       ),
+     *   ),
+     *   @OA\Response(
+     *     response=201,
+     *     description="User data created",
+     *       @OA\JsonContent(
+     *        @OA\Property(
+     *          property="data",
+     *          default="[]",
+     *          description="data",
+     *        ),
+     *        @OA\Property(
+     *          property="status",
+     *          default="success",
+     *          description="Status",
+     *        ),
+     *       ),
+     *   ),
+     * )
+     */
     public function addData($id, Request $request)
     {
         try {
@@ -256,9 +886,9 @@ class AgencyController extends Controller
     {
         try {
             $agencyData = AgencyData::all()
-            ->where('idAgency', $idAgency)
-            ->where('keyAgencyData', $key)
-            ->first();
+                ->where('idAgency', $idAgency)
+                ->where('keyAgencyData', $key)
+                ->first();
 
             if ($agencyData == null)
                 return false;
