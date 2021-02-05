@@ -60,17 +60,15 @@ $router->group(['prefix' => 'api/v1'], function () use ($router) {
     // Prefix
     $router->group(['prefix' => 'roles'], function () use ($router) {
         // Matches "/api/v1/roles/ Get all roles
-        $router->get('', 'RoleController@allRoles');
+        $router->get('', 'RoleController@getRoles');
         // Matches "/api/v1/roles/{id} Get One role
-        $router->get('/{id}', 'RoleController@oneUserRole');
+        $router->get('/{id}', 'RoleController@getRole');
         // Matches "/api/v1/roles Post Register role
-        $router->post('', 'RoleController@createRole');
-        // Matches "/api/v1/roles/id Put all of One role
-        $router->put('/{id}', 'RoleController@put');
+        $router->post('', 'RoleController@addRole');
         // Matches "/api/v1/roles/id Patch one element of one role
-        $router->patch('/{id}', 'RoleController@patch');
+        $router->patch('/{id}', 'RoleController@updateRole');
         // Matches "/api/v1/roles/id Delete one role
-        $router->delete('/{id}', 'RoleController@delete');
+        $router->delete('/{id}', 'RoleController@deleteRole');
     });
     /*
     |------------------------|
