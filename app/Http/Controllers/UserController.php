@@ -6,7 +6,6 @@ use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\UserData;
 use Illuminate\Support\Facades\Auth;
-use OpenApi\Annotations as OA;
 
 /**
  * @OA\Parameter(
@@ -30,35 +29,6 @@ use OpenApi\Annotations as OA;
  */
 class UserController extends Controller
 {
-
-    /**
-  * @OA\Get(
-  *   path="/users",
-  *   summary="Return the list of users",
-  *   tags={"Hello"},
-  *   @OA\Parameter(ref="#/components/parameters/get_users_request_parameter_limit"),
-   *    @OA\Response(
-  *      response=200,
-  *      description="List of users",
-  *      @OA\JsonContent(
-  *        @OA\Property(
-  *          property="data",
-  *          description="List of users",
-  *          @OA\Schema(
-  *            type="array",
-  *            @OA\Items(ref="#/components/schemas/UserSchema")
-  *          )
-  *        )
-  *      )
-  *    )
-  * )
-  */
-    public function index (Request $request)
-    {
-    $users = User::paginate($request->get("limit", 10));
-    return ["data" => $users];
-    }
-
     /**
      * Constructor
      */
