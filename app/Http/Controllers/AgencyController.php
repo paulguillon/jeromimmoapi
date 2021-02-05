@@ -6,26 +6,6 @@ use App\Models\Agency;
 use App\Models\AgencyData;
 use Illuminate\Http\Request;
 
-/**
- * @OA\Parameter(
- *   parameter="get_agencies_request_parameter_limit",
- *   name="limit",
- *   description="Limit the number of results",
- *   in="query",
- *   @OA\Schema(
- *     type="number", default=10
- *   )
- * ),
- * @OA\SecurityScheme(
- *     type="http",
- *     description="Login with email and password to get the authentication token",
- *     name="Token based Based",
- *     in="header",
- *     scheme="bearer",
- *     bearerFormat="JWT",
- *     securityScheme="apiAuth",
- * )
- */
 class AgencyController extends Controller
 {
     /**
@@ -39,11 +19,11 @@ class AgencyController extends Controller
 
     /**
      * @OA\Get(
-     *   path="/api/v1/users",
-     *   summary="Return all users",
-     *   tags={"User Controller"},
+     *   path="/api/v1/agency",
+     *   summary="Return all agencies",
+     *   tags={"Agency controller"},
      *   security={{ "apiAuth": {} }},
-     *   @OA\Parameter(ref="#/components/parameters/get_users_request_parameter_limit"),
+     *   @OA\Parameter(ref="#/components/parameters/get_request_parameter_limit"),
      *   @OA\Response(
      *       response=401,
      *       description="Unauthenticated",
@@ -54,37 +34,32 @@ class AgencyController extends Controller
      *   ),
      *   @OA\Response(
      *     response=200,
-     *     description="List of users",
+     *     description="List of agencies",
      *     @OA\JsonContent(
      *       @OA\Property(
-     *         property="lastnameUser",
-     *         default="lastname",
-     *         description="Last name of the user",
-     *       ),
-     *       @OA\Property(
-     *         property="firstnameUser",
-     *         default="firstname",
-     *         description="First name of the user",
-     *       ),
-     *       @OA\Property(
-     *         property="emailUser",
-     *         default="test@test.fr",
-     *         description="Email address of the user",
-     *       ),
-     *       @OA\Property(
-     *         property="passwordUser",
-     *         default="1234",
-     *         description="Password of the user",
-     *       ),
-     *       @OA\Property(
-     *         property="idRoleUser",
+     *         property="idAgency",
      *         default="1",
-     *         description="Id of the user's role",
+     *         description="id of the agency",
+     *       ),
+     *       @OA\Property(
+     *         property="nameAgency",
+     *         default="name",
+     *         description="Name of the agency",
+     *       ),
+     *       @OA\Property(
+     *         property="zipCodeAgency",
+     *         default="zip code",
+     *         description="Zip code of the agency",
+     *       ),
+     *       @OA\Property(
+     *         property="cityAgency",
+     *         default="city",
+     *         description="City of the agency",
      *       ),
      *       @OA\Property(
      *         property="created_at",
      *         default="2021-02-05T09:00:57.000000Z",
-     *         description="Id of user who created this one",
+     *         description="Timestamp of the creation",
      *       ),
      *       @OA\Property(
      *         property="created_by",
@@ -94,7 +69,7 @@ class AgencyController extends Controller
      *       @OA\Property(
      *         property="updated_at",
      *         default="2021-02-05T09:00:57.000000Z",
-     *         description="Id of user who modified this one",
+     *         description="Timestamp of the last update",
      *       ),
      *       @OA\Property(
      *         property="updated_by",
@@ -125,15 +100,15 @@ class AgencyController extends Controller
     }
     /**
      * @OA\Get(
-     *   path="/api/v1/users/{id}",
-     *   summary="Return a user",
-     *   tags={"User Controller"},
+     *   path="/api/v1/agency/{id}",
+     *   summary="Return a agency",
+     *   tags={"Agency Controller"},
      *   security={{ "apiAuth": {} }},
      *   @OA\Parameter(
      *     name="id",
      *     in="path",
      *     required=true,
-     *     description="ID of the user to get",
+     *     description="ID of the agency to get",
      *     @OA\Schema(
      *       type="number", default=1
      *     )
@@ -148,11 +123,11 @@ class AgencyController extends Controller
      *   ),
      *   @OA\Response(
      *       response=500,
-     *       description="User not found",
+     *       description="Agency not found",
      *       @OA\JsonContent(
      *        @OA\Property(
      *          property="message",
-     *          default="The user ? doesn't exist",
+     *          default="The agency doesn't exist",
      *          description="Message",
      *        ),
      *        @OA\Property(
@@ -164,37 +139,32 @@ class AgencyController extends Controller
      *   ),
      *   @OA\Response(
      *     response=200,
-     *     description="One user",
+     *     description="One agency",
      *     @OA\JsonContent(
      *       @OA\Property(
-     *         property="lastnameUser",
-     *         default="lastname",
-     *         description="Last name of the user",
-     *       ),
-     *       @OA\Property(
-     *         property="firstnameUser",
-     *         default="firstname",
-     *         description="First name of the user",
-     *       ),
-     *       @OA\Property(
-     *         property="emailUser",
-     *         default="test@test.fr",
-     *         description="Email address of the user",
-     *       ),
-     *       @OA\Property(
-     *         property="passwordUser",
-     *         default="1234",
-     *         description="Password of the user",
-     *       ),
-     *       @OA\Property(
-     *         property="idRoleUser",
+     *         property="idAgency",
      *         default="1",
-     *         description="Id of the user's role",
+     *         description="Id of the agency",
+     *       ),
+     *       @OA\Property(
+     *         property="nameAgency",
+     *         default="name",
+     *         description="Name of the agency",
+     *       ),
+     *       @OA\Property(
+     *         property="zipCodeAgency",
+     *         default="zip code",
+     *         description="Zip code of the agency",
+     *       ),
+     *       @OA\Property(
+     *         property="cityAgency",
+     *         default="city",
+     *         description="City of the agency",
      *       ),
      *       @OA\Property(
      *         property="created_at",
      *         default="2021-02-05T09:00:57.000000Z",
-     *         description="Id of user who created this one",
+     *         description="Timestamp of the creation",
      *       ),
      *       @OA\Property(
      *         property="created_by",
@@ -204,7 +174,7 @@ class AgencyController extends Controller
      *       @OA\Property(
      *         property="updated_at",
      *         default="2021-02-05T09:00:57.000000Z",
-     *         description="Id of user who modified this one",
+     *         description="Timestamp of the last update",
      *       ),
      *       @OA\Property(
      *         property="updated_by",
@@ -217,7 +187,7 @@ class AgencyController extends Controller
      *         description="User data",
      *       ),
      *     )
-     *   ),
+     *   )
      * )
      */
     public function getAgency($id)
@@ -232,63 +202,36 @@ class AgencyController extends Controller
         }
     }
 
-/**
+    /**
      * @OA\Post(
-     *   path="/api/v1/users",
-     *   summary="Add a user",
-     *   tags={"User Controller"},
+     *   path="/api/v1/agency",
+     *   summary="Add a agency",
+     *   tags={"Agency Controller"},
      *   @OA\Parameter(
-     *     name="firstnameUser",
+     *     name="nameAgency",
      *     in="query",
      *     required=true,
-     *     description="First name of the user to add",
+     *     description="Name of the agency to add",
      *     @OA\Schema(
-     *       type="string", default="first"
+     *       type="string", default="Name agency"
      *     )
      *   ),
      *   @OA\Parameter(
-     *     name="lastnameUser",
+     *     name="zipCodeAgency",
      *     in="query",
      *     required=true,
-     *     description="Last name of the user to add",
+     *     description="Zip code of the agency to add",
      *     @OA\Schema(
-     *       type="string", default="last"
+     *       type="string", default="76000"
      *     )
      *   ),
      *   @OA\Parameter(
-     *     name="emailUser",
+     *     name="cityAgency",
      *     in="query",
      *     required=true,
-     *     description="Email of the user to add",
+     *     description="City of the agency to add",
      *     @OA\Schema(
-     *       type="string", default="test@test.fr"
-     *     )
-     *   ),
-     *   @OA\Parameter(
-     *     name="passwordUser",
-     *     in="query",
-     *     required=true,
-     *     description="password of the user to add",
-     *     @OA\Schema(
-     *       type="string", default="test"
-     *     )
-     *   ),
-     *   @OA\Parameter(
-     *     name="passwordUser_confirmation",
-     *     in="query",
-     *     required=true,
-     *     description="Confirmation password of the user to add",
-     *     @OA\Schema(
-     *       type="string", default="test"
-     *     )
-     *   ),
-     *   @OA\Parameter(
-     *     name="idRoleUser",
-     *     in="query",
-     *     required=true,
-     *     description="Role id of the user to add",
-     *     @OA\Schema(
-     *       type="number", default="1"
+     *       type="string", default="Le Havre"
      *     )
      *   ),
      *   @OA\Parameter(
@@ -313,7 +256,7 @@ class AgencyController extends Controller
      *     name="data",
      *     in="query",
      *     required=true,
-     *     description="First name of the user to add",
+     *     description="Name of the data agency to add",
      *     @OA\Schema(
      *       type="string", default="{'cle':'valeur','deuxiemecle':'deuxiemevaleur'}"
      *     )
@@ -328,11 +271,11 @@ class AgencyController extends Controller
      *   ),
      *   @OA\Response(
      *       response=500,
-     *       description="User data not added",
+     *       description="Agency data not added",
      *       @OA\JsonContent(
      *        @OA\Property(
      *          property="message",
-     *          default="User data not added",
+     *          default="Agency data not added",
      *          description="Message",
      *        ),
      *        @OA\Property(
@@ -344,37 +287,27 @@ class AgencyController extends Controller
      *   ),
      *   @OA\Response(
      *     response=201,
-     *     description="User created",
+     *     description="Agency created",
      *     @OA\JsonContent(
      *       @OA\Property(
-     *         property="lastnameUser",
-     *         default="lastname",
-     *         description="Last name of the user",
+     *         property="nameAgency",
+     *         default="name",
+     *         description="Name of the agency",
      *       ),
      *       @OA\Property(
-     *         property="firstnameUser",
-     *         default="firstname",
-     *         description="First name of the user",
+     *         property="zipCodeAgency",
+     *         default="zipCode",
+     *         description="Zip Code of the Agency",
      *       ),
      *       @OA\Property(
-     *         property="emailUser",
-     *         default="test@test.fr",
-     *         description="Email address of the user",
-     *       ),
-     *       @OA\Property(
-     *         property="passwordUser",
-     *         default="1234",
-     *         description="Password of the user",
-     *       ),
-     *       @OA\Property(
-     *         property="idRoleUser",
-     *         default="1",
-     *         description="Id of the user's role",
+     *         property="cityAgency",
+     *         default="city Agency",
+     *         description="City of the agency",
      *       ),
      *       @OA\Property(
      *         property="created_at",
      *         default="2021-02-05T09:00:57.000000Z",
-     *         description="Id of user who created this one",
+     *         description="Timestamp of the creation",
      *       ),
      *       @OA\Property(
      *         property="created_by",
@@ -384,7 +317,7 @@ class AgencyController extends Controller
      *       @OA\Property(
      *         property="updated_at",
      *         default="2021-02-05T09:00:57.000000Z",
-     *         description="Id of user who modified this one",
+     *         description="Timestamp of the last update",
      *       ),
      *       @OA\Property(
      *         property="updated_by",
@@ -440,65 +373,41 @@ class AgencyController extends Controller
 
     /**
      * @OA\Patch(
-     *   path="/api/v1/users/{id}",
-     *   summary="Update a user",
-     *   tags={"User Controller"},
+     *   path="/api/v1/agency/{id}",
+     *   summary="Update a agency",
+     *   tags={"Agency Controller"},
      *   security={{ "apiAuth": {} }},
      *   @OA\Parameter(
      *     name="id",
      *     in="path",
      *     required=true,
-     *     description="ID of the user to update",
+     *     description="ID of the agency to update",
      *     @OA\Schema(
      *       type="number", default="1"
      *     )
      *   ),
      *   @OA\Parameter(
-     *     name="firstnameUser",
+     *     name="nameAgency",
      *     in="query",
-     *     description="First name of the user to add",
+     *     description="Name of the agency to add",
      *     @OA\Schema(
-     *       type="string", default="first"
+     *       type="string", default="Agence"
      *     )
      *   ),
      *   @OA\Parameter(
-     *     name="lastnameUser",
+     *     name="zipCodeAgency",
      *     in="query",
-     *     description="Last name of the user to add",
+     *     description="Zip Code of the agency to add",
      *     @OA\Schema(
-     *       type="string", default="last"
+     *       type="string", default="76000"
      *     )
      *   ),
      *   @OA\Parameter(
-     *     name="emailUser",
+     *     name="cityAgency",
      *     in="query",
-     *     description="Email of the user to add",
+     *     description="City of the agency to add",
      *     @OA\Schema(
-     *       type="string", default="test@test.fr"
-     *     )
-     *   ),
-     *   @OA\Parameter(
-     *     name="passwordUser",
-     *     in="query",
-     *     description="password of the user to add",
-     *     @OA\Schema(
-     *       type="string", default="test"
-     *     )
-     *   ),
-     *   @OA\Parameter(
-     *     name="passwordUser_confirmation",
-     *     in="query",
-     *     description="Confirmation password of the user to add",
-     *     @OA\Schema(
-     *       type="string", default="test"
-     *     )
-     *   ),
-     *   @OA\Parameter(
-     *     name="idRoleUser",
-     *     in="query",
-     *     description="Role id of the user to add",
-     *     @OA\Schema(
-     *       type="number", default="1"
+     *       type="string", default="LE Havre"
      *     )
      *   ),
      *   @OA\Parameter(
@@ -520,7 +429,7 @@ class AgencyController extends Controller
      *   @OA\Parameter(
      *     name="data",
      *     in="query",
-     *     description="First name of the user to add",
+     *     description="Data to add",
      *     @OA\Schema(
      *       type="string", default="{'cle':'valeur','deuxiemecle':'deuxiemevaleur'}"
      *     )
@@ -535,11 +444,11 @@ class AgencyController extends Controller
      *   ),
      *   @OA\Response(
      *       response=500,
-     *       description="User data not updated",
+     *       description="Agency data not updated",
      *       @OA\JsonContent(
      *        @OA\Property(
      *          property="message",
-     *          default="User data not updated",
+     *          default="Agency data not updated",
      *          description="Message",
      *        ),
      *        @OA\Property(
@@ -551,32 +460,22 @@ class AgencyController extends Controller
      *   ),
      *   @OA\Response(
      *     response=200,
-     *     description="User updated",
+     *     description="Agency updated",
      *     @OA\JsonContent(
      *       @OA\Property(
-     *         property="lastnameUser",
-     *         default="lastname",
-     *         description="Last name of the user",
+     *         property="nameagency",
+     *         default="Agence",
+     *         description="Name of the agency",
      *       ),
      *       @OA\Property(
-     *         property="firstnameUser",
-     *         default="firstname",
-     *         description="First name of the user",
+     *         property="zipCodeAgency",
+     *         default="76600",
+     *         description="sip code of the agency",
      *       ),
      *       @OA\Property(
-     *         property="emailUser",
-     *         default="test@test.fr",
-     *         description="Email address of the user",
-     *       ),
-     *       @OA\Property(
-     *         property="passwordUser",
-     *         default="1234",
-     *         description="Password of the user",
-     *       ),
-     *       @OA\Property(
-     *         property="idRoleUser",
-     *         default="1",
-     *         description="Id of the user's role",
+     *         property="city",
+     *         default="Le Havre",
+     *         description="City of the agency",
      *       ),
      *       @OA\Property(
      *         property="created_at",
@@ -591,7 +490,7 @@ class AgencyController extends Controller
      *       @OA\Property(
      *         property="updated_at",
      *         default="2021-02-05T09:00:57.000000Z",
-     *         description="Id of user who modified this one",
+     *         description="Timestamp of the last update",
      *       ),
      *       @OA\Property(
      *         property="updated_by",
@@ -601,7 +500,7 @@ class AgencyController extends Controller
      *       @OA\Property(
      *         property="data",
      *         default="[]",
-     *         description="User data",
+     *         description="Agency data",
      *       ),
      *     )
      *   ),
@@ -656,15 +555,15 @@ class AgencyController extends Controller
 
     /**
      * @OA\Delete(
-     *   path="/api/v1/users/{id}",
-     *   summary="Delete a user",
-     *   tags={"User Controller"},
+     *   path="/api/v1/agency/{id}",
+     *   summary="Delete a agency",
+     *   tags={"Agency Controller"},
      *   security={{ "apiAuth": {} }},
      *   @OA\Parameter(
      *     name="id",
      *     in="path",
      *     required=true,
-     *     description="ID of the user to delete",
+     *     description="ID of the agency to delete",
      *     @OA\Schema(
      *       type="number", default="1"
      *     )
@@ -679,51 +578,41 @@ class AgencyController extends Controller
      *   ),
      *   @OA\Response(
      *       response=500,
-     *       description="User data not deleted"
+     *       description="Agency data not deleted"
      *   ),
      *   @OA\Response(
      *     response=200,
-     *     description="User deleted",
+     *     description="Agency deleted",
      *     @OA\JsonContent(
      *       @OA\Property(
-     *         property="lastnameUser",
-     *         default="lastname",
-     *         description="Last name of the user",
+     *         property="nameAgency",
+     *         default="Agence",
+     *         description="Name of the agency",
      *       ),
      *       @OA\Property(
-     *         property="firstnameUser",
-     *         default="firstname",
-     *         description="First name of the user",
+     *         property="zipCodeAgency",
+     *         default="76000",
+     *         description="zipCode of the agency",
      *       ),
      *       @OA\Property(
-     *         property="emailUser",
-     *         default="test@test.fr",
-     *         description="Email address of the user",
-     *       ),
-     *       @OA\Property(
-     *         property="passwordUser",
-     *         default="1234",
-     *         description="Password of the user",
-     *       ),
-     *       @OA\Property(
-     *         property="idRoleUser",
-     *         default="1",
-     *         description="Id of the user's role",
+     *         property="cityAgency",
+     *         default="Le Havre",
+     *         description="City of the agency",
      *       ),
      *       @OA\Property(
      *         property="created_at",
      *         default="2021-02-05T09:00:57.000000Z",
-     *         description="Id of user who created this one",
+     *         description="Timestamp of the creation",
      *       ),
      *       @OA\Property(
      *         property="created_by",
      *         default="1",
-     *         description="Id of user who created this one",
+     *         description="Id of agency who created this one",
      *       ),
      *       @OA\Property(
      *         property="updated_at",
      *         default="2021-02-05T09:00:57.000000Z",
-     *         description="Id of user who modified this one",
+     *         description="Timestamp of the last update",
      *       ),
      *       @OA\Property(
      *         property="updated_by",
@@ -733,7 +622,7 @@ class AgencyController extends Controller
      *       @OA\Property(
      *         property="data",
      *         default="[]",
-     *         description="User data",
+     *         description="Agency data",
      *       ),
      *     )
      *   ),
@@ -761,15 +650,15 @@ class AgencyController extends Controller
     }
     /**
      * @OA\Post(
-     *   path="/api/v1/users/data/{id}",
-     *   summary="Add user data",
-     *   tags={"User Controller"},
+     *   path="/api/v1/agency/data/{id}",
+     *   summary="Add agency data",
+     *   tags={"Agency Controller"},
      *   security={{ "apiAuth": {} }},
      *   @OA\Parameter(
      *     name="id",
      *     in="path",
      *     required=true,
-     *     description="ID of the user",
+     *     description="ID of the agency",
      *     @OA\Schema(
      *       type="number", default="1"
      *     )

@@ -50,14 +50,3 @@ class Controller extends BaseController
         ], 200);
     }
 }
-
-/**
- * @OA\Info(
- *   title="Your Awesome Modules's API",
- *  version="1.0.0",
- *  @OA\Contact(
- *    email="developers@module.com",
- *    name="Developer Team"
- *  )
- * )
- */
