@@ -6,7 +6,6 @@ use Illuminate\Http\Request;
 use App\Models\Visit;
 use App\Models\VisitData;
 
-
 class VisitController extends Controller
 {
     /**
@@ -19,10 +18,62 @@ class VisitController extends Controller
     }
 
     /**
-     * Get all visits
-     *
-     * @param  Request  $request
-     * @return Response
+     * @OA\Get(
+     *   path="/api/v1/visit",
+     *   summary="Return all visits",
+     *   tags={"Visit Controller"},
+     *   security={{ "apiAuth": {} }},
+     *   @OA\Parameter(ref="#/components/parameters/get_request_parameter_limit"),
+     *   @OA\Response(
+     *       response=401,
+     *       description="Unauthenticated",
+     *   ),
+     *   @OA\Response(
+     *       response=404,
+     *       description="Resource Not Found"
+     *   ),
+     *   @OA\Response(
+     *     response=200,
+     *     description="List of visits",
+     *     @OA\JsonContent(
+     *       @OA\Property(
+     *         property="idVisit",
+     *         default="1",
+     *         description="Id of the visit",
+     *       ),
+     *       @OA\Property(
+     *         property="dateVisit",
+     *         default="2020-10-20 20:20:20",
+     *         description="Date of the visit",
+     *       ),
+     *       @OA\Property(
+     *         property="created_at",
+     *         default="2021-02-05T09:00:57.000000Z",
+     *         description="Timestamp of the creation",
+     *       ),
+     *       @OA\Property(
+     *         property="created_by",
+     *         default="1",
+     *         description="Id of user who created this one",
+     *       ),
+     *       @OA\Property(
+     *         property="updated_at",
+     *         default="2021-02-05T09:00:57.000000Z",
+     *         description="Timestamp of the last update",
+     *       ),
+     *       @OA\Property(
+     *         property="updated_by",
+     *         default="1",
+     *         description="Id of user who modified this one",
+     *       ),
+     *       @OA\Property(
+     *         property="data",
+     *         default="[]",
+     *         description="Visit data",
+     *       ),
+     *     )
+     *   )
+     * )
      */
     public function getVisits(Request $request)
     {
@@ -38,11 +89,88 @@ class VisitController extends Controller
     }
 
     /**
-     * Get one visit
-     *
-     * @param  Request  $request
-     * @return Response
+     * @OA\Get(
+     *   path="/api/v1/visit/{id}",
+     *   summary="Return a visit",
+     *   tags={"Visit Controller"},
+     *   security={{ "apiAuth": {} }},
+     *   @OA\Parameter(
+     *     name="id",
+     *     in="path",
+     *     required=true,
+     *     description="ID of the visit to get",
+     *     @OA\Schema(
+     *       type="number", default=1
+     *     )
+     *   ),
+     *   @OA\Response(
+     *       response=401,
+     *       description="Unauthenticated",
+     *   ),
+     *   @OA\Response(
+     *       response=404,
+     *       description="Resource Not Found"
+     *   ),
+     *   @OA\Response(
+     *       response=500,
+     *       description="Visit not found",
+     *       @OA\JsonContent(
+     *        @OA\Property(
+     *          property="message",
+     *          default="The visit ? doesn't exist",
+     *          description="Message",
+     *        ),
+     *        @OA\Property(
+     *          property="status",
+     *          default="fail",
+     *          description="Status",
+     *        ),
+     *       ),
+     *   ),
+     *   @OA\Response(
+     *     response=200,
+     *     description="One visit",
+     *     @OA\JsonContent(
+     *       @OA\Property(
+     *         property="idVisit",
+     *         default="1",
+     *         description="id of the visit",
+     *       ),
+     *       @OA\Property(
+     *         property="dateVisit",
+     *         default="2020-10-20 20:20:20",
+     *         description="Last name of the user",
+     *       ),
+     *       @OA\Property(
+     *         property="created_at",
+     *         default="2021-02-05T09:00:57.000000Z",
+     *         description="Timestamp of the creation",
+     *       ),
+     *       @OA\Property(
+     *         property="created_by",
+     *         default="1",
+     *         description="Id of user who created this one",
+     *       ),
+     *       @OA\Property(
+     *         property="updated_at",
+     *         default="2021-02-05T09:00:57.000000Z",
+     *         description="Timestamp of the last update",
+     *       ),
+     *       @OA\Property(
+     *         property="updated_by",
+     *         default="1",
+     *         description="Id of user who modified this one",
+     *       ),
+     *       @OA\Property(
+     *         property="data",
+     *         default="[]",
+     *         description="Visit data",
+     *       ),
+     *     )
+     *   ),
+     * )
      */
+
     public function getVisit($id)
     {
         try {
@@ -55,12 +183,114 @@ class VisitController extends Controller
         }
     }
     /**
-     * Store a new visit.
-     *
-     * @param  Request  $request
-     * @return Response
+     * @OA\Post(
+     *   path="/api/v1/visit",
+     *   summary="Add a visit",
+     *   tags={"Visit Controller"},
+     *   security={{ "apiAuth": {} }},
+     *   @OA\Parameter(
+     *     name="dateVisit",
+     *     in="query",
+     *     required=true,
+     *     description="Date of the visit",
+     *     @OA\Schema(
+     *       type="string", default="2020-10-20 20:20:20"
+     *     )
+     *   ),
+     *   @OA\Parameter(
+     *     name="created_by",
+     *     in="query",
+     *     required=true,
+     *     description="ID of the logged user",
+     *     @OA\Schema(
+     *       type="number", default="1"
+     *     )
+     *   ),
+     *   @OA\Parameter(
+     *     name="updated_by",
+     *     in="query",
+     *     required=true,
+     *     description="ID of the logged user",
+     *     @OA\Schema(
+     *       type="number", default="1"
+     *     )
+     *   ),
+     *   @OA\Parameter(
+     *     name="data",
+     *     in="query",
+     *     required=true,
+     *     description="First name of the visit to add",
+     *     @OA\Schema(
+     *       type="string", default="{'cle':'valeur','deuxiemecle':'deuxiemevaleur'}"
+     *     )
+     *   ),
+     *   @OA\Response(
+     *       response=409,
+     *       description="Not created",
+     *   ),
+     *   @OA\Response(
+     *       response=404,
+     *       description="Resource Not Found",
+     *   ),
+     *   @OA\Response(
+     *       response=500,
+     *       description="Visit data not added",
+     *       @OA\JsonContent(
+     *        @OA\Property(
+     *          property="message",
+     *          default="Visit data not added",
+     *          description="Message",
+     *        ),
+     *        @OA\Property(
+     *          property="status",
+     *          default="fail",
+     *          description="Status",
+     *        ),
+     *       ),
+     *   ),
+     *   @OA\Response(
+     *     response=201,
+     *     description="Visit created",
+     *     @OA\JsonContent(
+     *       @OA\Property(
+     *         property="idVisit",
+     *         default="1",
+     *         description="id of the visit",
+     *       ),
+     *       @OA\Property(
+     *         property="dateVisit",
+     *         default="2020-10-20 20:20:20",
+     *         description="Last name of the user",
+     *       ),
+     *       @OA\Property(
+     *         property="created_at",
+     *         default="2021-02-05T09:00:57.000000Z",
+     *         description="Timestamp of the creation",
+     *       ),
+     *       @OA\Property(
+     *         property="created_by",
+     *         default="1",
+     *         description="Id of user who created this one",
+     *       ),
+     *       @OA\Property(
+     *         property="updated_at",
+     *         default="2021-02-05T09:00:57.000000Z",
+     *         description="Timestamp of the last update",
+     *       ),
+     *       @OA\Property(
+     *         property="updated_by",
+     *         default="1",
+     *         description="Id of user who modified this one",
+     *       ),
+     *       @OA\Property(
+     *         property="data",
+     *         default="[]",
+     *         description="User data",
+     *       ),
+     *     )
+     *   ),
+     * )
      */
-
     public function addVisit(Request $request)
     {
         //validate incoming request
@@ -95,11 +325,118 @@ class VisitController extends Controller
     }
 
     /**
-     * Put visit
-     *
-     * @param  string   $id
-     * @param  Request  $request
-     * @return Response
+     * @OA\Patch(
+     *   path="/api/v1/visit/{id}",
+     *   summary="Update a visit",
+     *   tags={"Visit Controller"},
+     *   security={{ "apiAuth": {} }},
+     *   @OA\Parameter(
+     *     name="id",
+     *     in="path",
+     *     required=true,
+     *     description="ID of the visit to update",
+     *     @OA\Schema(
+     *       type="number", default="1"
+     *     )
+     *   ),
+     *   @OA\Parameter(
+     *     name="dateVisit",
+     *     in="query",
+     *     description="Date of the visit",
+     *     @OA\Schema(
+     *       type="string", default="2020-10-20 20:20:20"
+     *     )
+     *   ),
+     *   @OA\Parameter(
+     *     name="created_by",
+     *     in="query",
+     *     description="ID of the logged user",
+     *     @OA\Schema(
+     *       type="number", default="1"
+     *     )
+     *   ),
+     *   @OA\Parameter(
+     *     name="updated_by",
+     *     in="query",  
+     *     description="ID of the logged user",
+     *     @OA\Schema(
+     *       type="number", default="1"
+     *     )
+     *   ),
+     *   @OA\Parameter(
+     *     name="data",
+     *     in="query",
+     *     description="data to add",
+     *     @OA\Schema(
+     *       type="string", default="{'cle':'valeur','deuxiemecle':'deuxiemevaleur'}"
+     *     )
+     *   ),
+     *   @OA\Response(
+     *       response=409,
+     *       description="Not updated",
+     *   ),
+     *   @OA\Response(
+     *       response=404,
+     *       description="Resource Not Found",
+     *   ),
+     *   @OA\Response(
+     *       response=500,
+     *       description="Visit data not updated",
+     *       @OA\JsonContent(
+     *        @OA\Property(
+     *          property="message",
+     *          default="Visit data not updated",
+     *          description="Message",
+     *        ),
+     *        @OA\Property(
+     *          property="status",
+     *          default="fail",
+     *          description="Status",
+     *        ),
+     *       ),
+     *   ),
+     *   @OA\Response(
+     *     response=200,
+     *     description="Visit updated",
+     *     @OA\JsonContent(
+     *       @OA\Property(
+     *         property="idVisit",
+     *         default="1",
+     *         description="id of the visit",
+     *       ),
+     *       @OA\Property(
+     *         property="dateVisit",
+     *         default="2020-12-20 20:20:20",
+     *         description="Date of the visit",
+     *       ),
+     *       @OA\Property(
+     *         property="created_at",
+     *         default="2021-02-05T09:00:57.000000Z",
+     *         description="Timestamp of the creation",
+     *       ),
+     *       @OA\Property(
+     *         property="created_by",
+     *         default="1",
+     *         description="Id of user who created this visit",
+     *       ),
+     *       @OA\Property(
+     *         property="updated_at",
+     *         default="2021-02-05T09:00:57.000000Z",
+     *         description="Timestamp of the last update",
+     *       ),
+     *       @OA\Property(
+     *         property="updated_by",
+     *         default="1",
+     *         description="Id of user who modified this visit",
+     *       ),
+     *       @OA\Property(
+     *         property="data",
+     *         default="[]",
+     *         description="Visit data",
+     *       ),
+     *     )
+     *   ),
+     * )
      */
     public function updateVisit($id, Request $request)
     {
@@ -147,10 +484,74 @@ class VisitController extends Controller
     }
 
     /**
-     * Delete visit function
-     *
-     * @param int $id
-     * @return Response
+     * @OA\Delete(
+     *   path="/api/v1/visit/{id}",
+     *   summary="Delete a visit",
+     *   tags={"Visit Controller"},
+     *   security={{ "apiAuth": {} }},
+     *   @OA\Parameter(
+     *     name="id",
+     *     in="path",
+     *     required=true,
+     *     description="ID of the visit to delete",
+     *     @OA\Schema(
+     *       type="number", default="1"
+     *     )
+     *   ),
+     *   @OA\Response(
+     *       response=409,
+     *       description="Not deleted",
+     *   ),
+     *   @OA\Response(
+     *       response=404,
+     *       description="Resource Not Found"
+     *   ),
+     *   @OA\Response(
+     *       response=500,
+     *       description="Visit data not deleted"
+     *   ),
+     *   @OA\Response(
+     *     response=200,
+     *     description="Visit deleted",
+     *     @OA\JsonContent(
+     *       @OA\Property(
+     *         property="idVisit",
+     *         default="1",
+     *         description="id of the visit",
+     *       ),
+     *       @OA\Property(
+     *         property="dateVisit",
+     *         default="2020-12-20 20:20",
+     *         description="Date of the visit",
+     *       ),
+     *       @OA\Property(
+     *         property="created_at",
+     *         default="2021-02-05T09:00:57.000000Z",
+     *         description="Timestamp of the creation",
+     *       ),
+     *       @OA\Property(
+     *         property="created_by",
+     *         default="1",
+     *         description="Id of user who created this one",
+     *       ),
+     *       @OA\Property(
+     *         property="updated_at",
+     *         default="2021-02-05T09:00:57.000000Z",
+     *         description="Timestamp of the last update",
+     *       ),
+     *       @OA\Property(
+     *         property="updated_by",
+     *         default="1",
+     *         description="Id of user who modified this one",
+     *       ),
+     *       @OA\Property(
+     *         property="data",
+     *         default="[]",
+     *         description="User data",
+     *       ),
+     *     )
+     *   ),
+     * )
      */
     public function deleteVisit($id)
     {
@@ -172,8 +573,72 @@ class VisitController extends Controller
             return response()->json(['message' => 'Visit deletion failed!' . $e->getMessage(), 'status' => 'fail'], 409);
         }
     }
-
-    //route
+    /**
+     * @OA\Post(
+     *   path="/api/v1/visit/data/{id}",
+     *   summary="Add visit data",
+     *   tags={"Visit Controller"},
+     *   security={{ "apiAuth": {} }},
+     *   @OA\Parameter(
+     *     name="id",
+     *     in="path",
+     *     required=true,
+     *     description="ID of the visit",
+     *     @OA\Schema(
+     *       type="number", default="1"
+     *     )
+     *   ),
+     *   @OA\Parameter(
+     *     name="data",
+     *     in="query",
+     *     required=true,
+     *     description="data to add",
+     *     @OA\Schema(
+     *       type="string", default="{'cle':'valeur','deuxiemecle':'deuxiemevaleur'}"
+     *     )
+     *   ),
+     *   @OA\Response(
+     *       response=409,
+     *       description="Data not created",
+     *   ),
+     *   @OA\Response(
+     *       response=404,
+     *       description="Resource Not Found",
+     *   ),
+     *   @OA\Response(
+     *       response=500,
+     *       description="Visit data not added",
+     *       @OA\JsonContent(
+     *        @OA\Property(
+     *          property="message",
+     *          default="User data not added",
+     *          description="Message",
+     *        ),
+     *        @OA\Property(
+     *          property="status",
+     *          default="fail",
+     *          description="Status",
+     *        ),
+     *       ),
+     *   ),
+     *   @OA\Response(
+     *     response=201,
+     *     description="Visit data created",
+     *       @OA\JsonContent(
+     *        @OA\Property(
+     *          property="data",
+     *          default="[]",
+     *          description="data",
+     *        ),
+     *        @OA\Property(
+     *          property="status",
+     *          default="success",
+     *          description="Status",
+     *        ),
+     *       ),
+     *   ),
+     * )
+     */
     public function addData($id, Request $request)
     {
         try {
