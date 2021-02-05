@@ -96,7 +96,7 @@ class UserController extends Controller
      *   summary="Return all users",
      *   tags={"User Controller"},
      *   security={{ "apiAuth": {} }},
-     *   @OA\Parameter(ref="#/components/parameters/get_users_request_parameter_limit"),
+     *   @OA\Parameter(ref="#/components/parameters/get_request_parameter_limit"),
      *   @OA\Response(
      *       response=401,
      *       description="Unauthenticated",
