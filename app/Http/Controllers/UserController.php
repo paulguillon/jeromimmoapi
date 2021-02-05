@@ -7,26 +7,6 @@ use App\Models\User;
 use App\Models\UserData;
 use Illuminate\Support\Facades\Auth;
 
-/**
- * @OA\Parameter(
- *   parameter="get_users_request_parameter_limit",
- *   name="limit",
- *   description="Limit the number of results",
- *   in="query",
- *   @OA\Schema(
- *     type="number", default=10
- *   )
- * ),
- * @OA\SecurityScheme(
- *     type="http",
- *     description="Login with email and password to get the authentication token",
- *     name="Token based Based",
- *     in="header",
- *     scheme="bearer",
- *     bearerFormat="JWT",
- *     securityScheme="apiAuth",
- * )
- */
 class UserController extends Controller
 {
     /**
@@ -116,7 +96,7 @@ class UserController extends Controller
      *   summary="Return all users",
      *   tags={"User Controller"},
      *   security={{ "apiAuth": {} }},
-     *   @OA\Parameter(ref="#/components/parameters/get_users_request_parameter_limit"),
+     *   @OA\Parameter(ref="#/components/parameters/get_request_parameter_limit"),
      *   @OA\Response(
      *       response=401,
      *       description="Unauthenticated",
@@ -129,6 +109,11 @@ class UserController extends Controller
      *     response=200,
      *     description="List of users",
      *     @OA\JsonContent(
+     *       @OA\Property(
+     *         property="idUser",
+     *         default="1",
+     *         description="id of the user",
+     *       ),
      *       @OA\Property(
      *         property="lastnameUser",
      *         default="lastname",
@@ -157,7 +142,7 @@ class UserController extends Controller
      *       @OA\Property(
      *         property="created_at",
      *         default="2021-02-05T09:00:57.000000Z",
-     *         description="Id of user who created this one",
+     *         description="Timestamp of the creation",
      *       ),
      *       @OA\Property(
      *         property="created_by",
@@ -167,7 +152,7 @@ class UserController extends Controller
      *       @OA\Property(
      *         property="updated_at",
      *         default="2021-02-05T09:00:57.000000Z",
-     *         description="Id of user who modified this one",
+     *         description="Timestamp of the last update",
      *       ),
      *       @OA\Property(
      *         property="updated_by",
@@ -240,6 +225,11 @@ class UserController extends Controller
      *     description="One user",
      *     @OA\JsonContent(
      *       @OA\Property(
+     *         property="idUser",
+     *         default="1",
+     *         description="id of the user",
+     *       ),
+     *       @OA\Property(
      *         property="lastnameUser",
      *         default="lastname",
      *         description="Last name of the user",
@@ -267,7 +257,7 @@ class UserController extends Controller
      *       @OA\Property(
      *         property="created_at",
      *         default="2021-02-05T09:00:57.000000Z",
-     *         description="Id of user who created this one",
+     *         description="Timestamp of the creation",
      *       ),
      *       @OA\Property(
      *         property="created_by",
@@ -277,7 +267,7 @@ class UserController extends Controller
      *       @OA\Property(
      *         property="updated_at",
      *         default="2021-02-05T09:00:57.000000Z",
-     *         description="Id of user who modified this one",
+     *         description="Timestamp of the last update",
      *       ),
      *       @OA\Property(
      *         property="updated_by",
@@ -316,6 +306,7 @@ class UserController extends Controller
      *   path="/api/v1/users",
      *   summary="Add a user",
      *   tags={"User Controller"},
+     *   security={{ "apiAuth": {} }},
      *   @OA\Parameter(
      *     name="firstnameUser",
      *     in="query",
@@ -426,6 +417,11 @@ class UserController extends Controller
      *     description="User created",
      *     @OA\JsonContent(
      *       @OA\Property(
+     *         property="idUser",
+     *         default="1",
+     *         description="id of the user",
+     *       ),
+     *       @OA\Property(
      *         property="lastnameUser",
      *         default="lastname",
      *         description="Last name of the user",
@@ -453,7 +449,7 @@ class UserController extends Controller
      *       @OA\Property(
      *         property="created_at",
      *         default="2021-02-05T09:00:57.000000Z",
-     *         description="Id of user who created this one",
+     *         description="Timestamp of the creation",
      *       ),
      *       @OA\Property(
      *         property="created_by",
@@ -463,7 +459,7 @@ class UserController extends Controller
      *       @OA\Property(
      *         property="updated_at",
      *         default="2021-02-05T09:00:57.000000Z",
-     *         description="Id of user who modified this one",
+     *         description="Timestamp of the last update",
      *       ),
      *       @OA\Property(
      *         property="updated_by",
@@ -533,6 +529,11 @@ class UserController extends Controller
      *     @OA\Schema(
      *       type="number", default="1"
      *     )
+     *   ),
+     *   @OA\Property(
+     *     property="idUser",
+     *     default="1",
+     *     description="id of the user",
      *   ),
      *   @OA\Parameter(
      *     name="firstnameUser",
@@ -635,6 +636,11 @@ class UserController extends Controller
      *     description="User updated",
      *     @OA\JsonContent(
      *       @OA\Property(
+     *         property="idUser",
+     *         default="1",
+     *         description="id of the user",
+     *       ),
+     *       @OA\Property(
      *         property="lastnameUser",
      *         default="lastname",
      *         description="Last name of the user",
@@ -662,7 +668,7 @@ class UserController extends Controller
      *       @OA\Property(
      *         property="created_at",
      *         default="2021-02-05T09:00:57.000000Z",
-     *         description="Id of user who created this one",
+     *         description="Timestamp of the creation",
      *       ),
      *       @OA\Property(
      *         property="created_by",
@@ -672,7 +678,7 @@ class UserController extends Controller
      *       @OA\Property(
      *         property="updated_at",
      *         default="2021-02-05T09:00:57.000000Z",
-     *         description="Id of user who modified this one",
+     *         description="Timestamp of the last update",
      *       ),
      *       @OA\Property(
      *         property="updated_by",
@@ -776,6 +782,11 @@ class UserController extends Controller
      *     description="User deleted",
      *     @OA\JsonContent(
      *       @OA\Property(
+     *         property="idUser",
+     *         default="1",
+     *         description="id of the user",
+     *       ),
+     *       @OA\Property(
      *         property="lastnameUser",
      *         default="lastname",
      *         description="Last name of the user",
@@ -803,7 +814,7 @@ class UserController extends Controller
      *       @OA\Property(
      *         property="created_at",
      *         default="2021-02-05T09:00:57.000000Z",
-     *         description="Id of user who created this one",
+     *         description="Timestamp of the creation",
      *       ),
      *       @OA\Property(
      *         property="created_by",
@@ -813,7 +824,7 @@ class UserController extends Controller
      *       @OA\Property(
      *         property="updated_at",
      *         default="2021-02-05T09:00:57.000000Z",
-     *         description="Id of user who modified this one",
+     *         description="Timestamp of the last update",
      *       ),
      *       @OA\Property(
      *         property="updated_by",
@@ -1010,7 +1021,7 @@ class UserController extends Controller
         }
     }
 
-/**
+    /**
      * @OA\Post(
      *   path="/api/v1/logout",
      *   summary="Log out",

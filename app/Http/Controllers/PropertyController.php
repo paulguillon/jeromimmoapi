@@ -6,26 +6,6 @@ use Illuminate\Http\Request;
 use App\Models\Property;
 use App\Models\PropertyData;
 
-/**
- * @OA\Parameter(
- *   parameter="get_property_request_parameter_limit",
- *   name="limit",
- *   description="Limit the number of results",
- *   in="query",
- *   @OA\Schema(
- *     type="number", default=10
- *   )
- * ),
- * @OA\SecurityScheme(
- *     type="http",
- *     description="Login with email and password to get the authentication token",
- *     name="Token based Based",
- *     in="header",
- *     scheme="bearer",
- *     bearerFormat="JWT",
- *     securityScheme="apiAuth",
- * )
- */
 class PropertyController extends Controller
 {
     /**
@@ -43,7 +23,7 @@ class PropertyController extends Controller
      *   summary="Return all properties",
      *   tags={"Property Controller"},
      *   security={{ "apiAuth": {} }},
-     *   @OA\Parameter(ref="#/components/parameters/get_property_request_parameter_limit"),
+     *   @OA\Parameter(ref="#/components/parameters/get_request_parameter_limit"),
      *   @OA\Response(
      *       response=401,
      *       description="Unauthenticated",
@@ -103,7 +83,7 @@ class PropertyController extends Controller
      *       ),
      *       @OA\Property(
      *         property="data",
-     *         default="["keyPropertyData": "key", "valuePropertyData": "value"]",
+     *         default="[""]",
      *         description="Property data",
      *       ),
      *     )
@@ -212,7 +192,7 @@ class PropertyController extends Controller
      *       ),
      *       @OA\Property(
      *         property="data",
-     *         default="["keyPropertyData": "key", "valuePropertyData": "value"]",
+     *         default="[""]",
      *         description="Property data",
      *       ),
      *     )
@@ -236,41 +216,79 @@ class PropertyController extends Controller
      *   path="/api/v1/properties",
      *   summary="Add a property",
      *   tags={"Property Controller"},
-     *       @OA\Property(
-     *         property="typeProperty",
-     *         default="Property type",
-     *         description="Type of the property",
-     *       ),
-     *       @OA\Property(
-     *         property="priceProperty",
-     *         default="Property price",
-     *         description="Price of the property",
-     *       ),
-     *       @OA\Property(
-     *         property="zipCodeProperty",
-     *         default="Property zipcode",
-     *         description="Zipcode of the property",
-     *       ),
-     *       @OA\Property(
-     *         property="cityProperty",
-     *         default="Property city",
-     *         description="City of the property",
-     *       ),
-     *       @OA\Property(
-     *         property="created_by",
-     *         default="1",
-     *         description="Id of user who created this one",
-     *       ),
-     *       @OA\Property(
-     *         property="updated_by",
-     *         default="1",
-     *         description="Id of user who modified this one",
-     *       ),
-     *       @OA\Property(
-     *         property="data",
-     *         default="["keyPropertyData": "key", "valuePropertyData": "value"]",
-     *         description="Property data",
-     *       ),
+     *   security={{ "apiAuth": {} }},
+     *   @OA\Parameter(
+     *     name="typeProperty",
+     *     in="query",
+     *     required=true,
+     *     description="Type of the property to add",
+     *     @OA\Schema(
+     *       type="string", default="first"
+     *     )
+     *   ),
+     *   @OA\Parameter(
+     *     name="priceProperty",
+     *     in="query",
+     *     required=true,
+     *     description="Price of the property to add",
+     *     @OA\Schema(
+     *       type="string", default="first"
+     *     )
+     *   ),
+     *   @OA\Parameter(
+     *     name="zipCodeProperty",
+     *     in="query",
+     *     required=true,
+     *     description="Zipcode of the property to add",
+     *     @OA\Schema(
+     *       type="string", default="first"
+     *     )
+     *   ),
+     *   @OA\Parameter(
+     *     name="cityProperty",
+     *     in="query",
+     *     required=true,
+     *     description="City of the property to add",
+     *     @OA\Schema(
+     *       type="string", default="first"
+     *     )
+     *   ),
+     *   @OA\Parameter(
+     *     name="typeProperty",
+     *     in="query",
+     *     required=true,
+     *     description="Type of the property to add",
+     *     @OA\Schema(
+     *       type="string", default="first"
+     *     )
+     *   ),
+     *   @OA\Parameter(
+     *     name="created_by",
+     *     in="query",
+     *     required=true,
+     *     description="ID of the logged user",
+     *     @OA\Schema(
+     *       type="number", default="1"
+     *     )
+     *   ),
+     *   @OA\Parameter(
+     *     name="updated_by",
+     *     in="query",
+     *     required=true,
+     *     description="ID of the logged user",
+     *     @OA\Schema(
+     *       type="number", default="1"
+     *     )
+     *   ),
+     *   @OA\Parameter(
+     *     name="data",
+     *     in="query",
+     *     required=true,
+     *     description="Data of the property to add",
+     *     @OA\Schema(
+     *       type="string", default="{'cle':'valeur','deuxiemecle':'deuxiemevaleur'}"
+     *     )
+     *   ),
      *   @OA\Response(
      *       response=409,
      *       description="Not created",
@@ -346,7 +364,7 @@ class PropertyController extends Controller
      *       ),
      *       @OA\Property(
      *         property="data",
-     *         default="["keyPropertyData": "key", "valuePropertyData": "value"]",
+     *         default="[""]",
      *         description="Property data",
      *       ),
      *     )
@@ -405,41 +423,78 @@ class PropertyController extends Controller
      *       type="number", default="1"
      *     )
      *   ),
-     *       @OA\Property(
-     *         property="typeProperty",
-     *         default="Property type",
-     *         description="Type of the property",
-     *       ),
-     *       @OA\Property(
-     *         property="priceProperty",
-     *         default="Property price",
-     *         description="Price of the property",
-     *       ),
-     *       @OA\Property(
-     *         property="zipCodeProperty",
-     *         default="Property zipcode",
-     *         description="Zipcode of the property",
-     *       ),
-     *       @OA\Property(
-     *         property="cityProperty",
-     *         default="Property city",
-     *         description="City of the property",
-     *       ),
-     *       @OA\Property(
-     *         property="created_by",
-     *         default="1",
-     *         description="Id of user who created this one",
-     *       ),
-     *       @OA\Property(
-     *         property="updated_by",
-     *         default="1",
-     *         description="Id of user who modified this one",
-     *       ),
-     *       @OA\Property(
-     *         property="data",
-     *         default="["keyPropertyData": "key", "valuePropertyData": "value"]",
-     *         description="Property data",
-     *       ),
+     *   @OA\Parameter(
+     *     name="typeProperty",
+     *     in="query",
+     *     required=true,
+     *     description="Type of the property to add",
+     *     @OA\Schema(
+     *       type="string", default="first"
+     *     )
+     *   ),
+     *   @OA\Parameter(
+     *     name="priceProperty",
+     *     in="query",
+     *     required=true,
+     *     description="Price of the property to add",
+     *     @OA\Schema(
+     *       type="string", default="first"
+     *     )
+     *   ),
+     *   @OA\Parameter(
+     *     name="zipCodeProperty",
+     *     in="query",
+     *     required=true,
+     *     description="Zipcode of the property to add",
+     *     @OA\Schema(
+     *       type="string", default="first"
+     *     )
+     *   ),
+     *   @OA\Parameter(
+     *     name="cityProperty",
+     *     in="query",
+     *     required=true,
+     *     description="City of the property to add",
+     *     @OA\Schema(
+     *       type="string", default="first"
+     *     )
+     *   ),
+     *   @OA\Parameter(
+     *     name="typeProperty",
+     *     in="query",
+     *     required=true,
+     *     description="Type of the property to add",
+     *     @OA\Schema(
+     *       type="string", default="first"
+     *     )
+     *   ),
+     *   @OA\Parameter(
+     *     name="created_by",
+     *     in="query",
+     *     required=true,
+     *     description="ID of the logged user",
+     *     @OA\Schema(
+     *       type="number", default="1"
+     *     )
+     *   ),
+     *   @OA\Parameter(
+     *     name="updated_by",
+     *     in="query",
+     *     required=true,
+     *     description="ID of the logged user",
+     *     @OA\Schema(
+     *       type="number", default="1"
+     *     )
+     *   ),
+     *   @OA\Parameter(
+     *     name="data",
+     *     in="query",
+     *     required=true,
+     *     description="Data of the property to add",
+     *     @OA\Schema(
+     *       type="string", default="{'cle':'valeur','deuxiemecle':'deuxiemevaleur'}"
+     *     )
+     *   ),
      *   @OA\Response(
      *       response=409,
      *       description="Not updated",
@@ -515,7 +570,7 @@ class PropertyController extends Controller
      *       ),
      *       @OA\Property(
      *         property="data",
-     *         default="["keyPropertyData": "key", "valuePropertyData": "value"]",
+     *         default="[""]",
      *         description="Property data",
      *       ),
      *     )
@@ -581,7 +636,7 @@ class PropertyController extends Controller
      *     name="id",
      *     in="path",
      *     required=true,
-     *     description="ID of the user to delete",
+     *     description="ID of the property to delete",
      *     @OA\Schema(
      *       type="number", default="1"
      *     )
@@ -596,51 +651,36 @@ class PropertyController extends Controller
      *   ),
      *   @OA\Response(
      *       response=500,
-     *       description="User data not deleted"
+     *       description="Property data not deleted"
      *   ),
      *   @OA\Response(
      *     response=200,
-     *     description="User deleted",
+     *     description="Property deleted",
      *     @OA\JsonContent(
      *       @OA\Property(
-     *         property="lastnameUser",
-     *         default="lastname",
-     *         description="Last name of the user",
+     *         property="typeProperty",
+     *         default="Property type",
+     *         description="Type of the property",
      *       ),
      *       @OA\Property(
-     *         property="firstnameUser",
-     *         default="firstname",
-     *         description="First name of the user",
+     *         property="priceProperty",
+     *         default="Property price",
+     *         description="Price of the property",
      *       ),
      *       @OA\Property(
-     *         property="emailUser",
-     *         default="test@test.fr",
-     *         description="Email address of the user",
+     *         property="zipCodeProperty",
+     *         default="Property zipcode",
+     *         description="Zipcode of the property",
      *       ),
      *       @OA\Property(
-     *         property="passwordUser",
-     *         default="1234",
-     *         description="Password of the user",
-     *       ),
-     *       @OA\Property(
-     *         property="idRoleUser",
-     *         default="1",
-     *         description="Id of the user's role",
-     *       ),
-     *       @OA\Property(
-     *         property="created_at",
-     *         default="2021-02-05T09:00:57.000000Z",
-     *         description="Id of user who created this one",
+     *         property="cityProperty",
+     *         default="Property city",
+     *         description="City of the property",
      *       ),
      *       @OA\Property(
      *         property="created_by",
      *         default="1",
      *         description="Id of user who created this one",
-     *       ),
-     *       @OA\Property(
-     *         property="updated_at",
-     *         default="2021-02-05T09:00:57.000000Z",
-     *         description="Id of user who modified this one",
      *       ),
      *       @OA\Property(
      *         property="updated_by",
@@ -649,10 +689,10 @@ class PropertyController extends Controller
      *       ),
      *       @OA\Property(
      *         property="data",
-     *         default="[]",
-     *         description="User data",
-     *       ),
-     *     )
+     *         default="[""]",
+     *         description="Property data",
+     *       )
+     *      )
      *   ),
      * )
      */
@@ -676,7 +716,91 @@ class PropertyController extends Controller
             return response()->json(['message' => 'Property deletion failed!' . $e->getMessage(), 'status' => 'fail'], 409);
         }
     }
-    // Route
+    
+    /**
+     * @OA\Post(
+     *   path="/api/v1/properties/data/{id}",
+     *   summary="Add property data",
+     *   tags={"Property Controller"},
+     *   security={{ "apiAuth": {} }},
+     *   @OA\Parameter(
+     *     name="id",
+     *     in="path",
+     *     required=true,
+     *     description="ID of the property",
+     *     @OA\Schema(
+     *       type="number", default="1"
+     *     )
+     *   ),
+     *   @OA\Parameter(
+     *     name="data",
+     *     in="query",
+     *     required=true,
+     *     description="Data of the property to add",
+     *     @OA\Schema(
+     *       type="string", default="{'cle':'valeur','deuxiemecle':'deuxiemevaleur'}"
+     *     )
+     *   ),
+     *   @OA\Parameter(
+     *     name="created_by",
+     *     in="query",
+     *     required=true,
+     *     description="ID of the logged user",
+     *     @OA\Schema(
+     *       type="number", default="1"
+     *     )
+     *   ),
+     *   @OA\Parameter(
+     *     name="updated_by",
+     *     in="query",
+     *     required=true,
+     *     description="ID of the logged user",
+     *     @OA\Schema(
+     *       type="number", default="1"
+     *     )
+     *   ),
+     *   @OA\Response(
+     *       response=409,
+     *       description="Data not created",
+     *   ),
+     *   @OA\Response(
+     *       response=404,
+     *       description="Resource Not Found",
+     *   ),
+     *   @OA\Response(
+     *       response=500,
+     *       description="Property data not added",
+     *       @OA\JsonContent(
+     *        @OA\Property(
+     *          property="message",
+     *          default="Property data not added",
+     *          description="Message",
+     *        ),
+     *        @OA\Property(
+     *          property="status",
+     *          default="fail",
+     *          description="Status",
+     *        ),
+     *       ),
+     *   ),
+     *   @OA\Response(
+     *     response=201,
+     *     description="Property data created",
+     *       @OA\JsonContent(
+     *        @OA\Property(
+     *          property="data",
+     *          default="[""]",
+     *          description="data",
+     *        ),
+     *        @OA\Property(
+     *          property="status",
+     *          default="success",
+     *          description="Status",
+     *        ),
+     *       ),
+     *   ),
+     * )
+     */
     public function addData($id, Request $request)
     {
         try {
@@ -690,6 +814,7 @@ class PropertyController extends Controller
             return response()->json(['message' => 'Property data not added!', 'status' => 'fail'], 409);
         }
     }
+
     // Fonction utilisée par la route et lors de la creation de user pour ajouter toutes les data
     public function _addData($idProperty, $request)
     {
