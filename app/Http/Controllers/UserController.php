@@ -73,6 +73,7 @@ class UserController extends Controller
      *    )
      * )
      */
+
     public function login(Request $request)
     {
         //validate incoming request
@@ -96,7 +97,7 @@ class UserController extends Controller
      *   summary="Return all users",
      *   tags={"User Controller"},
      *   security={{ "apiAuth": {} }},
-     *   @OA\Parameter(ref="#/components/parameters/get_users_request_parameter_limit"),
+     *   @OA\Parameter(ref="#/components/parameters/get_request_parameter_limit"),
      *   @OA\Response(
      *       response=401,
      *       description="Unauthenticated",
@@ -306,6 +307,7 @@ class UserController extends Controller
      *   path="/api/v1/users",
      *   summary="Add a user",
      *   tags={"User Controller"},
+     *   security={{ "apiAuth": {} }},
      *   @OA\Parameter(
      *     name="firstnameUser",
      *     in="query",
@@ -748,7 +750,7 @@ class UserController extends Controller
         }
     }
 
-    
+
     /**
      * @OA\Delete(
      *   path="/api/v1/users/{id}",
