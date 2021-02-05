@@ -6,6 +6,26 @@ use Laravel\Lumen\Routing\Controller as BaseController;
 //import auth facades
 use Illuminate\Support\Facades\Auth;
 
+/**
+ * @OA\Parameter(
+ *   parameter="get_request_parameter_limit",
+ *   name="limit",
+ *   description="Limit the number of results",
+ *   in="query",
+ *   @OA\Schema(
+ *     type="number", default=10
+ *   )
+ * ),
+ * @OA\SecurityScheme(
+ *     type="http",
+ *     description="Login with email and password to get the authentication token",
+ *     name="Token based Based",
+ *     in="header",
+ *     scheme="bearer",
+ *     bearerFormat="JWT",
+ *     securityScheme="apiAuth",
+ * )
+ */
 class Controller extends BaseController
 {
     /**
