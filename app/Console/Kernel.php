@@ -15,6 +15,7 @@ class Kernel extends ConsoleKernel
      */
     protected $commands = [
         // 'auth.jwt' => \Tymon\JWTAuth\Http\Middleware\Authenticate::class
+        'swg:scan' => Commands\SwaggerScan::class
     ];
 
     /**

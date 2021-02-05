@@ -5,3 +5,6 @@ Homestead.yaml
 .env
 .phpunit.result.cache
 composer.lock
+/resources/views/vendor
+/storage/api-docs
+/public/swagger-ui-assets

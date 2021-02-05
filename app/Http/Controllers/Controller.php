@@ -17,6 +17,17 @@ class Controller extends BaseController
             'expires_in' => Auth::factory()->getTTL() * 60,
             'status' => 'success',
         ], 200);
-        
+
     }
 }
+
+/**
+ * @OA\Info(
+ *   title="Your Awesome Modules's API",
+ *  version="1.0.0",
+ *  @OA\Contact(
+ *    email="developers@module.com",
+ *    name="Developer Team"
+ *  )
+ * )
+ */

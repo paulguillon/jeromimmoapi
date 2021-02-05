@@ -6,12 +6,70 @@ use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\UserData;
 use Illuminate\Support\Facades\Auth;
+use OpenApi\Annotations as OA;
 
 use Illuminate\Support\Str;
 use Symfony\Component\VarDumper\VarDumper;
 
+// We can define the User Scheme here or in our App\User model
+/**
+ * @OA\Schema(
+ *   schema="UserSchema",
+ *   title="User Model",
+ *   description="User model",
+ *   @OA\Property(
+ *     property="id", description="ID of the user",
+ *     @OA\Schema(type="number", example=1)
+ *  ),
+ *   @OA\Property(
+ *     property="name", description="Name of the user",
+ *     @OA\Schema(type="string", example="User Name")
+ *  )
+ * )
+ */
+// We can define the request parameter inside the Requests or here
+/**
+ * @OA\Parameter(
+ *   parameter="get_users_request_parameter_limit",
+ *   name="limit",
+ *   description="Limit the number of results",
+ *   in="query",
+ *   @OA\Schema(
+ *     type="number", default=10
+ *   )
+ * ),
+ */
 class UserController extends Controller
 {
+
+    /**
+  * @OA\Get(
+  *   path="/users",
+  *   summary="Return the list of users",
+  *   tags={"Hello"},
+  *   @OA\Parameter(ref="#/components/parameters/get_users_request_parameter_limit"),
+   *    @OA\Response(
+  *      response=200,
+  *      description="List of users",
+  *      @OA\JsonContent(
+  *        @OA\Property(
+  *          property="data",
+  *          description="List of users",
+  *          @OA\Schema(
+  *            type="array",
+  *            @OA\Items(ref="#/components/schemas/UserSchema")
+  *          )
+  *        )
+  *      )
+  *    )
+  * )
+  */
+    public function index (Request $request)
+    {
+    $users = User::paginate($request->get("limit", 10));
+    return ["data" => $users];
+    }
+
     /**
      * Constructor
      */
