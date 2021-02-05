@@ -19,10 +19,18 @@ class FaqController extends Controller
     }
 
     /**
-     * Get all faq
-     *
-     * @param  Request  $request
-     * @return Response
+     * @OA\Get(
+     *   path="/users",
+     *    @OA\Response(
+     *      response=200,
+     *      description="List of all users",
+     *      @OA\JsonContent(
+     *        @OA\Property(
+     *          description="List of all users",
+     *        )
+     *      )
+     *    )
+     * )
      */
     public function getAllFaq(Request $request)
     {

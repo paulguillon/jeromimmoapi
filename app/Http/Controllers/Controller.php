@@ -6,6 +6,16 @@ use Laravel\Lumen\Routing\Controller as BaseController;
 //import auth facades
 use Illuminate\Support\Facades\Auth;
 
+/**
+ * @OA\Info(
+ *   title="Your Awesome Modules's API",
+ *  version="1.0.0",
+ *  @OA\Contact(
+ *    email="developers@module.com",
+ *    name="Developer Team"
+ *  )
+ * )
+ */
 class Controller extends BaseController
 {
     //Add this method to the Controller class
