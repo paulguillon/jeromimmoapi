@@ -85,12 +85,12 @@ $router->group(['prefix' => 'api/v1'], function () use ($router) {
         $router->get('/{id}', 'PropertyController@getProperty');
         // Matches "/api/v1/properties Post register property
         $router->post('', 'PropertyController@addProperty');
-        // Matches "/api/v1/properties/id Put all of One property
-        // $router->put('/{id}', 'PropertyController@put');
+        // Matches "/api/v1/properties/data/idProperty Post Register
+        $router->post('/data/{id}', 'PropertyController@addData');
         // Matches "/api/v1/properties/id Patch one element of one Property
         $router->patch('/{id}', 'PropertyController@updateProperty');
         // Matches "/api/v1/properties/id Delete one Property
-        $router->delete('/{id}', 'PropertyController@deleteProporty');
+        $router->delete('/{id}', 'PropertyController@deleteProperty');
     });
     /*
     |------------------------|
