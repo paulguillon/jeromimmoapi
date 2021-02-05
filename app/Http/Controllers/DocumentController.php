@@ -31,7 +31,7 @@ class DocumentController extends Controller
         for ($i = 0; $i < count($documents); $i++) {
             $document = $documents[$i];
 
-            $document['data'] = $this->getAllData($document->idDocument)->original;
+            $document['data'] = $this->getAllData($document->idDocument);
         }
 
         return response()->json(['documents' =>  $documents], 200);
@@ -49,7 +49,7 @@ class DocumentController extends Controller
             $document = Document::all()
                 ->where('idDocument', $id)
                 ->first();
-            $document['data'] = $this->getAllData($id)->original;
+            $document['data'] = $this->getAllData($id);
             return response()->json(['document' => $document], 200);
         } catch (\Exception $e) {
 
@@ -133,7 +133,7 @@ class DocumentController extends Controller
                 }
             }
             // Return successful response
-            return response()->json(['document' => $document, 'data' => $this->getAllData($document->idDocument)->original, 'message' => 'ALL UPDATED', 'status' => 'success'], 200);
+            return response()->json(['document' => $document, 'data' => $this->getAllData($document->idDocument), 'message' => 'ALL UPDATED', 'status' => 'success'], 200);
         } catch (\Exception $e) {
             // Return error message
             return response()->json(['message' => 'Document Update Failed!' . $e->getMessage(), 'status' => 'fail'], 409);
@@ -150,14 +150,12 @@ class DocumentController extends Controller
     {
         try {
             $document = Document::findOrFail($id);
-            $documentData = DocumentData::all()->where('idDocument', $id);
+            $documentData = $this->getAllData($id);
 
             // Update data
             if ($documentData !== null) {
-                foreach ($documentData as $key => $value) {
-                    if (!$this->deleteData($document->idDocument, $key))
-                        return response()->json(['message' => 'Document Deletion Failed!', 'status' => 'fail'], 500);
-                }
+                if (!$this->deleteData($id))
+                    return response()->json(['message' => 'Document Deletion Failed!', 'status' => 'fail'], 500);
             }
 
             $document->delete();
@@ -177,10 +175,10 @@ class DocumentController extends Controller
                 return response()->json(['message' => 'Not all data has been added', 'status' => 'fail'], 409);
 
             // Return successful response
-            return response()->json(['data' => $this->getAllData($id)->original, 'message' => 'Data created', 'status' => 'success'], 201);
+            return response()->json(['data' => $this->getAllData($id), 'message' => 'Data created', 'status' => 'success'], 201);
         } catch (\Exception $e) {
             // Return error message
-            return response()->json(['message' => 'User data not added!', 'status' => 'fail'], 409);
+            return response()->json(['message' => 'Document data not added!', 'status' => 'fail'], 409);
         }
     }
     // fonction utilisée par la route et lors de la creation de user pour ajouter toutes les data
@@ -215,7 +213,7 @@ class DocumentController extends Controller
         foreach (DocumentData::all()->where('idDocument', $idDocument) as $value) {
             array_push($data, $value);
         }
-        return response()->json($data, 200);
+        return response()->json($data, 200)->original;
     }
 
     public function getData($idDocument, $key)
@@ -248,18 +246,14 @@ class DocumentController extends Controller
         }
     }
 
-    public function deleteData($idDocument, $key)
+    public function deleteData($idDocument)
     {
         try {
-            $documentData = DocumentData::all()
-            ->where('idDocument', $idDocument)
-            ->where('keyDocumentData', $key)
-            ->first();
+            $documentData = DocumentData::all()->where('idDocument', $idDocument);
 
-            if ($documentData == null)
-                return false;
-
-            $documentData->delete();
+            foreach ($documentData as $data) {
+                $data->delete();
+            }
 
             return true;
         } catch (\Exception $e) {

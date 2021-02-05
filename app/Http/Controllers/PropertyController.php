@@ -31,7 +31,7 @@ class PropertyController extends Controller
         for ($i = 0; $i < count($properties); $i++) {
             $property = $properties[$i];
 
-            $property['data'] = $this->getAllData($property->idProperty)->original;
+            $property['data'] = $this->getAllData($property->idProperty);
         }
         return response()->json(['properties' => $properties], 200);
     }
@@ -46,7 +46,7 @@ class PropertyController extends Controller
     {
         try {
             $property = Property::all()->where('idProperty', $id)->first();
-            $property['data'] = $this->getAllData($id)->original;
+            $property['data'] = $this->getAllData($id);
             return response()->json(['property' => $property], 200);
         } catch (\Exception $e) {
 
@@ -90,7 +90,7 @@ class PropertyController extends Controller
             }
 
             // Return successful response
-            return response()->json(['property' => $property, 'message' => 'CREATED', 'status' => 'success'], 201);
+            return response()->json(['property' => $property, 'data' => $this->getAllData($property->idProperty), 'message' => 'CREATED', 'status' => 'success'], 201);
         } catch (\Exception $e) {
             //return error message
             return response()->json(['message' => 'Property Data Registration Failed!', 'status' => 'fail'], 409);
@@ -146,7 +146,7 @@ class PropertyController extends Controller
                 }
             }
             // Return successful response
-            return response()->json(['proporty' => $property, 'data' => $this->getAllData($property->idProperty)->original, 'message' => 'ALL UPDATED', 'status' => 'success'], 200);
+            return response()->json(['property' => $property, 'data' => $this->getAllData($property->idProperty), 'message' => 'ALL UPDATED', 'status' => 'success'], 200);
         } catch (\Exception $e) {
             // Return error message
             return response()->json(['message' => 'Property Update Failed!' . $e->getMessage(), 'status' => 'fail'], 409);
@@ -163,15 +163,14 @@ class PropertyController extends Controller
     {
         try {
             $property = Property::findOrFail($id);
-            $propertyData = PropertyData::all()->where('idProperty', $id);
+            $propertyData = $this->getAllData($id);
 
             // Update data
             if ($propertyData !== null) {
-                foreach ($propertyData as $key => $value) {
-                    if (!$this->deleteData($property->idProperty, $key))
-                        return response()->json(['message' => 'Property Deletion Failed!', 'status' => 'fail'], 500);
-                }
+                if (!$this->deleteData($id))
+                    return response()->json(['message' => 'Faq Deletion Failed!', 'status' => 'fail'], 500);
             }
+
             $property->delete();
 
             return response()->json(['property' => $property, 'data' => $propertyData, 'message' => 'DELETED', 'status' => 'success'], 200);
@@ -188,7 +187,7 @@ class PropertyController extends Controller
                 return response()->json(['message' => 'Not all data has been added', 'status' => 'fail'], 409);
 
             // Return successful response
-            return response()->json(['data' => $this->getAllData($id)->original, 'message' => 'Data created', 'status' => 'success'], 201);
+            return response()->json(['data' => $this->getAllData($id), 'message' => 'Data created', 'status' => 'success'], 201);
         } catch (\Exception $e) {
             // Return error message
             return response()->json(['message' => 'Property data not added!', 'status' => 'fail'], 409);
@@ -225,7 +224,7 @@ class PropertyController extends Controller
         foreach (PropertyData::all()->where('idProperty', $idProperty) as $value) {
             array_push($data, $value);
         }
-        return response()->json($data, 200);
+        return response()->json($data, 200)->original;
     }
 
     public function getData($idProperty, $key)
@@ -258,18 +257,14 @@ class PropertyController extends Controller
         }
     }
 
-    public function deleteData($idProperty, $key)
+    public function deleteData($idProperty)
     {
         try {
-            $propertyData = PropertyData::all()
-            ->where('idProperty', $idProperty)
-            ->where('keyPropertyData', $key)
-            ->first();
+            $propertyData = PropertyData::all()->where('idProperty', $idProperty);
 
-            if ($propertyData == null)
-                return false;
-
-            $propertyData->delete();
+            foreach ($propertyData as $data) {
+                $data->delete();
+            }
 
             return true;
         } catch (\Exception $e) {
