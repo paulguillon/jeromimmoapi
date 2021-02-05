@@ -144,6 +144,7 @@ return [
         */
     ],
 
+
     /*
     |--------------------------------------------------------------------------
     | Turn this off to remove swagger generation on production
