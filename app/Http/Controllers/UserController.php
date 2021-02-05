@@ -594,7 +594,7 @@ class UserController extends Controller
      *   ),
      *   @OA\Parameter(
      *     name="updated_by",
-     *     in="query",
+     *     in="query",  
      *     description="ID of the logged user",
      *     @OA\Schema(
      *       type="number", default="1"
@@ -884,6 +884,24 @@ class UserController extends Controller
      *     description="data to add",
      *     @OA\Schema(
      *       type="string", default="{}"
+     *     )
+     *   ),
+     *   @OA\Parameter(
+     *     name="created_by",
+     *     in="query",
+     *     required=true,
+     *     description="ID of the creator",
+     *     @OA\Schema(
+     *       type="number", default="1"
+     *     )
+     *   ),
+     *   @OA\Parameter(
+     *     name="updated_by",
+     *     in="query",
+     *     required=true,
+     *     description="ID of the updator",
+     *     @OA\Schema(
+     *       type="number", default="1"
      *     )
      *   ),
      *   @OA\Response(

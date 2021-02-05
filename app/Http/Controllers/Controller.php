@@ -7,6 +7,14 @@ use Laravel\Lumen\Routing\Controller as BaseController;
 use Illuminate\Support\Facades\Auth;
 
 /**
+ * @OA\Info(
+ *   title="Your Awesome Modules's API",
+ *  version="1.0.0",
+ *  @OA\Contact(
+ *    email="developers@module.com",
+ *    name="Developer Team"
+ *  )
+ * ),
  * @OA\Parameter(
  *   parameter="get_request_parameter_limit",
  *   name="limit",
@@ -28,17 +36,7 @@ use Illuminate\Support\Facades\Auth;
  */
 class Controller extends BaseController
 {
-    /**
-     * @OA\Info(
-     *   title="Jeromimmo API",
-     *  version="1.0.0",
-     *  @OA\Contact(
-     *    email="developers@module.com",
-     *    name="Developer Team"
-     *  )
-     * )
-     */
-     
+        
     //Add this method to the Controller class
     protected function respondWithToken($token)
     {
