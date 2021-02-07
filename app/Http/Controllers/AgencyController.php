@@ -21,7 +21,7 @@ class AgencyController extends Controller
      * @OA\Get(
      *   path="/api/v1/agency",
      *   summary="Return all agencies",
-     *   tags={"Agency controller"},
+     *   tags={"Agency Controller"},
      *   security={{ "apiAuth": {} }},
      *   @OA\Parameter(ref="#/components/parameters/get_request_parameter_limit"),
      *   @OA\Response(
@@ -79,7 +79,7 @@ class AgencyController extends Controller
      *       @OA\Property(
      *         property="data",
      *         default="[]",
-     *         description="User data",
+     *         description="Agency data",
      *       ),
      *     )
      *   )
@@ -127,7 +127,7 @@ class AgencyController extends Controller
      *       @OA\JsonContent(
      *        @OA\Property(
      *          property="message",
-     *          default="The agency doesn't exist",
+     *          default="The agency ? doesn't exist",
      *          description="Message",
      *        ),
      *        @OA\Property(
@@ -184,10 +184,10 @@ class AgencyController extends Controller
      *       @OA\Property(
      *         property="data",
      *         default="[]",
-     *         description="User data",
+     *         description="Agency data",
      *       ),
      *     )
-     *   )
+     *   ),
      * )
      */
     public function getAgency($id)
@@ -222,7 +222,7 @@ class AgencyController extends Controller
      *     required=true,
      *     description="Zip code of the agency to add",
      *     @OA\Schema(
-     *       type="string", default="76000"
+     *       type="string", default="Zip code"
      *     )
      *   ),
      *   @OA\Parameter(
@@ -231,7 +231,7 @@ class AgencyController extends Controller
      *     required=true,
      *     description="City of the agency to add",
      *     @OA\Schema(
-     *       type="string", default="Le Havre"
+     *       type="string", default="City"
      *     )
      *   ),
      *   @OA\Parameter(
@@ -289,6 +289,11 @@ class AgencyController extends Controller
      *     response=201,
      *     description="Agency created",
      *     @OA\JsonContent(
+     *     @OA\Property(
+     *         property="idAgency",
+     *         default="1",
+     *         description="Id of the agency",
+     *       ),
      *       @OA\Property(
      *         property="nameAgency",
      *         default="name",
@@ -327,7 +332,7 @@ class AgencyController extends Controller
      *       @OA\Property(
      *         property="data",
      *         default="[]",
-     *         description="User data",
+     *         description="Agency data",
      *       ),
      *     )
      *   ),
@@ -386,12 +391,17 @@ class AgencyController extends Controller
      *       type="number", default="1"
      *     )
      *   ),
+     *     @OA\Property(
+     *         property="idAgency",
+     *         default="1",
+     *         description="Id of the agency",
+     *   ),
      *   @OA\Parameter(
      *     name="nameAgency",
      *     in="query",
      *     description="Name of the agency to add",
      *     @OA\Schema(
-     *       type="string", default="Agence"
+     *       type="string", default="Name"
      *     )
      *   ),
      *   @OA\Parameter(
@@ -399,7 +409,7 @@ class AgencyController extends Controller
      *     in="query",
      *     description="Zip Code of the agency to add",
      *     @OA\Schema(
-     *       type="string", default="76000"
+     *       type="string", default="Zip Code"
      *     )
      *   ),
      *   @OA\Parameter(
@@ -407,7 +417,7 @@ class AgencyController extends Controller
      *     in="query",
      *     description="City of the agency to add",
      *     @OA\Schema(
-     *       type="string", default="LE Havre"
+     *       type="string", default="City"
      *     )
      *   ),
      *   @OA\Parameter(
@@ -462,19 +472,24 @@ class AgencyController extends Controller
      *     response=200,
      *     description="Agency updated",
      *     @OA\JsonContent(
+     *     @OA\Property(
+     *         property="idAgency",
+     *         default="1",
+     *         description="Id of the agency",
+     *       ),
      *       @OA\Property(
      *         property="nameagency",
-     *         default="Agence",
+     *         default="Name",
      *         description="Name of the agency",
      *       ),
      *       @OA\Property(
      *         property="zipCodeAgency",
-     *         default="76600",
+     *         default="ZipCode",
      *         description="sip code of the agency",
      *       ),
      *       @OA\Property(
      *         property="city",
-     *         default="Le Havre",
+     *         default="CityLe Havre",
      *         description="City of the agency",
      *       ),
      *       @OA\Property(
@@ -584,19 +599,24 @@ class AgencyController extends Controller
      *     response=200,
      *     description="Agency deleted",
      *     @OA\JsonContent(
+     *     @OA\Property(
+     *         property="idAgency",
+     *         default="1",
+     *         description="Id of the agency",
+     *   ),
      *       @OA\Property(
      *         property="nameAgency",
-     *         default="Agence",
+     *         default="Name",
      *         description="Name of the agency",
      *       ),
      *       @OA\Property(
      *         property="zipCodeAgency",
-     *         default="76000",
+     *         default="ZipCode",
      *         description="zipCode of the agency",
      *       ),
      *       @OA\Property(
      *         property="cityAgency",
-     *         default="Le Havre",
+     *         default="City",
      *         description="City of the agency",
      *       ),
      *       @OA\Property(
@@ -672,6 +692,22 @@ class AgencyController extends Controller
      *       type="string", default="{}"
      *     )
      *   ),
+     *   @OA\Parameter(
+     *     name="created_by",
+     *     in="query",
+     *     description="ID of the creator",
+     *     @OA\Schema(
+     *       type="number", default="1"
+     *     )
+     *   ),
+     *   @OA\Parameter(
+     *     name="updated_by",
+     *     in="query",
+     *     description="ID of the updator",
+     *     @OA\Schema(
+     *       type="number", default="1"
+     *     )
+     *   ),
      *   @OA\Response(
      *       response=409,
      *       description="Data not created",
@@ -682,11 +718,11 @@ class AgencyController extends Controller
      *   ),
      *   @OA\Response(
      *       response=500,
-     *       description="User data not added",
+     *       description="Agency data not added",
      *       @OA\JsonContent(
      *        @OA\Property(
      *          property="message",
-     *          default="User data not added",
+     *          default="Agency data not added",
      *          description="Message",
      *        ),
      *        @OA\Property(
@@ -698,7 +734,7 @@ class AgencyController extends Controller
      *   ),
      *   @OA\Response(
      *     response=201,
-     *     description="User data created",
+     *     description="Agency data created",
      *       @OA\JsonContent(
      *        @OA\Property(
      *          property="data",
