@@ -18,20 +18,6 @@ class FaqController extends Controller
         $this->middleware('auth:api', ['accept' => ['addFaq']]);
     }
 
-    /**
-     * @OA\Get(
-     *   path="/users",
-     *    @OA\Response(
-     *      response=200,
-     *      description="List of all users",
-     *      @OA\JsonContent(
-     *        @OA\Property(
-     *          description="List of all users",
-     *        )
-     *      )
-     *    )
-     * )
-     */
     public function getAllFaq(Request $request)
     {
         $faqs = Faq::all();
