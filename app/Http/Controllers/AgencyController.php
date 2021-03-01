@@ -18,11 +18,74 @@ class AgencyController extends Controller
     }
 
     /**
-     * Get all agencies
-     *
-     * @param  Request  $request
-     * @return Response
+     * @OA\Get(
+     *   path="/api/v1/agency",
+     *   summary="Return all agencies",
+     *   tags={"Agency Controller"},
+     *   security={{ "apiAuth": {} }},
+     *   @OA\Parameter(ref="#/components/parameters/get_request_parameter_limit"),
+     *   @OA\Response(
+     *       response=401,
+     *       description="Unauthenticated",
+     *   ),
+     *   @OA\Response(
+     *       response=404,
+     *       description="Resource Not Found"
+     *   ),
+     *   @OA\Response(
+     *     response=200,
+     *     description="List of agencies",
+     *     @OA\JsonContent(
+     *       @OA\Property(
+     *         property="idAgency",
+     *         default="1",
+     *         description="id of the agency",
+     *       ),
+     *       @OA\Property(
+     *         property="nameAgency",
+     *         default="name",
+     *         description="Name of the agency",
+     *       ),
+     *       @OA\Property(
+     *         property="zipCodeAgency",
+     *         default="zip code",
+     *         description="Zip code of the agency",
+     *       ),
+     *       @OA\Property(
+     *         property="cityAgency",
+     *         default="city",
+     *         description="City of the agency",
+     *       ),
+     *       @OA\Property(
+     *         property="created_at",
+     *         default="2021-02-05T09:00:57.000000Z",
+     *         description="Timestamp of the creation",
+     *       ),
+     *       @OA\Property(
+     *         property="created_by",
+     *         default="1",
+     *         description="Id of user who created this one",
+     *       ),
+     *       @OA\Property(
+     *         property="updated_at",
+     *         default="2021-02-05T09:00:57.000000Z",
+     *         description="Timestamp of the last update",
+     *       ),
+     *       @OA\Property(
+     *         property="updated_by",
+     *         default="1",
+     *         description="Id of user who modified this one",
+     *       ),
+     *       @OA\Property(
+     *         property="data",
+     *         default="[]",
+     *         description="Agency data",
+     *       ),
+     *     )
+     *   )
+     * )
      */
+
     public function getAgencies(Request $request)
     {
         $agencies = Agency::all();
@@ -36,10 +99,96 @@ class AgencyController extends Controller
         return response()->json(['agencies' => $agencies], 200);
     }
     /**
-     * Get one agency
-     *
-     * @param  Request  $request
-     * @return Response
+     * @OA\Get(
+     *   path="/api/v1/agency/{id}",
+     *   summary="Return a agency",
+     *   tags={"Agency Controller"},
+     *   security={{ "apiAuth": {} }},
+     *   @OA\Parameter(
+     *     name="id",
+     *     in="path",
+     *     required=true,
+     *     description="ID of the agency to get",
+     *     @OA\Schema(
+     *       type="number", default=1
+     *     )
+     *   ),
+     *   @OA\Response(
+     *       response=401,
+     *       description="Unauthenticated",
+     *   ),
+     *   @OA\Response(
+     *       response=404,
+     *       description="Resource Not Found"
+     *   ),
+     *   @OA\Response(
+     *       response=500,
+     *       description="Agency not found",
+     *       @OA\JsonContent(
+     *        @OA\Property(
+     *          property="message",
+     *          default="The agency ? doesn't exist",
+     *          description="Message",
+     *        ),
+     *        @OA\Property(
+     *          property="status",
+     *          default="fail",
+     *          description="Status",
+     *        ),
+     *       ),
+     *   ),
+     *   @OA\Response(
+     *     response=200,
+     *     description="One agency",
+     *     @OA\JsonContent(
+     *       @OA\Property(
+     *         property="idAgency",
+     *         default="1",
+     *         description="Id of the agency",
+     *       ),
+     *       @OA\Property(
+     *         property="nameAgency",
+     *         default="name",
+     *         description="Name of the agency",
+     *       ),
+     *       @OA\Property(
+     *         property="zipCodeAgency",
+     *         default="zip code",
+     *         description="Zip code of the agency",
+     *       ),
+     *       @OA\Property(
+     *         property="cityAgency",
+     *         default="city",
+     *         description="City of the agency",
+     *       ),
+     *       @OA\Property(
+     *         property="created_at",
+     *         default="2021-02-05T09:00:57.000000Z",
+     *         description="Timestamp of the creation",
+     *       ),
+     *       @OA\Property(
+     *         property="created_by",
+     *         default="1",
+     *         description="Id of user who created this one",
+     *       ),
+     *       @OA\Property(
+     *         property="updated_at",
+     *         default="2021-02-05T09:00:57.000000Z",
+     *         description="Timestamp of the last update",
+     *       ),
+     *       @OA\Property(
+     *         property="updated_by",
+     *         default="1",
+     *         description="Id of user who modified this one",
+     *       ),
+     *       @OA\Property(
+     *         property="data",
+     *         default="[]",
+     *         description="Agency data",
+     *       ),
+     *     )
+     *   ),
+     * )
      */
     public function getAgency($id)
     {
@@ -52,11 +201,142 @@ class AgencyController extends Controller
             return response()->json(['message' => 'Agency not found!' . $e->getMessage()], 404);
         }
     }
+
     /**
-     * Store a new agency.
-     *
-     * @param  Request  $request
-     * @return Response
+     * @OA\Post(
+     *   path="/api/v1/agency",
+     *   summary="Add a agency",
+     *   tags={"Agency Controller"},
+     *   @OA\Parameter(
+     *     name="nameAgency",
+     *     in="query",
+     *     required=true,
+     *     description="Name of the agency to add",
+     *     @OA\Schema(
+     *       type="string", default="Name agency"
+     *     )
+     *   ),
+     *   @OA\Parameter(
+     *     name="zipCodeAgency",
+     *     in="query",
+     *     required=true,
+     *     description="Zip code of the agency to add",
+     *     @OA\Schema(
+     *       type="string", default="Zip code"
+     *     )
+     *   ),
+     *   @OA\Parameter(
+     *     name="cityAgency",
+     *     in="query",
+     *     required=true,
+     *     description="City of the agency to add",
+     *     @OA\Schema(
+     *       type="string", default="City"
+     *     )
+     *   ),
+     *   @OA\Parameter(
+     *     name="created_by",
+     *     in="query",
+     *     required=true,
+     *     description="ID of the logged user",
+     *     @OA\Schema(
+     *       type="number", default="1"
+     *     )
+     *   ),
+     *   @OA\Parameter(
+     *     name="updated_by",
+     *     in="query",
+     *     required=true,
+     *     description="ID of the logged user",
+     *     @OA\Schema(
+     *       type="number", default="1"
+     *     )
+     *   ),
+     *   @OA\Parameter(
+     *     name="data",
+     *     in="query",
+     *     required=true,
+     *     description="Name of the data agency to add",
+     *     @OA\Schema(
+     *       type="string", default="{'cle':'valeur','deuxiemecle':'deuxiemevaleur'}"
+     *     )
+     *   ),
+     *   @OA\Response(
+     *       response=409,
+     *       description="Not created",
+     *   ),
+     *   @OA\Response(
+     *       response=404,
+     *       description="Resource Not Found",
+     *   ),
+     *   @OA\Response(
+     *       response=500,
+     *       description="Agency data not added",
+     *       @OA\JsonContent(
+     *        @OA\Property(
+     *          property="message",
+     *          default="Agency data not added",
+     *          description="Message",
+     *        ),
+     *        @OA\Property(
+     *          property="status",
+     *          default="fail",
+     *          description="Status",
+     *        ),
+     *       ),
+     *   ),
+     *   @OA\Response(
+     *     response=201,
+     *     description="Agency created",
+     *     @OA\JsonContent(
+     *     @OA\Property(
+     *         property="idAgency",
+     *         default="1",
+     *         description="Id of the agency",
+     *       ),
+     *       @OA\Property(
+     *         property="nameAgency",
+     *         default="name",
+     *         description="Name of the agency",
+     *       ),
+     *       @OA\Property(
+     *         property="zipCodeAgency",
+     *         default="zipCode",
+     *         description="Zip Code of the Agency",
+     *       ),
+     *       @OA\Property(
+     *         property="cityAgency",
+     *         default="city Agency",
+     *         description="City of the agency",
+     *       ),
+     *       @OA\Property(
+     *         property="created_at",
+     *         default="2021-02-05T09:00:57.000000Z",
+     *         description="Timestamp of the creation",
+     *       ),
+     *       @OA\Property(
+     *         property="created_by",
+     *         default="1",
+     *         description="Id of user who created this one",
+     *       ),
+     *       @OA\Property(
+     *         property="updated_at",
+     *         default="2021-02-05T09:00:57.000000Z",
+     *         description="Timestamp of the last update",
+     *       ),
+     *       @OA\Property(
+     *         property="updated_by",
+     *         default="1",
+     *         description="Id of user who modified this one",
+     *       ),
+     *       @OA\Property(
+     *         property="data",
+     *         default="[]",
+     *         description="Agency data",
+     *       ),
+     *     )
+     *   ),
+     * )
      */
 
     public function addAgency(Request $request)
@@ -97,11 +377,149 @@ class AgencyController extends Controller
     }
 
     /**
-     * Update agency
-     *
-     * @param  string   $id
-     * @param  Request  $request
-     * @return Response
+     * @OA\Patch(
+     *   path="/api/v1/agency/{id}",
+     *   summary="Update a agency",
+     *   tags={"Agency Controller"},
+     *   security={{ "apiAuth": {} }},
+     *   @OA\Parameter(
+     *     name="id",
+     *     in="path",
+     *     required=true,
+     *     description="ID of the agency to update",
+     *     @OA\Schema(
+     *       type="number", default="1"
+     *     )
+     *   ),
+     *     @OA\Property(
+     *         property="idAgency",
+     *         default="1",
+     *         description="Id of the agency",
+     *   ),
+     *   @OA\Parameter(
+     *     name="nameAgency",
+     *     in="query",
+     *     description="Name of the agency to add",
+     *     @OA\Schema(
+     *       type="string", default="Name"
+     *     )
+     *   ),
+     *   @OA\Parameter(
+     *     name="zipCodeAgency",
+     *     in="query",
+     *     description="Zip Code of the agency to add",
+     *     @OA\Schema(
+     *       type="string", default="Zip Code"
+     *     )
+     *   ),
+     *   @OA\Parameter(
+     *     name="cityAgency",
+     *     in="query",
+     *     description="City of the agency to add",
+     *     @OA\Schema(
+     *       type="string", default="City"
+     *     )
+     *   ),
+     *   @OA\Parameter(
+     *     name="created_by",
+     *     in="query",
+     *     description="ID of the logged user",
+     *     @OA\Schema(
+     *       type="number", default="1"
+     *     )
+     *   ),
+     *   @OA\Parameter(
+     *     name="updated_by",
+     *     in="query",
+     *     description="ID of the logged user",
+     *     @OA\Schema(
+     *       type="number", default="1"
+     *     )
+     *   ),
+     *   @OA\Parameter(
+     *     name="data",
+     *     in="query",
+     *     description="Data to add",
+     *     @OA\Schema(
+     *       type="string", default="{'cle':'valeur','deuxiemecle':'deuxiemevaleur'}"
+     *     )
+     *   ),
+     *   @OA\Response(
+     *       response=409,
+     *       description="Not updated",
+     *   ),
+     *   @OA\Response(
+     *       response=404,
+     *       description="Resource Not Found",
+     *   ),
+     *   @OA\Response(
+     *       response=500,
+     *       description="Agency data not updated",
+     *       @OA\JsonContent(
+     *        @OA\Property(
+     *          property="message",
+     *          default="Agency data not updated",
+     *          description="Message",
+     *        ),
+     *        @OA\Property(
+     *          property="status",
+     *          default="fail",
+     *          description="Status",
+     *        ),
+     *       ),
+     *   ),
+     *   @OA\Response(
+     *     response=200,
+     *     description="Agency updated",
+     *     @OA\JsonContent(
+     *     @OA\Property(
+     *         property="idAgency",
+     *         default="1",
+     *         description="Id of the agency",
+     *       ),
+     *       @OA\Property(
+     *         property="nameagency",
+     *         default="Name",
+     *         description="Name of the agency",
+     *       ),
+     *       @OA\Property(
+     *         property="zipCodeAgency",
+     *         default="ZipCode",
+     *         description="sip code of the agency",
+     *       ),
+     *       @OA\Property(
+     *         property="city",
+     *         default="CityLe Havre",
+     *         description="City of the agency",
+     *       ),
+     *       @OA\Property(
+     *         property="created_at",
+     *         default="2021-02-05T09:00:57.000000Z",
+     *         description="Id of user who created this one",
+     *       ),
+     *       @OA\Property(
+     *         property="created_by",
+     *         default="1",
+     *         description="Id of user who created this one",
+     *       ),
+     *       @OA\Property(
+     *         property="updated_at",
+     *         default="2021-02-05T09:00:57.000000Z",
+     *         description="Timestamp of the last update",
+     *       ),
+     *       @OA\Property(
+     *         property="updated_by",
+     *         default="1",
+     *         description="Id of user who modified this one",
+     *       ),
+     *       @OA\Property(
+     *         property="data",
+     *         default="[]",
+     *         description="Agency data",
+     *       ),
+     *     )
+     *   ),
+     * )
      */
     public function updateAgency($id, Request $request)
     {
@@ -149,11 +567,86 @@ class AgencyController extends Controller
             return response()->json(['message' => 'Agency Update Failed!' . $e->getMessage()], 409);
         }
     }
+
     /**
-     * Delete agency function
-     *
-     * @param int $id
-     * @return Response
+     * @OA\Delete(
+     *   path="/api/v1/agency/{id}",
+     *   summary="Delete a agency",
+     *   tags={"Agency Controller"},
+     *   security={{ "apiAuth": {} }},
+     *   @OA\Parameter(
+     *     name="id",
+     *     in="path",
+     *     required=true,
+     *     description="ID of the agency to delete",
+     *     @OA\Schema(
+     *       type="number", default="1"
+     *     )
+     *   ),
+     *   @OA\Response(
+     *       response=409,
+     *       description="Not deleted",
+     *   ),
+     *   @OA\Response(
+     *       response=404,
+     *       description="Resource Not Found"
+     *   ),
+     *   @OA\Response(
+     *       response=500,
+     *       description="Agency data not deleted"
+     *   ),
+     *   @OA\Response(
+     *     response=200,
+     *     description="Agency deleted",
+     *     @OA\JsonContent(
+     *     @OA\Property(
+     *         property="idAgency",
+     *         default="1",
+     *         description="Id of the agency",
+     *   ),
+     *       @OA\Property(
+     *         property="nameAgency",
+     *         default="Name",
+     *         description="Name of the agency",
+     *       ),
+     *       @OA\Property(
+     *         property="zipCodeAgency",
+     *         default="ZipCode",
+     *         description="zipCode of the agency",
+     *       ),
+     *       @OA\Property(
+     *         property="cityAgency",
+     *         default="City",
+     *         description="City of the agency",
+     *       ),
+     *       @OA\Property(
+     *         property="created_at",
+     *         default="2021-02-05T09:00:57.000000Z",
+     *         description="Timestamp of the creation",
+     *       ),
+     *       @OA\Property(
+     *         property="created_by",
+     *         default="1",
+     *         description="Id of agency who created this one",
+     *       ),
+     *       @OA\Property(
+     *         property="updated_at",
+     *         default="2021-02-05T09:00:57.000000Z",
+     *         description="Timestamp of the last update",
+     *       ),
+     *       @OA\Property(
+     *         property="updated_by",
+     *         default="1",
+     *         description="Id of user who modified this one",
+     *       ),
+     *       @OA\Property(
+     *         property="data",
+     *         default="[]",
+     *         description="Agency data",
+     *       ),
+     *     )
+     *   ),
+     * )
      */
     public function deleteAgency($id)
     {
@@ -175,7 +668,88 @@ class AgencyController extends Controller
             return response()->json(['message' => 'Agency deletion failed!' . $e->getMessage(), 'status' => 'fail'], 409);
         }
     }
-    //route
+    /**
+     * @OA\Post(
+     *   path="/api/v1/agency/data/{id}",
+     *   summary="Add agency data",
+     *   tags={"Agency Controller"},
+     *   security={{ "apiAuth": {} }},
+     *   @OA\Parameter(
+     *     name="id",
+     *     in="path",
+     *     required=true,
+     *     description="ID of the agency",
+     *     @OA\Schema(
+     *       type="number", default="1"
+     *     )
+     *   ),
+     *   @OA\Parameter(
+     *     name="data",
+     *     in="query",
+     *     required=true,
+     *     description="data to add",
+     *     @OA\Schema(
+     *       type="string", default="{}"
+     *     )
+     *   ),
+     *   @OA\Parameter(
+     *     name="created_by",
+     *     in="query",
+     *     description="ID of the creator",
+     *     @OA\Schema(
+     *       type="number", default="1"
+     *     )
+     *   ),
+     *   @OA\Parameter(
+     *     name="updated_by",
+     *     in="query",
+     *     description="ID of the updator",
+     *     @OA\Schema(
+     *       type="number", default="1"
+     *     )
+     *   ),
+     *   @OA\Response(
+     *       response=409,
+     *       description="Data not created",
+     *   ),
+     *   @OA\Response(
+     *       response=404,
+     *       description="Resource Not Found",
+     *   ),
+     *   @OA\Response(
+     *       response=500,
+     *       description="Agency data not added",
+     *       @OA\JsonContent(
+     *        @OA\Property(
+     *          property="message",
+     *          default="Agency data not added",
+     *          description="Message",
+     *        ),
+     *        @OA\Property(
+     *          property="status",
+     *          default="fail",
+     *          description="Status",
+     *        ),
+     *       ),
+     *   ),
+     *   @OA\Response(
+     *     response=201,
+     *     description="Agency data created",
+     *       @OA\JsonContent(
+     *        @OA\Property(
+     *          property="data",
+     *          default="[]",
+     *          description="data",
+     *        ),
+     *        @OA\Property(
+     *          property="status",
+     *          default="success",
+     *          description="Status",
+     *        ),
+     *       ),
+     *   ),
+     * )
+     */
     public function addData($id, Request $request)
     {
         try {
@@ -237,9 +811,9 @@ class AgencyController extends Controller
     {
         try {
             $agencyData = AgencyData::all()
-            ->where('idAgency', $idAgency)
-            ->where('keyAgencyData', $key)
-            ->first();
+                ->where('idAgency', $idAgency)
+                ->where('keyAgencyData', $key)
+                ->first();
 
             if ($agencyData == null)
                 return false;
