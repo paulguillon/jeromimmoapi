@@ -36,7 +36,7 @@ use Illuminate\Support\Facades\Auth;
  */
 class Controller extends BaseController
 {
-        
+
     //Add this method to the Controller class
     protected function respondWithToken($token)
     {
