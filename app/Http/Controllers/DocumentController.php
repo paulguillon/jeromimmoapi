@@ -19,10 +19,62 @@ class DocumentController extends Controller
     }
 
     /**
-     * Get all documents
-     *
-     * @param  Request  $request
-     * @return Response
+     * @OA\Get(
+     *   path="/api/v1/document",
+     *   summary="Return all documents",
+     *   tags={"Document Controller"},
+     *   security={{ "apiAuth": {} }},
+     *   @OA\Parameter(ref="#/components/parameters/get_request_parameter_limit"),
+     *   @OA\Response(
+     *       response=401,
+     *       description="Unauthenticated",
+     *   ),
+     *   @OA\Response(
+     *       response=404,
+     *       description="Resource Not Found"
+     *   ),
+     *   @OA\Response(
+     *     response=200,
+     *     description="List of documents",
+     *     @OA\JsonContent(
+     *       @OA\Property(
+     *         property="idDocument",
+     *         default="Document id",
+     *         description="Id of the document",
+     *       ),
+     *       @OA\Property(
+     *         property="nameDocument",
+     *         default="Document name",
+     *         description="Name of the document",
+     *       ),
+     *       @OA\Property(
+     *         property="created_at",
+     *         default="2021-02-05T09:00:57.000000Z",
+     *         description="Timestamp of the document creation",
+     *       ),
+     *       @OA\Property(
+     *         property="created_by",
+     *         default="1",
+     *         description="Id of user who created this one",
+     *       ),
+     *       @OA\Property(
+     *         property="updated_at",
+     *         default="2021-02-05T09:00:57.000000Z",
+     *         description="Timestamp of the document last update",
+     *       ),
+     *       @OA\Property(
+     *         property="updated_by",
+     *         default="1",
+     *         description="Id of user who modified this one",
+     *       ),
+     *       @OA\Property(
+     *         property="data",
+     *         default={"keyData":"valueData"},
+     *         description="Document data",
+     *       ),
+     *     )
+     *   )
+     * )
      */
     public function getDocuments(Request $request)
     {
@@ -38,10 +90,86 @@ class DocumentController extends Controller
     }
 
     /**
-     * Get one document
-     *
-     * @param  Request  $request
-     * @return Response
+     * @OA\Get(
+     *   path="/api/v1/document/{id}",
+     *   summary="Return a document",
+     *   tags={"Document Controller"},
+     *   security={{ "apiAuth": {} }},
+     *   @OA\Parameter(
+     *     name="id",
+     *     in="path",
+     *     required=true,
+     *     description="ID of the document to get",
+     *     @OA\Schema(
+     *       type="number", default=1
+     *     )
+     *   ),
+     *   @OA\Response(
+     *       response=401,
+     *       description="Unauthenticated",
+     *   ),
+     *   @OA\Response(
+     *       response=404,
+     *       description="Resource Not Found"
+     *   ),
+     *   @OA\Response(
+     *       response=500,
+     *       description="Document not found",
+     *       @OA\JsonContent(
+     *        @OA\Property(
+     *          property="message",
+     *          default="The document ? doesn't exist",
+     *          description="Message",
+     *        ),
+     *        @OA\Property(
+     *          property="status",
+     *          default="fail",
+     *          description="Status",
+     *        ),
+     *       ),
+     *   ),
+     *   @OA\Response(
+     *     response=200,
+     *     description="List of documents",
+     *     @OA\JsonContent(
+     *       @OA\Property(
+     *         property="idDocument",
+     *         default="Document id",
+     *         description="Id of the document",
+     *       ),
+     *       @OA\Property(
+     *         property="nameDocument",
+     *         default="Document name",
+     *         description="Name of the document",
+     *       ),
+     *       @OA\Property(
+     *         property="created_at",
+     *         default="2021-02-05T09:00:57.000000Z",
+     *         description="Timestamp of the document creation",
+     *       ),
+     *       @OA\Property(
+     *         property="created_by",
+     *         default="1",
+     *         description="Id of user who created this one",
+     *       ),
+     *       @OA\Property(
+     *         property="updated_at",
+     *         default="2021-02-05T09:00:57.000000Z",
+     *         description="Timestamp of the document last update",
+     *       ),
+     *       @OA\Property(
+     *         property="updated_by",
+     *         default="1",
+     *         description="Id of user who modified this one",
+     *       ),
+     *       @OA\Property(
+     *         property="data",
+     *         default={"keyData":"valueData"},
+     *         description="Document data",
+     *       ),
+     *     )
+     *   )
+     * )
      */
     public function getDocument($id)
     {
@@ -56,13 +184,116 @@ class DocumentController extends Controller
             return response()->json(['message' => 'Document not found!' . $e->getMessage()], 404);
         }
     }
-    /**
-     * Store a new document.
-     *
-     * @param  Request  $request
-     * @return Response
-     */
 
+    /**
+     * @OA\Post(
+     *   path="/api/v1/document",
+     *   summary="Add a document",
+     *   tags={"Document Controller"},
+     *   security={{ "apiAuth": {} }},
+     *   @OA\Parameter(
+     *     name="nameDocument",
+     *     in="query",
+     *     required=true,
+     *     description="Name of the document to add",
+     *     @OA\Schema(
+     *       type="string", default="first"
+     *     )
+     *   ),
+     *   @OA\Parameter(
+     *     name="created_by",
+     *     in="query",
+     *     required=true,
+     *     description="ID of the logged user",
+     *     @OA\Schema(
+     *       type="number", default="1"
+     *     )
+     *   ),
+     *   @OA\Parameter(
+     *     name="updated_by",
+     *     in="query",
+     *     required=true,
+     *     description="ID of the logged user",
+     *     @OA\Schema(
+     *       type="number", default="1"
+     *     )
+     *   ),
+     *   @OA\Parameter(
+     *     name="data",
+     *     in="query",
+     *     required=true,
+     *     description="Data of the document to add",
+     *     @OA\Schema(
+     *       type="string", default={"keyData":"valueData"}
+     *     )
+     *   ),
+     *   @OA\Response(
+     *       response=409,
+     *       description="Not created",
+     *   ),
+     *   @OA\Response(
+     *       response=404,
+     *       description="Resource Not Found",
+     *   ),
+     *   @OA\Response(
+     *       response=500,
+     *       description="Document data not added",
+     *       @OA\JsonContent(
+     *        @OA\Property(
+     *          property="message",
+     *          default="Document data not added",
+     *          description="Message",
+     *        ),
+     *        @OA\Property(
+     *          property="status",
+     *          default="fail",
+     *          description="Status",
+     *        ),
+     *       ),
+     *   ),
+     *   @OA\Response(
+     *     response=201,
+     *     description="Document created",
+     *     @OA\JsonContent(
+     *       @OA\Property(
+     *         property="idDocument",
+     *         default="Document id",
+     *         description="Id of the document",
+     *       ),
+     *       @OA\Property(
+     *         property="nameDocument",
+     *         default="Document name",
+     *         description="Name of the document",
+     *       ),
+     *       @OA\Property(
+     *         property="created_at",
+     *         default="2021-02-05T09:00:57.000000Z",
+     *         description="Timestamp of the document creation",
+     *       ),
+     *       @OA\Property(
+     *         property="created_by",
+     *         default="1",
+     *         description="Id of user who created this one",
+     *       ),
+     *       @OA\Property(
+     *         property="updated_at",
+     *         default="2021-02-05T09:00:57.000000Z",
+     *         description="Timestamp of the document last update",
+     *       ),
+     *       @OA\Property(
+     *         property="updated_by",
+     *         default="1",
+     *         description="Id of user who modified this one",
+     *       ),
+     *       @OA\Property(
+     *         property="data",
+     *         default={"keyData":"valueData"},
+     *         description="Document data",
+     *       ),
+     *     )
+     *   ),
+     * )
+     */
     public function addDocument(Request $request)
     {
         //validate incoming request
@@ -95,11 +326,122 @@ class DocumentController extends Controller
     }
 
     /**
-     * Update document
-     *
-     * @param  string   $id
-     * @param  Request  $request
-     * @return Response
+     * @OA\Patch(
+     *   path="/api/v1/document/{id}",
+     *   summary="Update a document",
+     *   tags={"Document Controller"},
+     *   security={{ "apiAuth": {} }},
+     *   @OA\Parameter(
+     *     name="id",
+     *     in="path",
+     *     required=true,
+     *     description="ID of the document to update",
+     *     @OA\Schema(
+     *       type="number", default="1"
+     *     )
+     *   ),
+     *   @OA\Parameter(
+     *     name="nameDocument",
+     *     in="query",
+     *     required=true,
+     *     description="Type of the document to add",
+     *     @OA\Schema(
+     *       type="string", default="first"
+     *     )
+     *   ),
+     *   @OA\Parameter(
+     *     name="created_by",
+     *     in="query",
+     *     required=true,
+     *     description="ID of the logged user",
+     *     @OA\Schema(
+     *       type="number", default="1"
+     *     )
+     *   ),
+     *   @OA\Parameter(
+     *     name="updated_by",
+     *     in="query",
+     *     required=true,
+     *     description="ID of the logged user",
+     *     @OA\Schema(
+     *       type="number", default="1"
+     *     )
+     *   ),
+     *   @OA\Parameter(
+     *     name="data",
+     *     in="query",
+     *     required=true,
+     *     description="Data of the document to add",
+     *     @OA\Schema(
+     *       type="string", default={"keyData":"valueData"},
+     *     )
+     *   ),
+     *   @OA\Response(
+     *       response=409,
+     *       description="Not updated",
+     *   ),
+     *   @OA\Response(
+     *       response=404,
+     *       description="Resource Not Found",
+     *   ),
+     *   @OA\Response(
+     *       response=500,
+     *       description="Document data not updated",
+     *       @OA\JsonContent(
+     *        @OA\Property(
+     *          property="message",
+     *          default="Document data not updated",
+     *          description="Message",
+     *        ),
+     *        @OA\Property(
+     *          property="status",
+     *          default="fail",
+     *          description="Status",
+     *        ),
+     *       ),
+     *   ),
+     *   @OA\Response(
+     *     response=200,
+     *     description="Document updated",
+     *     @OA\JsonContent(
+     *       @OA\Property(
+     *         property="idDocument",
+     *         default="Document id",
+     *         description="Id of the document",
+     *       ),
+     *       @OA\Property(
+     *         property="nameDocument",
+     *         default="Document name",
+     *         description="Type of the document",
+     *       ),
+     *       @OA\Property(
+     *         property="created_at",
+     *         default="2021-02-05T09:00:57.000000Z",
+     *         description="Timestamp of the document creation",
+     *       ),
+     *       @OA\Property(
+     *         property="created_by",
+     *         default="1",
+     *         description="Id of user who created this one",
+     *       ),
+     *       @OA\Property(
+     *         property="updated_at",
+     *         default="2021-02-05T09:00:57.000000Z",
+     *         description="Timestamp of the document last update",
+     *       ),
+     *       @OA\Property(
+     *         property="updated_by",
+     *         default="1",
+     *         description="Id of user who modified this one",
+     *       ),
+     *       @OA\Property(
+     *         property="data",
+     *         default={"keyData":"valueData"},
+     *         description="Document data",
+     *       ),
+     *     )
+     *   ),
+     * )
      */
     public function updateDocument($id, Request $request)
     {
@@ -141,10 +483,59 @@ class DocumentController extends Controller
     }
 
     /**
-     * Delete document function
-     *
-     * @param int $id
-     * @return Response
+     * @OA\Delete(
+     *   path="/api/v1/document/{id}",
+     *   summary="Delete a document",
+     *   tags={"Document Controller"},
+     *   security={{ "apiAuth": {} }},
+     *   @OA\Parameter(
+     *     name="id",
+     *     in="path",
+     *     required=true,
+     *     description="ID of the document to delete",
+     *     @OA\Schema(
+     *       type="number", default="1"
+     *     )
+     *   ),
+     *   @OA\Response(
+     *       response=409,
+     *       description="Not deleted",
+     *   ),
+     *   @OA\Response(
+     *       response=404,
+     *       description="Resource Not Found"
+     *   ),
+     *   @OA\Response(
+     *       response=500,
+     *       description="Document data not deleted"
+     *   ),
+     *   @OA\Response(
+     *     response=200,
+     *     description="Document deleted",
+     *     @OA\JsonContent(
+     *       @OA\Property(
+     *         property="nameDocument",
+     *         default="Document name",
+     *         description="Type of the document",
+     *       ),
+     *       @OA\Property(
+     *         property="created_by",
+     *         default="1",
+     *         description="Id of user who created this one",
+     *       ),
+     *       @OA\Property(
+     *         property="updated_by",
+     *         default="1",
+     *         description="Id of user who modified this one",
+     *       ),
+     *       @OA\Property(
+     *         property="data",
+     *         default={"keyData":"valueData"},
+     *         description="Document data",
+     *       )
+     *      )
+     *   ),
+     * )
      */
     public function deleteDocument($id)
     {
@@ -167,7 +558,90 @@ class DocumentController extends Controller
         }
     }
 
-    // Route
+    /**
+     * @OA\Post(
+     *   path="/api/v1/document/data/{id}",
+     *   summary="Add document data",
+     *   tags={"Document Controller"},
+     *   security={{ "apiAuth": {} }},
+     *   @OA\Parameter(
+     *     name="id",
+     *     in="path",
+     *     required=true,
+     *     description="ID of the document",
+     *     @OA\Schema(
+     *       type="number", default="1"
+     *     )
+     *   ),
+     *   @OA\Parameter(
+     *     name="data",
+     *     in="query",
+     *     required=true,
+     *     description="Data of the document to add",
+     *     @OA\Schema(
+     *       type="string", default={"keyData":"valueData"},
+     *     )
+     *   ),
+     *   @OA\Parameter(
+     *     name="created_by",
+     *     in="query",
+     *     required=true,
+     *     description="ID of the logged user",
+     *     @OA\Schema(
+     *       type="number", default="1"
+     *     )
+     *   ),
+     *   @OA\Parameter(
+     *     name="updated_by",
+     *     in="query",
+     *     required=true,
+     *     description="ID of the logged user",
+     *     @OA\Schema(
+     *       type="number", default="1"
+     *     )
+     *   ),
+     *   @OA\Response(
+     *       response=409,
+     *       description="Data not created",
+     *   ),
+     *   @OA\Response(
+     *       response=404,
+     *       description="Resource Not Found",
+     *   ),
+     *   @OA\Response(
+     *       response=500,
+     *       description="Document data not added",
+     *       @OA\JsonContent(
+     *        @OA\Property(
+     *          property="message",
+     *          default="Document data not added",
+     *          description="Message",
+     *        ),
+     *        @OA\Property(
+     *          property="status",
+     *          default="fail",
+     *          description="Status",
+     *        ),
+     *       ),
+     *   ),
+     *   @OA\Response(
+     *     response=201,
+     *     description="Document data created",
+     *       @OA\JsonContent(
+     *        @OA\Property(
+     *          property="data",
+     *          default={"keyData":"valueData"},
+     *          description="data",
+     *        ),
+     *        @OA\Property(
+     *          property="status",
+     *          default="success",
+     *          description="Status",
+     *        ),
+     *       ),
+     *   ),
+     * )
+     */
     public function addData($id, Request $request)
     {
         try {
