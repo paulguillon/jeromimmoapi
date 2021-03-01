@@ -221,7 +221,7 @@ class VisitController extends Controller
      *     required=true,
      *     description="First name of the visit to add",
      *     @OA\Schema(
-     *       type="string", default="{'cle':'valeur','deuxiemecle':'deuxiemevaleur'}"
+     *       type="string", default={"cle":"valeur","deuxiemecle":"deuxiemevaleur"}
      *     )
      *   ),
      *   @OA\Response(
@@ -368,7 +368,7 @@ class VisitController extends Controller
      *     in="query",
      *     description="data to add",
      *     @OA\Schema(
-     *       type="string", default="{'cle':'valeur','deuxiemecle':'deuxiemevaleur'}"
+     *       type="string", default={"cle":"valeur","deuxiemecle":"deuxiemevaleur"}
      *     )
      *   ),
      *   @OA\Response(
@@ -594,7 +594,7 @@ class VisitController extends Controller
      *     required=true,
      *     description="data to add",
      *     @OA\Schema(
-     *       type="string", default="{'cle':'valeur','deuxiemecle':'deuxiemevaleur'}"
+     *       type="string", default={"cle":"valeur","deuxiemecle":"deuxiemevaleur"}
      *     )
      *   ),
      *   @OA\Response(
