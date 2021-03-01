@@ -192,7 +192,7 @@ class PropertyController extends Controller
      *       ),
      *       @OA\Property(
      *         property="data",
-     *         default="[""]",
+     *         default={"test":"test"},
      *         description="Property data",
      *       ),
      *     )
@@ -286,7 +286,7 @@ class PropertyController extends Controller
      *     required=true,
      *     description="Data of the property to add",
      *     @OA\Schema(
-     *       type="string", default="{'cle':'valeur','deuxiemecle':'deuxiemevaleur'}"
+     *       type="string", default={"test":"test"}
      *     )
      *   ),
      *   @OA\Response(
