@@ -18,6 +18,62 @@ class FaqController extends Controller
         $this->middleware('auth:api', ['accept' => ['addFaq']]);
     }
 
+
+    /**
+     * @OA\Get(
+     *   path="/api/v1/faq",
+     *   summary="Return all faq",
+     *   tags={"Faq Controller"},
+     *   security={{ "apiAuth": {} }},
+     *   @OA\Parameter(ref="#/components/parameters/get_request_parameter_limit"),
+     *   @OA\Response(
+     *       response=401,
+     *       description="Unauthenticated",
+     *   ),
+     *   @OA\Response(
+     *       response=404,
+     *       description="Resource Not Found"
+     *   ),
+     *   @OA\Response(
+     *     response=200,
+     *     description="List of faq",
+     *     @OA\JsonContent(
+     *       @OA\Property(
+     *         property="idfaq",
+     *         default="1",
+     *         description="id of the faq",
+     *       ),
+     *       @OA\Property(
+     *         property="created_at",
+     *         default="2021-02-05T09:00:57.000000Z",
+     *         description="Timestamp of the creation",
+     *       ),
+     *       @OA\Property(
+     *         property="created_by",
+     *         default="1",
+     *         description="Id of user who created this one",
+     *       ),
+     *       @OA\Property(
+     *         property="updated_at",
+     *         default="2021-02-05T09:00:57.000000Z",
+     *         description="Timestamp of the last update",
+     *       ),
+     *       @OA\Property(
+     *         property="updated_by",
+     *         default="1",
+     *         description="Id of user who modified this one",
+     *       ),
+     *       @OA\Property(
+     *         property="data",
+     *         default="[]",
+     *         description="faq data",
+     *       ),
+     *     )
+     *   )
+     * )
+     */
+
+
     public function getAllFaq(Request $request)
     {
         $faqs = Faq::all();
@@ -31,11 +87,82 @@ class FaqController extends Controller
         return response()->json(['faq' => $faqs], 200);
     }
 
-    /**
-     * Get one faq
-     *
-     * @param  Request  $request
-     * @return Response
+     /**
+     * @OA\Get(
+     *   path="/api/v1/faq/{id}",
+     *   summary="Return a faq",
+     *   tags={"Faq Controller"},
+     *   security={{ "apiAuth": {} }},
+     *   @OA\Parameter(
+     *     name="id",
+     *     in="path",
+     *     required=true,
+     *     description="ID of the faq to get",
+     *     @OA\Schema(
+     *       type="number", default=1
+     *     )
+     *   ),
+     *   @OA\Response(
+     *       response=401,
+     *       description="Unauthenticated",
+     *   ),
+     *   @OA\Response(
+     *       response=404,
+     *       description="Resource Not Found"
+     *   ),
+     *   @OA\Response(
+     *       response=500,
+     *       description="faq not found",
+     *       @OA\JsonContent(
+     *        @OA\Property(
+     *          property="message",
+     *          default="The faq ? doesn't exist",
+     *          description="Message",
+     *        ),
+     *        @OA\Property(
+     *          property="status",
+     *          default="fail",
+     *          description="Status",
+     *        ),
+     *       ),
+     *   ),
+     *   @OA\Response(
+     *     response=200,
+     *     description="One faq",
+     *     @OA\JsonContent(
+     *       @OA\Property(
+     *         property="idFaq",
+     *         default="1",
+     *         description="Id of the faq",
+     *       ),
+     *       @OA\Property(
+     *         property="created_at",
+     *         default="2021-02-05T09:00:57.000000Z",
+     *         description="Timestamp of the creation",
+     *       ),
+     *       @OA\Property(
+     *         property="created_by",
+     *         default="1",
+     *         description="Id of user who created this one",
+     *       ),
+     *       @OA\Property(
+     *         property="updated_at",
+     *         default="2021-02-05T09:00:57.000000Z",
+     *         description="Timestamp of the last update",
+     *       ),
+     *       @OA\Property(
+     *         property="updated_by",
+     *         default="1",
+     *         description="Id of user who modified this one",
+     *       ),
+     *       @OA\Property(
+     *         property="data",
+     *         default="[]",
+     *         description="faq data",
+     *       ),
+     *     )
+     *   ),
+     * )
      */
     public function getFaq($id)
     {
@@ -48,11 +175,92 @@ class FaqController extends Controller
             return response()->json(['message' => 'Faq not found!' . $e->getMessage()], 404);
         }
     }
-    /**
-     * Store a new faq.
-     *
-     * @param  Request  $request
-     * @return Response
+
+
+  /**
+     * @OA\Post(
+     *   path="/api/v1/faq",
+     *   summary="Add a faq",
+     *   tags={"Faq Controller"},
+     *   security={{ "apiAuth": {} }},
+     *   @OA\Parameter(
+     *     name="created_by",
+     *     in="query",
+     *     required=true,
+     *     description="ID of the logged user",
+     *     @OA\Schema(
+     *       type="number", default="1"
+     *     )
+     *   ),
+     *   @OA\Parameter(
+     *     name="updated_by",
+     *     in="query",
+     *     required=true,
+     *     description="ID of the logged user",
+     *     @OA\Schema(
+     *       type="number", default="1"
+     *     )
+     *   ),
+     *   @OA\Parameter(
+     *     name="data",
+     *     in="query",
+     *     required=true,
+     *     description="First name of the faq to add",
+     *     @OA\Schema(
+     *       type="string", default="{'test':'test','test2':'test2'}"
+     *     )
+     *   ),
+     *   @OA\Response(
+     *       response=409,
+     *       description="Not created",
+     *   ),
+     *   @OA\Response(
+     *       response=404,
+     *       description="Resource Not Found",
+     *   ),
+     *   @OA\Response(
+     *       response=500,
+     *       description="faq data not added",
+     *       @OA\JsonContent(
+     *        @OA\Property(
+     *          property="message",
+     *          default="faq data not added",
+     *          description="Message",
+     *        ),
+     *        @OA\Property(
+     *          property="status",
+     *          default="fail",
+     *          description="Status",
+     *        ),
+     *       ),
+     *   ),
+     *   @OA\Response(
+     *     response=201,
+     *     description="Faq created",
+     *     @OA\JsonContent(
+     *       @OA\Property(
+     *         property="idFaq",
+     *         default="1",
+     *         description="id of the user",
+     *       ),
+     *       @OA\Property(
+     *         property="created_by",
+     *         default="1",
+     *         description="Id of user who created this one",
+     *       ),
+     *       @OA\Property(
+     *         property="updated_by",
+     *         default="1",
+     *         description="Id of user who modified this one",
+     *       ),
+     *       @OA\Property(
+     *         property="data",
+     *         default="[]",
+     *         description="User data",
+     *       ),
+     *     )
+     *   ),
+     * )
      */
 
     public function addFaq(Request $request)
@@ -84,12 +292,111 @@ class FaqController extends Controller
         }
     }
 
-    /**
-     * Patch faq
-     *
-     * @param  string   $id
-     * @param  Request  $request
-     * @return Response
+  /**
+     * @OA\Patch(
+     *   path="/api/v1/faq/{id}",
+     *   summary="Update a faq",
+     *   tags={"Faq Controller"},
+     *   security={{ "apiAuth": {} }},
+     *   @OA\Parameter(
+     *     name="idFaq",
+     *     in="path",
+     *     required=true,
+     *     description="ID of the faq to update",
+     *     @OA\Schema(
+     *       type="number", default="1"
+     *     )
+     *   ),
+     *     @OA\Property(
+     *         property="idFaq",
+     *         default="1",
+     *         description="Id of the agency",
+     *   ),
+     *   @OA\Parameter(
+     *     name="created_by",
+     *     in="query",
+     *     description="ID of the logged user",
+     *     @OA\Schema(
+     *       type="number", default="1"
+     *     )
+     *   ),
+     *   @OA\Parameter(
+     *     name="updated_by",
+     *     in="query",
+     *     description="ID of the logged user",
+     *     @OA\Schema(
+     *       type="number", default="1"
+     *     )
+     *   ),
+     *   @OA\Parameter(
+     *     name="data",
+     *     in="query",
+     *     description="Data to add",
+     *     @OA\Schema(
+     *       type="string", default="{'cle':'valeur','deuxiemecle':'deuxiemevaleur'}"
+     *     )
+     *   ),
+     *   @OA\Response(
+     *       response=409,
+     *       description="Not updated",
+     *   ),
+     *   @OA\Response(
+     *       response=404,
+     *       description="Resource Not Found",
+     *   ),
+     *   @OA\Response(
+     *       response=500,
+     *       description="Faq data not updated",
+     *       @OA\JsonContent(
+     *        @OA\Property(
+     *          property="message",
+     *          default="Faq data not updated",
+     *          description="Message",
+     *        ),
+     *        @OA\Property(
+     *          property="status",
+     *          default="fail",
+     *          description="Status",
+     *        ),
+     *       ),
+     *   ),
+     *   @OA\Response(
+     *     response=200,
+     *     description="Faq updated",
+     *     @OA\JsonContent(
+     *     @OA\Property(
+     *         property="idFaq",
+     *         default="1",
+     *         description="Id of the faq",
+     *       ),
+     *       @OA\Property(
+     *         property="created_at",
+     *         default="2021-02-05T09:00:57.000000Z",
+     *         description="Id of user who created this one",
+     *       ),
+     *       @OA\Property(
+     *         property="created_by",
+     *         default="1",
+     *         description="Id of user who created this one",
+     *       ),
+     *       @OA\Property(
+     *         property="updated_at",
+     *         default="2021-02-05T09:00:57.000000Z",
+     *         description="Timestamp of the last update",
+     *       ),
+     *       @OA\Property(
+     *         property="updated_by",
+     *         default="1",
+     *         description="Id of user who modified this one",
+     *       ),
+     *       @OA\Property(
+     *         property="data",
+     *         default="[]",
+     *         description="Faq data",
+     *       ),
+     *     )
+     *   ),
+     * )
      */
     public function updateFaq($id, Request $request)
     {
@@ -122,7 +429,6 @@ class FaqController extends Controller
                         return response()->json(['message' => 'Faq Update Failed!', 'status' => 'fail'], 500);
                 }
             }
-
             //return successful response
             return response()->json(['faq' => $faq, 'data' => $this->getAllData($faq->idFaq), 'message' => 'ALL UPDATED', 'status' => 'success'], 200);
         } catch (\Exception $e) {
@@ -131,11 +437,71 @@ class FaqController extends Controller
         }
     }
 
+   
     /**
-     * Delete faq function
-     *
-     * @param int $id
-     * @return Response
+     * @OA\Delete(
+     *   path="/api/v1/faq/{id}",
+     *   summary="Delete a faq",
+     *   tags={"Faq Controller"},
+     *   security={{ "apiAuth": {} }},
+     *   @OA\Parameter(
+     *     name="id",
+     *     in="path",
+     *     required=true,
+     *     description="ID of the faq to delete",
+     *     @OA\Schema(
+     *       type="number", default="1"
+     *     )
+     *   ),
+     *   @OA\Response(
+     *       response=409,
+     *       description="Not deleted",
+     *   ),
+     *   @OA\Response(
+     *       response=404,
+     *       description="Resource Not Found"
+     *   ),
+     *   @OA\Response(
+     *       response=500,
+     *       description="Faq data not deleted"
+     *   ),
+     *   @OA\Response(
+     *     response=200,
+     *     description="Faq deleted",
+     *     @OA\JsonContent(
+     *     @OA\Property(
+     *         property="idFaq",
+     *         default="1",
+     *         description="Id of the agency",
+     *   ),
+     *       @OA\Property(
+     *         property="created_at",
+     *         default="2021-02-05T09:00:57.000000Z",
+     *         description="Timestamp of the creation",
+     *       ),
+     *       @OA\Property(
+     *         property="created_by",
+     *         default="1",
+     *         description="Id of agency who created this one",
+     *       ),
+     *       @OA\Property(
+     *         property="updated_at",
+     *         default="2021-02-05T09:00:57.000000Z",
+     *         description="Timestamp of the last update",
+     *       ),
+     *       @OA\Property(
+     *         property="updated_by",
+     *         default="1",
+     *         description="Id of user who modified this one",
+     *       ),
+     *       @OA\Property(
+     *         property="data",
+     *         default="[]",
+     *         description="Faq data",
+     *       ),
+     *     )
+     *   ),
+     * )
      */
     public function deleteFaq($id)
     {
@@ -158,14 +524,99 @@ class FaqController extends Controller
         }
     }
 
-    public function addData($idFaq, Request $request)
+ /**
+     * @OA\Post(
+     *   path="/api/v1/faq/data/{id}",
+     *   summary="Add faq data",
+     *   tags={"Faq Controller"},
+     *   security={{ "apiAuth": {} }},
+     *   @OA\Parameter(
+     *     name="id",
+     *     in="path",
+     *     required=true,
+     *     description="ID of the faq",
+     *     @OA\Schema(
+     *       type="number", default="1"
+     *     )
+     *   ),
+     *   @OA\Parameter(
+     *     name="data",
+     *     in="query",
+     *     required=true,
+     *     description="data to add",
+     *     @OA\Schema(
+     *       type="string", default="{'test':'test'}"
+     *     )
+     *   ),
+     *   @OA\Parameter(
+     *     name="created_by",
+     *     in="query",
+     *     required=true,
+     *     description="ID of the creator",
+     *     @OA\Schema(
+     *       type="number", default="1"
+     *     )
+     *   ),
+     *   @OA\Parameter(
+     *     name="updated_by",
+     *     in="query",
+     *     required=true,
+     *     description="ID of the updator",
+     *     @OA\Schema(
+     *       type="number", default="1"
+     *     )
+     *   ),
+     *   @OA\Response(
+     *       response=409,
+     *       description="Data not created",
+     *   ),
+     *   @OA\Response(
+     *       response=404,
+     *       description="Resource Not Found",
+     *   ),
+     *   @OA\Response(
+     *       response=500,
+     *       description="Faq data not added",
+     *       @OA\JsonContent(
+     *        @OA\Property(
+     *          property="message",
+     *          default="Faq data not added",
+     *          description="Message",
+     *        ),
+     *        @OA\Property(
+     *          property="status",
+     *          default="fail",
+     *          description="Status",
+     *        ),
+     *       ),
+     *   ),
+     *   @OA\Response(
+     *     response=201,
+     *     description="Faq data created",
+     *       @OA\JsonContent(
+     *        @OA\Property(
+     *          property="data",
+     *          default="[]",
+     *          description="data",
+     *        ),
+     *        @OA\Property(
+     *          property="status",
+     *          default="success",
+     *          description="Status",
+     *        ),
+     *       ),
+     *   ),
+     * )
+     */
+     
+    public function addData($id, Request $request)
     {
         try {
-            if (!$this->_addData($idFaq, $request))
+            if (!$this->_addData($id, $request))
                 return response()->json(['message' => 'Not all data has been added', 'status' => 'fail'], 409);
 
             //return successful response
-            return response()->json(['faq' => $this->getAllData($idFaq), 'message' => 'CREATED'], 201);
+            return response()->json(['faq' => $this->getAllData($id), 'message' => 'CREATED'], 201);
         } catch (\Exception $e) {
             //return error message
             return response()->json(['message' => 'Faq data not added!' . $e->getMessage()], 409);
@@ -173,7 +624,7 @@ class FaqController extends Controller
     }
 
     //fonction utilisée par la route et lors de la creation de user pour ajouter toutes les data
-    public function _addData($idFaq, $request)
+    public function _addData($id, $request)
     {
         $data = (array)json_decode($request->input('data'), true);
 
@@ -185,7 +636,7 @@ class FaqController extends Controller
                 $faqData->valueFaqData = $value;
                 $faqData->created_by = $request->input('created_by');
                 $faqData->updated_by = $request->input('updated_by');
-                $faqData->idFaq = $idFaq;
+                $faqData->idFaq = $id;
 
                 $faqData->save();
             }

@@ -123,8 +123,8 @@ $router->group(['prefix' => 'api/v1'], function () use ($router) {
         $router->get('/{id}', 'FaqController@getFaq');
         // Matches "/api/v1/faq Post add faq
         $router->post('', 'FaqController@addFaq');
-        // Matches "/api/v1/agency/data/idFaq Post Register
-        $router->post('/data/{id}', 'FaqController@addFaq');
+        // Matches "/api/v1/faq/data/idFaq Post Register
+        $router->post('/data/{id}', 'FaqController@addData');
         // Matches "/api/v1/faq/id Patch one element of one faq
         $router->patch('/{id}', 'FaqController@updateFaq');
         // Matches "/api/v1/faq/id delete one faq
