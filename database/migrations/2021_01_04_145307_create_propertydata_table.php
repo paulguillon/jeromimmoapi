@@ -14,7 +14,7 @@ class CreatePropertydataTable extends Migration
      */
     public function up()
     {
-        Schema::create('propertydata', function (Blueprint $table) {
+        Schema::create('propertyData', function (Blueprint $table) {
             $table->bigIncrements('idPropertydata');
             $table->timestamp('created_at')->default(DB::raw('CURRENT_TIMESTAMP'));
             $table->foreignId('created_by')->constrained('users', 'idUser');

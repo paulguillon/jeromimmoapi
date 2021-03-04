@@ -14,7 +14,7 @@ class PropertyController extends Controller
     public function __construct()
     {
         // methods with authorization
-        $this->middleware('auth:api', ['accept' => ['registerProperty']]);
+        $this->middleware('auth:api', ['except' => ['getProperties']]);
     }
 
     /**
@@ -99,7 +99,7 @@ class PropertyController extends Controller
 
             $property['data'] = $this->getAllData($property->idProperty);
         }
-        return response()->json(['properties' => $properties], 200);
+        return response()->json($properties, 200);
     }
 
     /**
