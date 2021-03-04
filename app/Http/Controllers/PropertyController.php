@@ -14,7 +14,7 @@ class PropertyController extends Controller
     public function __construct()
     {
         // methods with authorization
-        $this->middleware('auth:api', ['except' => ['getProperties']]);
+        $this->middleware('auth:api', ['except' => ['getProperties', 'getProperty']]);
     }
 
     /**
@@ -210,7 +210,7 @@ class PropertyController extends Controller
             return response()->json(['message' => 'Property not found!' . $e->getMessage()], 404);
         }
     }
-    
+
     /**
      * @OA\Post(
      *   path="/api/v1/properties",
@@ -716,7 +716,7 @@ class PropertyController extends Controller
             return response()->json(['message' => 'Property deletion failed!' . $e->getMessage(), 'status' => 'fail'], 409);
         }
     }
-    
+
     /**
      * @OA\Post(
      *   path="/api/v1/properties/data/{id}",
@@ -853,19 +853,19 @@ class PropertyController extends Controller
     {
         return response()->json(
             PropertyData::all()
-            ->where('idProperty', $idProperty)
-            ->where('keyPropertyData', $key),
+                ->where('idProperty', $idProperty)
+                ->where('keyPropertyData', $key),
             200
-            );
+        );
     }
 
     public function updateData($idProperty, $key, $value)
     {
         try {
             $propertyData = PropertyData::all()
-            ->where('idProperty', $idProperty)
-            ->where('keyPropertyData', $key)
-            ->first();
+                ->where('idProperty', $idProperty)
+                ->where('keyPropertyData', $key)
+                ->first();
 
             if ($propertyData == null)
                 return false;
