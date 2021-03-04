@@ -164,7 +164,7 @@ class RoleController extends Controller
 
             $role = Role::all()->where('idRole', $id)->first();
 
-            return response()->json(['role' => $role], 200);
+            return response()->json($role, 200);
         } catch (\Exception $e) {
 
             return response()->json(['message' => 'role user not found ' . $e->getMessage()], 404);
@@ -394,7 +394,7 @@ class RoleController extends Controller
     }
 
 
-/**
+    /**
      * @OA\Delete(
      *   path="/api/v1/roles/{id}",
      *   summary="Delete a role",

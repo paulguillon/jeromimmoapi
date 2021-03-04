@@ -179,7 +179,7 @@ class UserController extends Controller
             $user['data'] = $this->getAllData($user->idUser);
         }
 
-        return response()->json(['users' => $users], 200);
+        return response()->json($users, 200);
     }
 
     /**
@@ -295,7 +295,7 @@ class UserController extends Controller
 
             $user['data'] = $this->getAllData($id);
 
-            return response()->json(['user' => $user], 200);
+            return response()->json($user, 200);
         } catch (\Exception $e) {
 
             return response()->json(['message' => 'User not found!' . $e->getMessage()], 404);

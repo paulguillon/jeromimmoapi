@@ -86,7 +86,7 @@ class DocumentController extends Controller
             $document['data'] = $this->getAllData($document->idDocument);
         }
 
-        return response()->json(['documents' =>  $documents], 200);
+        return response()->json($documents, 200);
     }
 
     /**
@@ -178,7 +178,7 @@ class DocumentController extends Controller
                 ->where('idDocument', $id)
                 ->first();
             $document['data'] = $this->getAllData($id);
-            return response()->json(['document' => $document], 200);
+            return response()->json($document, 200);
         } catch (\Exception $e) {
 
             return response()->json(['message' => 'Document not found!' . $e->getMessage()], 404);
@@ -694,19 +694,19 @@ class DocumentController extends Controller
     {
         return response()->json(
             DocumentData::all()
-            ->where('idDocument', $idDocument)
-            ->where('keyDocumentData', $key),
+                ->where('idDocument', $idDocument)
+                ->where('keyDocumentData', $key),
             200
-            );
+        );
     }
 
     public function updateData($idDocument, $key, $value)
     {
         try {
             $documentData = DocumentData::all()
-            ->where('idDocument', $idDocument)
-            ->where('keyDocumentData', $key)
-            ->first();
+                ->where('idDocument', $idDocument)
+                ->where('keyDocumentData', $key)
+                ->first();
 
             if ($documentData == null)
                 return false;

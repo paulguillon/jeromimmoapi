@@ -204,7 +204,7 @@ class PropertyController extends Controller
         try {
             $property = Property::all()->where('idProperty', $id)->first();
             $property['data'] = $this->getAllData($id);
-            return response()->json(['property' => $property], 200);
+            return response()->json($property, 200);
         } catch (\Exception $e) {
 
             return response()->json(['message' => 'Property not found!' . $e->getMessage()], 404);

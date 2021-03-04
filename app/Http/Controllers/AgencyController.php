@@ -96,7 +96,7 @@ class AgencyController extends Controller
             $agency['data'] = $this->getAllData($agency->idAgency);
         }
 
-        return response()->json(['agencies' => $agencies], 200);
+        return response()->json($agencies, 200);
     }
     /**
      * @OA\Get(
@@ -195,7 +195,7 @@ class AgencyController extends Controller
         try {
             $agency = Agency::all()->where('idAgency', $id)->first();
             $agency['data'] = $this->getAllData($id);
-            return response()->json(['agency' => $agency], 200);
+            return response()->json($agency, 200);
         } catch (\Exception $e) {
 
             return response()->json(['message' => 'Agency not found!' . $e->getMessage()], 404);

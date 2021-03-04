@@ -84,10 +84,10 @@ class FaqController extends Controller
             $faq['data'] = $this->getAllData($faq->idFaq);
         }
 
-        return response()->json(['faq' => $faqs], 200);
+        return response()->json($faqs, 200);
     }
 
-     /**
+    /**
      * @OA\Get(
      *   path="/api/v1/faq/{id}",
      *   summary="Return a faq",
@@ -169,15 +169,14 @@ class FaqController extends Controller
         try {
             $faq = Faq::all()->where('idFaq', $id)->first();
             $faq['data'] = $this->getAllData($id);
-            return response()->json(['faq' => $faq], 200);
+            return response()->json($faq, 200);
         } catch (\Exception $e) {
-
             return response()->json(['message' => 'Faq not found!' . $e->getMessage()], 404);
         }
     }
 
 
-  /**
+    /**
      * @OA\Post(
      *   path="/api/v1/faq",
      *   summary="Add a faq",
@@ -292,7 +291,7 @@ class FaqController extends Controller
         }
     }
 
-  /**
+    /**
      * @OA\Patch(
      *   path="/api/v1/faq/{id}",
      *   summary="Update a faq",
@@ -437,7 +436,7 @@ class FaqController extends Controller
         }
     }
 
-   
+
     /**
      * @OA\Delete(
      *   path="/api/v1/faq/{id}",
@@ -524,7 +523,7 @@ class FaqController extends Controller
         }
     }
 
- /**
+    /**
      * @OA\Post(
      *   path="/api/v1/faq/data/{id}",
      *   summary="Add faq data",
@@ -608,7 +607,7 @@ class FaqController extends Controller
      *   ),
      * )
      */
-     
+
     public function addData($id, Request $request)
     {
         try {
@@ -702,5 +701,4 @@ class FaqController extends Controller
             return false;
         }
     }
-
 }

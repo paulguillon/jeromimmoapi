@@ -85,7 +85,7 @@ class VisitController extends Controller
             $visit['data'] = $this->getAllData($visit->idVisit);
         }
 
-        return response()->json(['visits' => $visits], 200);
+        return response()->json($visits, 200);
     }
 
     /**
