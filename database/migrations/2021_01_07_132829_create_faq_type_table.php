@@ -21,7 +21,6 @@ class CreateFaqTypeTable extends Migration
             $table->timestamp('updated_at')->default(DB::raw('CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP'));
             $table->foreignId('updated_by')->constrained('users', 'idUser');
             $table->string('faqTypeName', 55);
-            $table->foreignId('idFaq')->constrained('faq', 'idFaq');
         });
     }
 
