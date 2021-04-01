@@ -92,37 +92,35 @@ class PropertyController extends Controller
      */
     public function getProperties(Request $request)
     {
-        // $properties = Property::all();
+        //Get all ids
+        $propertiesId = Property::selectRaw('property.idProperty')
+            ->join('propertyData', 'property.idProperty', '=', 'propertyData.idProperty');
 
-        // for ($i = 0; $i < count($properties); $i++) {
-        //     $property = $properties[$i];
+        //filter if exist
+        if ($request->get('typeProperty'))
+            $propertiesId = $propertiesId->where('typeProperty', $request->get('typeProperty'));
+        if ($request->get('priceProperty'))
+            $propertiesId = $propertiesId->where('priceProperty', $request->get('priceProperty'));
+        if ($request->get('zipCodeProperty'))
+            $propertiesId = $propertiesId->where('zipCodeProperty', $request->get('zipCodeProperty'));
+        if ($request->get('keyPropertyData'))
+            $propertiesId = $propertiesId->where('keyPropertyData', $request->get('keyPropertyData'));
+        if ($request->get('valuePropertyData'))
+            $propertiesId = $propertiesId->where('valuePropertyData', $request->get('valuePropertyData'));
 
-        //     $property['data'] = $this->getAllData($property->idProperty);
-        // }
-        // return response()->json($properties, 200);
+        $propertiesId = $propertiesId->distinct('property.idProperty')->get();
 
-        $filterColumns = ['typeProperty', 'priceProperty', 'zipCodeProperty'];
+        //foreach id, get property
+        $properties = [];
+        for ($i = 0; $i < count($propertiesId); $i++) {
+            $id = $propertiesId[$i]['idProperty'];
 
-        $query = Property::all();
-
-        for ($i = 0; $i < count($query); $i++) {
-            $querie = $query[$i];
-            $querie['data'] = $this->getAllData($querie->idProperty);
+            //get property
+            $properties[] = Property::all()->where('idProperty', $id)->first();
+            //get property data
+            $properties[$i]['data'] = $this->getAllData($id);
         }
-        
-        foreach ($filterColumns as $column) {
-            if ($request->has($column)) {
-                $query = $query->where($column, $request->get($column));
-            }
-        }
-        
-return response()->json($query, 200);
-
-        // for ($i = 0; $i < count($query); $i++) {
-        //     $query['data'] = $this->getAllData($query->idProperty);
-        //     return response()->json($query, 200);
-        // }
-        
+        return response()->json($properties, 200);
     }
 
     /**
