@@ -103,26 +103,31 @@ class PropertyController extends Controller
 
         $filterColumns = ['typeProperty', 'priceProperty', 'zipCodeProperty'];
 
+        $test = Property::join('propertyData', 'property.idProperty', '=', 'propertyData.idProperty')->get();
+        return response()->json($test, 200);
+
+        var_dump($test);
+
         $query = Property::all();
 
         for ($i = 0; $i < count($query); $i++) {
             $querie = $query[$i];
             $querie['data'] = $this->getAllData($querie->idProperty);
         }
-        
+
         foreach ($filterColumns as $column) {
             if ($request->has($column)) {
                 $query = $query->where($column, $request->get($column));
             }
         }
-        
-return response()->json($query, 200);
+
+        return response()->json($query, 200);
 
         // for ($i = 0; $i < count($query); $i++) {
         //     $query['data'] = $this->getAllData($query->idProperty);
         //     return response()->json($query, 200);
         // }
-        
+
     }
 
     /**
