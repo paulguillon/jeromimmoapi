@@ -92,6 +92,8 @@ class PropertyController extends Controller
      */
     public function getProperties(Request $request)
     {
+
+        $filterColumns = ['typeProperty', 'priceProperty', 'zipCodeProperty', 'cityProperty'];
         //Get all ids
         $propertiesId = Property::selectRaw('property.idProperty')
             ->join('propertyData', 'property.idProperty', '=', 'propertyData.idProperty');
@@ -103,10 +105,26 @@ class PropertyController extends Controller
             $propertiesId = $propertiesId->where('priceProperty', $request->get('priceProperty'));
         if ($request->get('zipCodeProperty'))
             $propertiesId = $propertiesId->where('zipCodeProperty', $request->get('zipCodeProperty'));
-        if ($request->get('keyPropertyData'))
-            $propertiesId = $propertiesId->where('keyPropertyData', $request->get('keyPropertyData'));
-        if ($request->get('valuePropertyData'))
-            $propertiesId = $propertiesId->where('valuePropertyData', $request->get('valuePropertyData'));
+        if ($request->get('cityProperty'))
+            $propertiesId = $propertiesId->where('cityProperty', $request->get('cityProperty'));
+
+
+
+        $userInput = $request->all();
+        // checking $userInput here
+        // I can see the new value in the array
+
+        foreach ($userInput as $key => $value) {
+            // foreach ($request as $column) {
+            if (!in_array($key, $filterColumns)) {
+                $propertiesId = $propertiesId->where('keyPropertyData', $key);
+                $propertiesId = $propertiesId->where('valuePropertyData', $value);
+            }
+        }
+        // if ($request->get('keyPropertyData'))
+        //     $propertiesId = $propertiesId->where('keyPropertyData', $request->get('keyPropertyData'));
+        // if ($request->get('valuePropertyData'))
+        //     $propertiesId = $propertiesId->where('valuePropertyData', $request->get('valuePropertyData'));
 
         $propertiesId = $propertiesId->distinct('property.idProperty')->get();
 
