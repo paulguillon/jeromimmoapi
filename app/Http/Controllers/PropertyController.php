@@ -92,7 +92,7 @@ class PropertyController extends Controller
      */
     public function getProperties(Request $request)
     {
-        // $properties = Property::all();
+        $properties = Property::all();
 
         // for ($i = 0; $i < count($properties); $i++) {
         //     $property = $properties[$i];
@@ -101,22 +101,68 @@ class PropertyController extends Controller
         // }
         // return response()->json($properties, 200);
 
-        $filterColumns = ['typeProperty', 'priceProperty', 'zipCodeProperty'];
+        $filterColumns = ['typeProperty', 'priceProperty', 'zipCodeProperty','keyPropertyData'];
+        // $properties = Property::join('propertyData', 'property.idProperty', '=', 'propertyData.idProperty')->get();
+        // return response()->json($test, 200);
+        // var_dump($test);
+        // $properties = Property::all();
+        // $propertiesData = PropertyData::all();
 
-        $query = Property::all();
+        $properties['test'] = [];
 
-        for ($i = 0; $i < count($query); $i++) {
-            $querie = $query[$i];
-            $querie['data'] = $this->getAllData($querie->idProperty);
+        for ($i = 0; $i < count($properties); $i++) {
+            $property = $properties[$i];
+            $property['data'] = $this->getAllData($property->idProperty);
+        }
+
+        for ($i = 0; $i < count($properties['test']); $i++) {
+            $property = $properties['test'][$i];
+            $property['data'] = $this->getAllData($property->idProperty);
         }
         
+// foreach (PropertyData::all()->where('idProperty', $idProperty) as $value) {
+//             array_push($data, $value);
+//         }
         foreach ($filterColumns as $column) {
             if ($request->has($column)) {
-                $query = $query->where($column, $request->get($column));
-            }
+                if ($properties->where($column, $request)) {
+                    // $propertiesID = $properties->selectRaw('property.idProperty')->where($column, $request->get($column));
+                    // $properties = $properties->where($column, $request->get($column));
+                    $propertiesId = Property::selectRaw('property.idProperty')->join('propertyData', 'property.idProperty', '=', 'propertyData.idProperty')->where($column, $request->get($column))->distinct('property.idProperty')->get();
+                    for ($i = 0; $i < count($propertiesId); $i++) {
+                        $propertyId = $propertiesId[$i];
+                        $properties['test'] = $properties->where('idProperty', $propertyId->get('idProperty'));
+                    }
+                    
+                    // var_dump($properties);
+                }
+                // if ($propertiesData->where($column, $request)) {
+                //     $propertiesData = $propertiesData->where($column, $request->get($column));
+                // }
+
+                // for ($i = 0; $i < count($propertiesData); $i++) {
+                //     $propertyData = $propertiesData[$i];
+
+                //     $properties = Property::where('idProperty', '=', $propertyData['idProperty'])->get();
+                //     // $properties = $properties->where('idProperty', '=', $propertyData['idProperty']);
+                //     // var_dump($property->idProperty);
+                // }
+                // $properties = $properties->where($column, $request->get($column));
+                
+                // $propertiesData = $propertiesData->where($column, $request->get($column));
+            } 
         }
+
         
-return response()->json($query, 200);
+
+        
+
+        // $properties = PropertyData::join('property', 'property.idProperty', '=', 'propertyData.idPropertyData')
+        // // ->where('type', '=', 2)
+        // ->select('*')
+        // ->get();
+        
+        return response()->json($properties, 200);
 
         // for ($i = 0; $i < count($query); $i++) {
         //     $query['data'] = $this->getAllData($query->idProperty);

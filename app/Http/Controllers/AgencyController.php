@@ -14,7 +14,7 @@ class AgencyController extends Controller
     public function __construct()
     {
         // methods with authorization
-        $this->middleware('auth:api', ['accept' => ['registerAgency']]);
+        $this->middleware('auth:api', ['except' => ['getAgencies']]);
     }
 
     /**
