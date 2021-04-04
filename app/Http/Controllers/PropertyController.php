@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use App\Models\Property;
 use App\Models\PropertyData;
 
@@ -92,53 +93,44 @@ class PropertyController extends Controller
      */
     public function getProperties(Request $request)
     {
-
+        // basic filters
         $filterColumns = ['typeProperty', 'priceProperty', 'zipCodeProperty', 'cityProperty'];
-        //Get all ids
-        $propertiesId = Property::selectRaw('property.idProperty')
-            ->join('propertyData', 'property.idProperty', '=', 'propertyData.idProperty');
 
-        //filter if exist
-        if ($request->get('typeProperty'))
-            $propertiesId = $propertiesId->where('typeProperty', $request->get('typeProperty'));
-        if ($request->get('priceProperty'))
-            $propertiesId = $propertiesId->where('priceProperty', $request->get('priceProperty'));
-        if ($request->get('zipCodeProperty'))
-            $propertiesId = $propertiesId->where('zipCodeProperty', $request->get('zipCodeProperty'));
-        if ($request->get('cityProperty'))
-            $propertiesId = $propertiesId->where('cityProperty', $request->get('cityProperty'));
+        // beginning of the query
+        $query = 'SELECT DISTINCT  (p.idProperty) FROM property p INNER JOIN propertydata pd ON (p.idProperty = pd.idProperty)';
 
+        //first filters
+        $filters = [];
+        foreach ($filterColumns as $column) {
+            if ($request->get($column))
+                $filters[] = "$column='" . $request->get($column) . "'";
+        }
+        $query .= count($filters) > 0 ? ' WHERE ' . implode(' AND ', $filters) : '';
 
-
-        $userInput = $request->all();
-        // checking $userInput here
-        // I can see the new value in the array
-
-        foreach ($userInput as $key => $value) {
-            // foreach ($request as $column) {
-            if (!in_array($key, $filterColumns)) {
-                $propertiesId = $propertiesId->where('keyPropertyData', $key);
-                $propertiesId = $propertiesId->where('valuePropertyData', $value);
+        // building additionnal keu/value filters
+        $requestedColumns = $request->all();
+        $requestedData = [];
+        foreach ($requestedColumns as $column => $value) {
+            if (!in_array($column, $filterColumns)) {
+                $requestedData[] = "(SELECT COUNT(idPropertyData) FROM propertydata WHERE keyPropertyData = '$column' AND valuePropertyData = '$value' AND idProperty = p.idProperty) = 1";
             }
         }
-        // if ($request->get('keyPropertyData'))
-        //     $propertiesId = $propertiesId->where('keyPropertyData', $request->get('keyPropertyData'));
-        // if ($request->get('valuePropertyData'))
-        //     $propertiesId = $propertiesId->where('valuePropertyData', $request->get('valuePropertyData'));
 
-        $propertiesId = $propertiesId->distinct('property.idProperty')->get();
-
-        //foreach id, get property
-        $properties = [];
-        for ($i = 0; $i < count($propertiesId); $i++) {
-            $id = $propertiesId[$i]['idProperty'];
-
-            //get property
-            $properties[] = Property::all()->where('idProperty', $id)->first();
-            //get property data
-            $properties[$i]['data'] = $this->getAllData($id);
+        if (count($filters) == 0) {
+            if (count($requestedData) > 0)
+                $query .= ' WHERE ';
+        } else {
+            if (count($requestedData) > 0)
+                $query .= ' AND ';
         }
-        return response()->json($properties, 200);
+        // add additionnal filters
+        $query .= implode(' AND ', $requestedData);
+
+        //result query
+        $result = DB::select($query);
+
+        //response
+        return response()->json($result, 200);
     }
 
     /**
