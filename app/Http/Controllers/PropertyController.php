@@ -97,7 +97,7 @@ class PropertyController extends Controller
         $filterColumns = ['typeProperty', 'priceProperty', 'zipCodeProperty', 'cityProperty'];
 
         // beginning of the query
-        $query = 'SELECT DISTINCT  (p.idProperty) FROM property p INNER JOIN propertydata pd ON (p.idProperty = pd.idProperty)';
+        $query = 'SELECT DISTINCT  (p.idProperty) FROM property p INNER JOIN propertyData pd ON (p.idProperty = pd.idProperty)';
 
         //first filters
         $filters = [];
@@ -112,7 +112,7 @@ class PropertyController extends Controller
         $requestedData = [];
         foreach ($requestedColumns as $column => $value) {
             if (!in_array($column, $filterColumns)) {
-                $requestedData[] = "(SELECT COUNT(idPropertyData) FROM propertydata WHERE keyPropertyData = '$column' AND valuePropertyData = '$value' AND idProperty = p.idProperty) = 1";
+                $requestedData[] = "(SELECT COUNT(idPropertyData) FROM propertyData WHERE keyPropertyData = '$column' AND valuePropertyData = '$value' AND idProperty = p.idProperty) = 1";
             }
         }
 
@@ -128,9 +128,22 @@ class PropertyController extends Controller
 
         //result query
         $result = DB::select($query);
+        //object to array
+        $result = json_decode(json_encode($result), true);
+
+        //foreach id, get property
+        $properties = [];
+        for ($i = 0; $i < count($result); $i++) {
+            $id = $result[$i]['idProperty'];
+
+            //get property
+            $properties[] = Property::all()->where('idProperty', $id)->first();
+            //get property data
+            $properties[$i]['data'] = $this->getAllData($id);
+        }
 
         //response
-        return response()->json($result, 200);
+        return response()->json($properties, 200);
     }
 
     /**
