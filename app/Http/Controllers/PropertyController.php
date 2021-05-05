@@ -94,7 +94,7 @@ class PropertyController extends Controller
     public function getProperties(Request $request)
     {
         // basic filters
-        $filterColumns = ['typeProperty', 'priceProperty', 'zipCodeProperty', 'cityProperty'];
+        $filterColumns = ['typeProperty', 'minPriceProperty', 'maxPriceProperty', 'zipCodeProperty', 'cityProperty'];
 
         // beginning of the query
         $query = 'SELECT DISTINCT  (p.idProperty) FROM property p INNER JOIN propertyData pd ON (p.idProperty = pd.idProperty)';
@@ -102,12 +102,21 @@ class PropertyController extends Controller
         //first filters
         $filters = [];
         foreach ($filterColumns as $column) {
-            if ($request->get($column))
-                $filters[] = "$column='" . $request->get($column) . "'";
+            if ($request->get($column)) {
+                //price is handled differently
+                if ($column == 'minPriceProperty')
+                    $filters[] = "priceProperty >= '" . $request->get($column) . "'";
+                if ($column == 'maxPriceProperty')
+                    $filters[] = "priceProperty <= '" . $request->get($column) . "'";
+
+                //if the current column isn't about price
+                if (!in_array($column, ['minPriceProperty', 'maxPriceProperty']))
+                    $filters[] = "$column='" . $request->get($column) . "'";
+            }
         }
         $query .= count($filters) > 0 ? ' WHERE ' . implode(' AND ', $filters) : '';
 
-        // building additionnal keu/value filters
+        // building additionnal key/value filters
         $requestedColumns = $request->all();
         $requestedData = [];
         foreach ($requestedColumns as $column => $value) {
