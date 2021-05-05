@@ -97,7 +97,7 @@ class PropertyController extends Controller
         $filterColumns = ['typeProperty', 'minPriceProperty', 'maxPriceProperty', 'zipCodeProperty', 'cityProperty'];
 
         // beginning of the query
-        $query = 'SELECT DISTINCT  (p.idProperty) FROM property p INNER JOIN propertyData pd ON (p.idProperty = pd.idProperty)';
+        $query = 'SELECT DISTINCT (p.idProperty) FROM property p INNER JOIN propertyData pd ON (p.idProperty = pd.idProperty)';
 
         //first filters
         $filters = [];
@@ -120,7 +120,7 @@ class PropertyController extends Controller
         $requestedColumns = $request->all();
         $requestedData = [];
         foreach ($requestedColumns as $column => $value) {
-            if (!in_array($column, $filterColumns)) {
+            if (!in_array($column, array_merge($filterColumns, ['limit', 'offset']))) {
                 $requestedData[] = "(SELECT COUNT(idPropertyData) FROM propertyData WHERE keyPropertyData = '$column' AND valuePropertyData = '$value' AND idProperty = p.idProperty) = 1";
             }
         }
@@ -135,6 +135,17 @@ class PropertyController extends Controller
         // add additionnal filters
         $query .= implode(' AND ', $requestedData);
 
+        //limit & offset
+        $limit = [];
+
+        if ($request->get('offset'))
+            $limit[] = $request->get('offset');
+        if ($request->get('limit'))
+            $limit[] = $request->get('limit');
+
+        if (count($limit) > 0 && !(count($limit) == 1 && $limit[0] == $request->get('offset')))
+            $query .= ' LIMIT ' . implode(',', $limit);
+            
         //result query
         $result = DB::select($query);
         //object to array
