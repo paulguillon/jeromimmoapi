@@ -485,8 +485,8 @@ class UserController extends Controller
             'emailUser' => 'required|email|unique:users',
             'passwordUser' => 'required|confirmed',
             'idRoleUser' => 'required|integer',
-            'created_by' => 'required|integer',
-            'updated_by' => 'required|integer',
+            'created_by' => 'integer',
+            'updated_by' => 'integer',
             'data' => 'string',
         ]);
 
