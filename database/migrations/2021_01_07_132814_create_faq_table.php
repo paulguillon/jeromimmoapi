@@ -5,7 +5,7 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\DB;
 
-class CreateFaqDataTable extends Migration
+class CreateFaqTable extends Migration
 {
     /**
      * Run the migrations.
@@ -33,6 +33,6 @@ class CreateFaqDataTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('faqData');
+        Schema::dropIfExists('faq');
     }
 }
