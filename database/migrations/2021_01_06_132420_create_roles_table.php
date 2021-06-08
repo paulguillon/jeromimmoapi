@@ -1,9 +1,11 @@
 <?php
 
+use Database\Seeders\RoleTableSeeder;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Artisan;
 
 class CreateRolesTable extends Migration
 {
@@ -15,7 +17,7 @@ class CreateRolesTable extends Migration
 
     public function up()
     {
-        
+
         Schema::create('roles', function (Blueprint $table) {
             $table->bigIncrements('idRole');
             $table->string('roleName', 55);
@@ -24,9 +26,12 @@ class CreateRolesTable extends Migration
             $table->timestamp('updated_at')->default(DB::raw('CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP'));
             $table->foreignId('updated_by')->constrained('users', 'idUser');
         });
+        Artisan::call('db:seed', [
+            '--class' => RoleTableSeeder::class,
+        ]);
     }
 
-   
+
     /**
      * Reverse the migrations.
      *
@@ -34,6 +39,7 @@ class CreateRolesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('roles');
+        DB::statement('SET FOREIGN_KEY_CHECKS=0;');
+        Schema::drop('roles');
     }
 }
