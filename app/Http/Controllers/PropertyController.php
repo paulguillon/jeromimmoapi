@@ -135,6 +135,14 @@ class PropertyController extends Controller
         // add additionnal filters
         $query .= implode(' AND ', $requestedData);
 
+
+        $queryBeforeLimitOffset = $query;
+        //result query
+        $resultBeforeLimitOffset = DB::select($queryBeforeLimitOffset);
+        //object to array
+        $resultBeforeLimitOffset = json_decode(json_encode($resultBeforeLimitOffset), true);
+
+
         //limit & offset
         $limit = [];
 
@@ -145,7 +153,7 @@ class PropertyController extends Controller
 
         if (count($limit) > 0 && !(count($limit) == 1 && $limit[0] == $request->get('offset')))
             $query .= ' LIMIT ' . implode(',', $limit);
-            
+
         //result query
         $result = DB::select($query);
         //object to array
@@ -153,7 +161,7 @@ class PropertyController extends Controller
 
         //foreach id, get property
         $properties = [
-            "total" => count($result)
+            "total" => count($resultBeforeLimitOffset)
         ];
         for ($i = 0; $i < count($result); $i++) {
             $id = $result[$i]['idProperty'];
