@@ -152,14 +152,16 @@ class PropertyController extends Controller
         $result = json_decode(json_encode($result), true);
 
         //foreach id, get property
-        $properties = [];
+        $properties = [
+            "total" => count(Property::all())
+        ];
         for ($i = 0; $i < count($result); $i++) {
             $id = $result[$i]['idProperty'];
 
             //get property
-            $properties[] = Property::all()->where('idProperty', $id)->first();
+            $properties["properties"][] = Property::all()->where('idProperty', $id)->first();
             //get property data
-            $properties[$i]['data'] = $this->getAllData($id);
+            $properties["properties"][$i]['data'] = $this->getAllData($id);
         }
 
         //response
