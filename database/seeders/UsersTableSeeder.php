@@ -22,8 +22,8 @@ class UsersTableSeeder extends Seeder
             'emailUser' => Str::random(10),
             'passwordUser' => Hash::make('password'),
             'idRoleUser' => 1,
-            'created_by' => "1",
-            'updated_by' => "1"
+            'created_by' => '1',
+            'updated_by' => '1'
         ]);
     }
 }
