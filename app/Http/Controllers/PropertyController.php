@@ -153,7 +153,7 @@ class PropertyController extends Controller
 
         //foreach id, get property
         $properties = [
-            "total" => count(Property::all())
+            "total" => count($result)
         ];
         for ($i = 0; $i < count($result); $i++) {
             $id = $result[$i]['idProperty'];
