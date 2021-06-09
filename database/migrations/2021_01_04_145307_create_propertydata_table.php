@@ -1,9 +1,11 @@
 <?php
 
+use Database\Seeders\PropertyDataSeeder;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Artisan;
 
 class CreatePropertydataTable extends Migration
 {
@@ -24,6 +26,9 @@ class CreatePropertydataTable extends Migration
             $table->longText('valuePropertyData');
             $table->foreignId('idProperty')->constrained('property', 'idProperty');
         });
+        Artisan::call('db:seed', [
+            '--class' => PropertyDataSeeder::class,
+        ]);
     }
 
     /**
