@@ -31,154 +31,154 @@ class PropertyTableSeeder extends Seeder
                 'created_by' => "1",
                 'updated_by' => "1",
                 'keyPropertyData' => "Jardin",
-                'valuePropertyData' => $faker->boolean($chanceOfGettingTrue = 30),
+                'valuePropertyData' => $faker->boolean($chanceOfGettingTrue = 30) ? 'true' : 'false',
                 'idProperty' => $idProperty
             ]);
             DB::table('propertyData')->insert([
                 'created_by' => "1",
                 'updated_by' => "1",
                 'keyPropertyData' => "Sous-sol",
-                'valuePropertyData' => $faker->boolean($chanceOfGettingTrue = 30),
+                'valuePropertyData' => $faker->boolean($chanceOfGettingTrue = 30) ? 'true' : 'false',
                 'idProperty' => $idProperty
             ]);
             DB::table('propertyData')->insert([
                 'created_by' => "1",
                 'updated_by' => "1",
                 'keyPropertyData' => "Cheminée",
-                'valuePropertyData' => $faker->boolean($chanceOfGettingTrue = 30),
+                'valuePropertyData' => $faker->boolean($chanceOfGettingTrue = 30) ? 'true' : 'false',
                 'idProperty' => $idProperty
             ]);
             DB::table('propertyData')->insert([
                 'created_by' => "1",
                 'updated_by' => "1",
                 'keyPropertyData' => "Gardien",
-                'valuePropertyData' => $faker->boolean($chanceOfGettingTrue = 30),
+                'valuePropertyData' => $faker->boolean($chanceOfGettingTrue = 30) ? 'true' : 'false',
                 'idProperty' => $idProperty
             ]);
             DB::table('propertyData')->insert([
                 'created_by' => "1",
                 'updated_by' => "1",
                 'keyPropertyData' => "Belle vue",
-                'valuePropertyData' => $faker->boolean($chanceOfGettingTrue = 30),
+                'valuePropertyData' => $faker->boolean($chanceOfGettingTrue = 30) ? 'true' : 'false',
                 'idProperty' => $idProperty
             ]);
             DB::table('propertyData')->insert([
                 'created_by' => "1",
                 'updated_by' => "1",
                 'keyPropertyData' => "Balcon",
-                'valuePropertyData' => $faker->boolean($chanceOfGettingTrue = 30),
+                'valuePropertyData' => $faker->boolean($chanceOfGettingTrue = 30) ? 'true' : 'false',
                 'idProperty' => $idProperty
             ]);
             DB::table('propertyData')->insert([
                 'created_by' => "1",
                 'updated_by' => "1",
                 'keyPropertyData' => "Piscine",
-                'valuePropertyData' => $faker->boolean($chanceOfGettingTrue = 30),
+                'valuePropertyData' => $faker->boolean($chanceOfGettingTrue = 30) ? 'true' : 'false',
                 'idProperty' => $idProperty
             ]);
             DB::table('propertyData')->insert([
                 'created_by' => "1",
                 'updated_by' => "1",
                 'keyPropertyData' => "Ascenseur",
-                'valuePropertyData' => $faker->boolean($chanceOfGettingTrue = 30),
+                'valuePropertyData' => $faker->boolean($chanceOfGettingTrue = 30) ? 'true' : 'false',
                 'idProperty' => $idProperty
             ]);
             DB::table('propertyData')->insert([
                 'created_by' => "1",
                 'updated_by' => "1",
                 'keyPropertyData' => "Rez-de-chaussée",
-                'valuePropertyData' => $faker->boolean($chanceOfGettingTrue = 30),
+                'valuePropertyData' => $faker->boolean($chanceOfGettingTrue = 30) ? 'true' : 'false',
                 'idProperty' => $idProperty
             ]);
             DB::table('propertyData')->insert([
                 'created_by' => "1",
                 'updated_by' => "1",
                 'keyPropertyData' => "Terrasse",
-                'valuePropertyData' => $faker->boolean($chanceOfGettingTrue = 30),
+                'valuePropertyData' => $faker->boolean($chanceOfGettingTrue = 30) ? 'true' : 'false',
                 'idProperty' => $idProperty
             ]);
             DB::table('propertyData')->insert([
                 'created_by' => "1",
                 'updated_by' => "1",
                 'keyPropertyData' => "Cave",
-                'valuePropertyData' => $faker->boolean($chanceOfGettingTrue = 30),
+                'valuePropertyData' => $faker->boolean($chanceOfGettingTrue = 30) ? 'true' : 'false',
                 'idProperty' => $idProperty
             ]);
             DB::table('propertyData')->insert([
                 'created_by' => "1",
                 'updated_by' => "1",
                 'keyPropertyData' => "Orientation Sud",
-                'valuePropertyData' => $faker->boolean($chanceOfGettingTrue = 30),
+                'valuePropertyData' => $faker->boolean($chanceOfGettingTrue = 30) ? 'true' : 'false',
                 'idProperty' => $idProperty
             ]);
             DB::table('propertyData')->insert([
                 'created_by' => "1",
                 'updated_by' => "1",
                 'keyPropertyData' => "Climatisation",
-                'valuePropertyData' => $faker->boolean($chanceOfGettingTrue = 30),
+                'valuePropertyData' => $faker->boolean($chanceOfGettingTrue = 30) ? 'true' : 'false',
                 'idProperty' => $idProperty
             ]);
             DB::table('propertyData')->insert([
                 'created_by' => "1",
                 'updated_by' => "1",
                 'keyPropertyData' => "Meublé",
-                'valuePropertyData' => $faker->boolean($chanceOfGettingTrue = 30),
+                'valuePropertyData' => $faker->boolean($chanceOfGettingTrue = 30) ? 'true' : 'false',
                 'idProperty' => $idProperty
             ]);
             DB::table('propertyData')->insert([
                 'created_by' => "1",
                 'updated_by' => "1",
                 'keyPropertyData' => "Colocation",
-                'valuePropertyData' => $faker->boolean($chanceOfGettingTrue = 30),
+                'valuePropertyData' => $faker->boolean($chanceOfGettingTrue = 30) ? 'true' : 'false',
                 'idProperty' => $idProperty
             ]);
             DB::table('propertyData')->insert([
                 'created_by' => "1",
                 'updated_by' => "1",
                 'keyPropertyData' => "Stationnement",
-                'valuePropertyData' => $faker->boolean($chanceOfGettingTrue = 30),
+                'valuePropertyData' => $faker->boolean($chanceOfGettingTrue = 30) ? 'true' : 'false',
                 'idProperty' => $idProperty
             ]);
             DB::table('propertyData')->insert([
                 'created_by' => "1",
                 'updated_by' => "1",
                 'keyPropertyData' => "Plain-pied",
-                'valuePropertyData' => $faker->boolean($chanceOfGettingTrue = 30),
+                'valuePropertyData' => $faker->boolean($chanceOfGettingTrue = 30) ? 'true' : 'false',
                 'idProperty' => $idProperty
             ]);
             DB::table('propertyData')->insert([
                 'created_by' => "1",
                 'updated_by' => "1",
                 'keyPropertyData' => "Accessibilité PMR",
-                'valuePropertyData' => $faker->boolean($chanceOfGettingTrue = 30),
+                'valuePropertyData' => $faker->boolean($chanceOfGettingTrue = 30) ? 'true' : 'false',
                 'idProperty' => $idProperty
             ]);
             DB::table('propertyData')->insert([
                 'created_by' => "1",
                 'updated_by' => "1",
                 'keyPropertyData' => "Véranda",
-                'valuePropertyData' => $faker->boolean($chanceOfGettingTrue = 30),
+                'valuePropertyData' => $faker->boolean($chanceOfGettingTrue = 30) ? 'true' : 'false',
                 'idProperty' => $idProperty
             ]);
             DB::table('propertyData')->insert([
                 'created_by' => "1",
                 'updated_by' => "1",
                 'keyPropertyData' => "Alarme",
-                'valuePropertyData' => $faker->boolean($chanceOfGettingTrue = 30),
+                'valuePropertyData' => $faker->boolean($chanceOfGettingTrue = 30) ? 'true' : 'false',
                 'idProperty' => $idProperty
             ]);
             DB::table('propertyData')->insert([
                 'created_by' => "1",
                 'updated_by' => "1",
                 'keyPropertyData' => "Digicode",
-                'valuePropertyData' => $faker->boolean($chanceOfGettingTrue = 30),
+                'valuePropertyData' => $faker->boolean($chanceOfGettingTrue = 30) ? 'true' : 'false',
                 'idProperty' => $idProperty
             ]);
             DB::table('propertyData')->insert([
                 'created_by' => "1",
                 'updated_by' => "1",
                 'keyPropertyData' => "Interphone",
-                'valuePropertyData' => $faker->boolean($chanceOfGettingTrue = 30),
+                'valuePropertyData' => $faker->boolean($chanceOfGettingTrue = 30) ? 'true' : 'false',
                 'idProperty' => $idProperty
             ]);
             DB::table('propertyData')->insert([
