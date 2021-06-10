@@ -13,7 +13,7 @@ class PropertyData extends Model implements AuthenticatableContract, Authorizabl
 {
     use Authenticatable, Authorizable, HasFactory;
 
-    protected $table = 'propertyData'; 
+    protected $table = 'propertydata';
 
     protected $primaryKey = 'idPropertyData';
 
@@ -32,6 +32,6 @@ class PropertyData extends Model implements AuthenticatableContract, Authorizabl
      * @var array
      */
     protected $hidden = [
-        
+
     ];
 }

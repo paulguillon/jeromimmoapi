@@ -218,7 +218,7 @@ class PropertyDataSeeder extends Seeder
                 'created_by' => "1",
                 'updated_by' => "1",
                 'keyPropertyData' => "thumbnail",
-                'valuePropertyData' => $faker->image('', 400, 300),
+                'valuePropertyData' => 'https://lorempixel.com/640x480.png/?text=city',
                 'idProperty' => $i
             ]);
         }

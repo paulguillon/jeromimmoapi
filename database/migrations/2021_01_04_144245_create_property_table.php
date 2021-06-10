@@ -26,9 +26,9 @@ class CreatePropertyTable extends Migration
             $table->string('zipCodeProperty', 5);
             $table->string('cityProperty', 55);
         });
-        Artisan::call('db:seed', [
-            '--class' => PropertyTableSeeder::class,
-        ]);
+        // Artisan::call('db:seed', [
+        //     '--class' => PropertyTableSeeder::class,
+        // ]);
     }
 
     /**

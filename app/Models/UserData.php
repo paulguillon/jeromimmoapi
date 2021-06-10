@@ -13,7 +13,7 @@ class UserData extends Model implements AuthenticatableContract, AuthorizableCon
 {
     use Authenticatable, Authorizable, HasFactory;
 
-    protected $table = 'userData'; 
+    protected $table = 'userdata';
 
     protected $primaryKey = 'idUserData';
 
@@ -32,6 +32,6 @@ class UserData extends Model implements AuthenticatableContract, AuthorizableCon
      * @var array
      */
     protected $hidden = [
-        
+
     ];
 }
