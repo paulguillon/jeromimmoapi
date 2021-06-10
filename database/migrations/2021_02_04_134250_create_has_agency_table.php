@@ -14,7 +14,7 @@ class CreateHasAgencyTable extends Migration
      */
     public function up()
     {
-        Schema::create('hasAgency', function (Blueprint $table) {
+        Schema::create('hasagency', function (Blueprint $table) {
             $table->bigIncrements('idHasAgency');
             $table->timestamp('created_at')->default(DB::raw('CURRENT_TIMESTAMP'));
             $table->foreignId('created_by')->constrained('users', 'idUser');
@@ -33,6 +33,6 @@ class CreateHasAgencyTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('hasAgency');
+        Schema::dropIfExists('hasagency');
     }
 }

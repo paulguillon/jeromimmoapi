@@ -14,7 +14,7 @@ class CreateAgencyDataTable extends Migration
      */
     public function up()
     {
-        Schema::create('agencyData', function (Blueprint $table) {
+        Schema::create('agencydata', function (Blueprint $table) {
             $table->bigIncrements('idAgencyData');
             $table->timestamp('created_at')->default(DB::raw('CURRENT_TIMESTAMP'));
             $table->foreignId('created_by')->constrained('users', 'idUser');
@@ -33,6 +33,6 @@ class CreateAgencyDataTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('agencyData');
+        Schema::dropIfExists('agencydata');
     }
 }

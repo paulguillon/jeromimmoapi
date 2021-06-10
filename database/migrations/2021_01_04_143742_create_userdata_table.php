@@ -16,7 +16,7 @@ class CreateUserdataTable extends Migration
      */
     public function up()
     {
-        Schema::create('userData', function (Blueprint $table) {
+        Schema::create('userdata', function (Blueprint $table) {
             $table->bigIncrements('idUserData');
             $table->timestamp('created_at')->default(DB::raw('CURRENT_TIMESTAMP'));
             $table->foreignId('created_by')->constrained('users', 'idUser');

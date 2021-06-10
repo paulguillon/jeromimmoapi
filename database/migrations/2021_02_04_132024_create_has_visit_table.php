@@ -14,7 +14,7 @@ class CreateHasVisitTable extends Migration
      */
     public function up()
     {
-        Schema::create('hasVisit', function (Blueprint $table) {
+        Schema::create('hasvisit', function (Blueprint $table) {
             $table->bigIncrements('idHasVisit');
             $table->timestamp('created_at')->default(DB::raw('CURRENT_TIMESTAMP'));
             $table->foreignId('created_by')->constrained('users', 'idUser');
@@ -33,6 +33,6 @@ class CreateHasVisitTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('hasVisit');
+        Schema::dropIfExists('hasvisit');
     }
 }

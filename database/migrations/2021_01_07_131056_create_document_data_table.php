@@ -14,7 +14,7 @@ class CreateDocumentDataTable extends Migration
      */
     public function up()
     {
-        Schema::create('documentData', function (Blueprint $table) {
+        Schema::create('documentdata', function (Blueprint $table) {
             $table->bigIncrements('idDocumentData');
             $table->timestamp('created_at')->default(DB::raw('CURRENT_TIMESTAMP'));
             $table->foreignId('created_by')->constrained('users', 'idUser');
@@ -33,6 +33,6 @@ class CreateDocumentDataTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('documentData');
+        Schema::dropIfExists('documentdata');
     }
 }

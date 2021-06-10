@@ -14,7 +14,7 @@ class CreateFaqTypeTable extends Migration
      */
     public function up()
     {
-        Schema::create('faqType', function (Blueprint $table) {
+        Schema::create('faqtype', function (Blueprint $table) {
             $table->bigIncrements('idFaqType');
             $table->timestamp('created_at')->default(DB::raw('CURRENT_TIMESTAMP'));
             $table->foreignId('created_by')->constrained('users', 'idUser');
@@ -31,6 +31,6 @@ class CreateFaqTypeTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('faqType');
+        Schema::dropIfExists('faqtype');
     }
 }

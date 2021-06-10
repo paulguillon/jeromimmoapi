@@ -14,7 +14,7 @@ class CreateHasPropertyTable extends Migration
      */
     public function up()
     {
-        Schema::create('hasProperty', function (Blueprint $table) {
+        Schema::create('hasproperty', function (Blueprint $table) {
             $table->bigIncrements('idHasProperty');
             $table->timestamp('created_at')->default(DB::raw('CURRENT_TIMESTAMP'));
             $table->foreignId('created_by')->constrained('users', 'idUser');
@@ -33,6 +33,6 @@ class CreateHasPropertyTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('hasProperty');
+        Schema::dropIfExists('hasproperty');
     }
 }
