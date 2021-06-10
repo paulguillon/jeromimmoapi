@@ -4,6 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Artisan;
 
 class CreateAgencyDataTable extends Migration
 {
@@ -24,6 +25,9 @@ class CreateAgencyDataTable extends Migration
             $table->longText('valueAgencyData');
             $table->foreignId('idAgency')->constrained('agency', 'idAgency');
         });
+        Artisan::call('db:seed', [
+            '--class' => AgencyDataSeeder::class,
+        ]);
     }
 
     /**

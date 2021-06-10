@@ -19,7 +19,7 @@ class UserDataSeeder extends Seeder
 
         for ($i = 1; $i <= 10; $i++) {
             // Value one
-            DB::table('userData')->insert([
+            DB::table('userdata')->insert([
                 'created_by' => '1',
                 'updated_by' => '1',
                 'keyUserData' => 'Birthday',

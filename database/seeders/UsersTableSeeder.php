@@ -17,6 +17,17 @@ class UsersTableSeeder extends Seeder
      */
     public function run()
     {
+        // créer ICI un user en BRUT pour tous les membres du groupe
+            DB::table('users')->insert([
+                'lastnameUser' => 'John',
+                'firstnameUser' => 'Test',
+                'emailUser' => 'test@test.fr',
+                'passwordUser' => Hash::make('test'),
+                'idRoleUser' => "1",
+                'created_by' => "1",
+                'updated_by' => "1"
+            ]);
+        
         $faker = Faker::create();
         foreach (range(1, 10) as $index) {
             DB::table('users')->insert([
