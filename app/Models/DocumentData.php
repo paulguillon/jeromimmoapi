@@ -13,7 +13,7 @@ class DocumentData extends Model implements AuthenticatableContract, Authorizabl
 {
     use Authenticatable, Authorizable, HasFactory;
 
-    protected $table = 'documentData'; 
+    protected $table = 'documentdata';
 
     protected $primaryKey = 'idDocumentData';
 
@@ -32,6 +32,6 @@ class DocumentData extends Model implements AuthenticatableContract, Authorizabl
      * @var array
      */
     protected $hidden = [
-        
+
     ];
 }

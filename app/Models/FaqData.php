@@ -13,7 +13,7 @@ class FaqData extends Model implements AuthenticatableContract, AuthorizableCont
 {
     use Authenticatable, Authorizable, HasFactory;
 
-    protected $table = 'faqData'; 
+    protected $table = 'faqdata';
 
     protected $primaryKey = 'idFaqData';
 
@@ -32,6 +32,6 @@ class FaqData extends Model implements AuthenticatableContract, AuthorizableCont
      * @var array
      */
     protected $hidden = [
-        
+
     ];
 }

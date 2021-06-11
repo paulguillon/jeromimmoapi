@@ -1,9 +1,12 @@
 <?php
 
+use Database\Seeders\PropertyDataSeeder;
+use Database\Seeders\PropertyTableSeeder;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Artisan;
 
 class CreatePropertydataTable extends Migration
 {
@@ -14,7 +17,7 @@ class CreatePropertydataTable extends Migration
      */
     public function up()
     {
-        Schema::create('propertyData', function (Blueprint $table) {
+        Schema::create('propertydata', function (Blueprint $table) {
             $table->bigIncrements('idPropertydata');
             $table->timestamp('created_at')->default(DB::raw('CURRENT_TIMESTAMP'));
             $table->foreignId('created_by')->constrained('users', 'idUser');
@@ -24,6 +27,9 @@ class CreatePropertydataTable extends Migration
             $table->longText('valuePropertyData');
             $table->foreignId('idProperty')->constrained('property', 'idProperty');
         });
+        Artisan::call('db:seed', [
+            '--class' => PropertyTableSeeder::class,
+        ]);
     }
 
     /**

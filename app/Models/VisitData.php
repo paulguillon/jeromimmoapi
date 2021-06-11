@@ -13,7 +13,7 @@ class VisitData extends Model implements AuthenticatableContract, AuthorizableCo
 {
     use Authenticatable, Authorizable, HasFactory;
 
-    protected $table = 'visitData'; 
+    protected $table = 'visitdata';
 
     protected $primaryKey = 'idVisitData';
 
@@ -32,6 +32,6 @@ class VisitData extends Model implements AuthenticatableContract, AuthorizableCo
      * @var array
      */
     protected $hidden = [
-        
+
     ];
 }

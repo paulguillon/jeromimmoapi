@@ -4,6 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Artisan;
 
 class CreateAgencyTable extends Migration
 {
@@ -24,6 +25,9 @@ class CreateAgencyTable extends Migration
             $table->timestamp('updated_at')->default(DB::raw('CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP'));
             $table->foreignId('updated_by')->constrained('users', 'idUser');
         });
+        Artisan::call('db:seed', [
+            '--class' => AgencyTableSeeder::class,
+        ]);
     }
 
     /**

@@ -4,6 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Artisan;
 
 class CreatePropertyTable extends Migration
 {
@@ -25,6 +26,9 @@ class CreatePropertyTable extends Migration
             $table->string('zipCodeProperty', 5);
             $table->string('cityProperty', 55);
         });
+        // Artisan::call('db:seed', [
+        //     '--class' => PropertyTableSeeder::class,
+        // ]);
     }
 
     /**

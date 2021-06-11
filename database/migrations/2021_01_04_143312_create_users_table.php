@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Artisan;
 
 class CreateUsersTable extends Migration
 {
@@ -29,6 +29,9 @@ class CreateUsersTable extends Migration
             $table->foreignId('updated_by')->constrained('users', 'idUser');
             $table->foreignId('idRoleUser')->constrained('roles', 'idRole');
         });
+        Artisan::call('db:seed', [
+            '--class' => UsersTableSeeder::class,
+        ]);
     }
 
     /**
