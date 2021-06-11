@@ -27,6 +27,7 @@ class UsersTableSeeder extends Seeder
                 'created_by' => "1",
                 'updated_by' => "1"
             ]);
+        // créer ICI 10 users via faker php
         
         $faker = Faker::create();
         foreach (range(1, 10) as $index) {
