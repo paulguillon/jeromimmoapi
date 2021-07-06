@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Models\Property;
 use App\Models\PropertyData;
+use App\Models\User;
 
 class PropertyController extends Controller
 {
@@ -23,7 +24,6 @@ class PropertyController extends Controller
      *   path="/api/v1/properties",
      *   summary="Return all properties",
      *   tags={"Property Controller"},
-     *   security={{ "apiAuth": {} }},
      *   @OA\Parameter(ref="#/components/parameters/get_request_parameter_limit"),
      *   @OA\Response(
      *       response=401,
@@ -69,7 +69,7 @@ class PropertyController extends Controller
      *       ),
      *       @OA\Property(
      *         property="created_by",
-     *         default="1",
+     *         default=1,
      *         description="Id of user who created this one",
      *       ),
      *       @OA\Property(
@@ -79,13 +79,8 @@ class PropertyController extends Controller
      *       ),
      *       @OA\Property(
      *         property="updated_by",
-     *         default="1",
+     *         default=1,
      *         description="Id of user who modified this one",
-     *       ),
-     *       @OA\Property(
-     *         property="data",
-     *         default="[""]",
-     *         description="Property data",
      *       ),
      *     )
      *   )
@@ -168,8 +163,6 @@ class PropertyController extends Controller
 
             //get property
             $properties["properties"][] = Property::all()->where('idProperty', $id)->first();
-            //get property data
-            $properties["properties"][$i]['data'] = $this->getAllData($id);
         }
 
         //response
@@ -181,14 +174,13 @@ class PropertyController extends Controller
      *   path="/api/v1/properties/{id}",
      *   summary="Return a property",
      *   tags={"Property Controller"},
-     *   security={{ "apiAuth": {} }},
      *   @OA\Parameter(
      *     name="id",
      *     in="path",
      *     required=true,
      *     description="ID of the property to get",
      *     @OA\Schema(
-     *       type="number", default=1
+     *       type="integer", default=1
      *     )
      *   ),
      *   @OA\Response(
@@ -200,20 +192,8 @@ class PropertyController extends Controller
      *       description="Resource Not Found"
      *   ),
      *   @OA\Response(
-     *       response=500,
-     *       description="Property not found",
-     *       @OA\JsonContent(
-     *        @OA\Property(
-     *          property="message",
-     *          default="The property ? doesn't exist",
-     *          description="Message",
-     *        ),
-     *        @OA\Property(
-     *          property="status",
-     *          default="fail",
-     *          description="Status",
-     *        ),
-     *       ),
+     *       response=409,
+     *       description="Property recovery failed!",
      *   ),
      *   @OA\Response(
      *     response=200,
@@ -251,7 +231,7 @@ class PropertyController extends Controller
      *       ),
      *       @OA\Property(
      *         property="created_by",
-     *         default="1",
+     *         default=1,
      *         description="Id of user who created this one",
      *       ),
      *       @OA\Property(
@@ -261,13 +241,8 @@ class PropertyController extends Controller
      *       ),
      *       @OA\Property(
      *         property="updated_by",
-     *         default="1",
+     *         default=1,
      *         description="Id of user who modified this one",
-     *       ),
-     *       @OA\Property(
-     *         property="data",
-     *         default={"test":"test"},
-     *         description="Property data",
      *       ),
      *     )
      *   ),
@@ -277,11 +252,12 @@ class PropertyController extends Controller
     {
         try {
             $property = Property::all()->where('idProperty', $id)->first();
-            $property['data'] = $this->getAllData($id);
+            if (!$property)
+                return response()->json(['message' => 'Property not found!'], 404);
+
             return response()->json($property, 200);
         } catch (\Exception $e) {
-
-            return response()->json(['message' => 'Property not found!' . $e->getMessage()], 404);
+            return response()->json(['message' => 'Property recovery failed!'], 409);
         }
     }
 
@@ -342,7 +318,7 @@ class PropertyController extends Controller
      *     required=true,
      *     description="ID of the logged user",
      *     @OA\Schema(
-     *       type="number", default="1"
+     *       type="integer", default=1
      *     )
      *   ),
      *   @OA\Parameter(
@@ -351,41 +327,20 @@ class PropertyController extends Controller
      *     required=true,
      *     description="ID of the logged user",
      *     @OA\Schema(
-     *       type="number", default="1"
-     *     )
-     *   ),
-     *   @OA\Parameter(
-     *     name="data",
-     *     in="query",
-     *     required=true,
-     *     description="Data of the property to add",
-     *     @OA\Schema(
-     *       type="string", default={"test":"test"}
+     *       type="integer", default=1
      *     )
      *   ),
      *   @OA\Response(
-     *       response=409,
-     *       description="Not created",
+     *       response=401,
+     *       description="Unauthenticated",
      *   ),
      *   @OA\Response(
      *       response=404,
      *       description="Resource Not Found",
      *   ),
      *   @OA\Response(
-     *       response=500,
-     *       description="Property data not added",
-     *       @OA\JsonContent(
-     *        @OA\Property(
-     *          property="message",
-     *          default="Property data not added",
-     *          description="Message",
-     *        ),
-     *        @OA\Property(
-     *          property="status",
-     *          default="fail",
-     *          description="Status",
-     *        ),
-     *       ),
+     *       response=409,
+     *       description="Property creation failed!",
      *   ),
      *   @OA\Response(
      *     response=201,
@@ -423,8 +378,8 @@ class PropertyController extends Controller
      *       ),
      *       @OA\Property(
      *         property="created_by",
-     *         default="1",
-     *         description="Id of user who created this one",
+     *         default=1,
+     *         description="Id of creator",
      *       ),
      *       @OA\Property(
      *         property="updated_at",
@@ -433,13 +388,8 @@ class PropertyController extends Controller
      *       ),
      *       @OA\Property(
      *         property="updated_by",
-     *         default="1",
-     *         description="Id of user who modified this one",
-     *       ),
-     *       @OA\Property(
-     *         property="data",
-     *         default="[""]",
-     *         description="Property data",
+     *         default=1,
+     *         description="Id of creator",
      *       ),
      *     )
      *   ),
@@ -455,7 +405,6 @@ class PropertyController extends Controller
             'cityProperty' => 'required|string',
             'created_by' => 'required|integer',
             'updated_by' => 'required|integer',
-            'data' => 'string',
         ]);
 
         try {
@@ -469,13 +418,8 @@ class PropertyController extends Controller
 
             $property->save();
 
-            if ($request->input('data') !== null) {
-                if (!$this->_addData($property->idProperty, $request))
-                    return response()->json(['message' => 'Property data not added!', 'status' => 'fail'], 500);
-            }
-
             // Return successful response
-            return response()->json(['property' => $property, 'data' => $this->getAllData($property->idProperty), 'message' => 'CREATED', 'status' => 'success'], 201);
+            return response()->json(['property' => $property, 'message' => 'Property successfully created!', 'status' => 'success'], 201);
         } catch (\Exception $e) {
             //return error message
             return response()->json(['message' => 'Property Data Registration Failed!', 'status' => 'fail'], 409);
@@ -494,14 +438,14 @@ class PropertyController extends Controller
      *     required=true,
      *     description="ID of the property to update",
      *     @OA\Schema(
-     *       type="number", default="1"
+     *       type="integer", default=1
      *     )
      *   ),
      *   @OA\Parameter(
      *     name="typeProperty",
      *     in="query",
      *     required=true,
-     *     description="Type of the property to add",
+     *     description="Type",
      *     @OA\Schema(
      *       type="string", default="first"
      *     )
@@ -510,7 +454,7 @@ class PropertyController extends Controller
      *     name="priceProperty",
      *     in="query",
      *     required=true,
-     *     description="Price of the property to add",
+     *     description="Price",
      *     @OA\Schema(
      *       type="string", default="first"
      *     )
@@ -519,7 +463,7 @@ class PropertyController extends Controller
      *     name="zipCodeProperty",
      *     in="query",
      *     required=true,
-     *     description="Zipcode of the property to add",
+     *     description="Zipcode",
      *     @OA\Schema(
      *       type="string", default="first"
      *     )
@@ -528,16 +472,7 @@ class PropertyController extends Controller
      *     name="cityProperty",
      *     in="query",
      *     required=true,
-     *     description="City of the property to add",
-     *     @OA\Schema(
-     *       type="string", default="first"
-     *     )
-     *   ),
-     *   @OA\Parameter(
-     *     name="typeProperty",
-     *     in="query",
-     *     required=true,
-     *     description="Type of the property to add",
+     *     description="City",
      *     @OA\Schema(
      *       type="string", default="first"
      *     )
@@ -548,7 +483,7 @@ class PropertyController extends Controller
      *     required=true,
      *     description="ID of the logged user",
      *     @OA\Schema(
-     *       type="number", default="1"
+     *       type="integer", default=1
      *     )
      *   ),
      *   @OA\Parameter(
@@ -557,41 +492,20 @@ class PropertyController extends Controller
      *     required=true,
      *     description="ID of the logged user",
      *     @OA\Schema(
-     *       type="number", default="1"
-     *     )
-     *   ),
-     *   @OA\Parameter(
-     *     name="data",
-     *     in="query",
-     *     required=true,
-     *     description="Data of the property to add",
-     *     @OA\Schema(
-     *       type="string", default="{'cle':'valeur','deuxiemecle':'deuxiemevaleur'}"
+     *       type="integer", default=1
      *     )
      *   ),
      *   @OA\Response(
-     *       response=409,
-     *       description="Not updated",
+     *       response=401,
+     *       description="Unauthenticated",
      *   ),
      *   @OA\Response(
      *       response=404,
      *       description="Resource Not Found",
      *   ),
      *   @OA\Response(
-     *       response=500,
-     *       description="Property data not updated",
-     *       @OA\JsonContent(
-     *        @OA\Property(
-     *          property="message",
-     *          default="Property data not updated",
-     *          description="Message",
-     *        ),
-     *        @OA\Property(
-     *          property="status",
-     *          default="fail",
-     *          description="Status",
-     *        ),
-     *       ),
+     *       response=409,
+     *       description="Property update failed!",
      *   ),
      *   @OA\Response(
      *     response=200,
@@ -629,7 +543,7 @@ class PropertyController extends Controller
      *       ),
      *       @OA\Property(
      *         property="created_by",
-     *         default="1",
+     *         default=1,
      *         description="Id of user who created this one",
      *       ),
      *       @OA\Property(
@@ -639,13 +553,8 @@ class PropertyController extends Controller
      *       ),
      *       @OA\Property(
      *         property="updated_by",
-     *         default="1",
+     *         default=1,
      *         description="Id of user who modified this one",
-     *       ),
-     *       @OA\Property(
-     *         property="data",
-     *         default="[""]",
-     *         description="Property data",
      *       ),
      *     )
      *   ),
@@ -661,13 +570,16 @@ class PropertyController extends Controller
             'cityProperty' => 'string',
             'created_by' => 'integer',
             'updated_by' => 'integer',
-
-            'data' => 'string',
         ]);
 
         try {
-            // Update
-            $property = Property::findOrFail($id);
+            // get property
+            $property = Property::find($id);
+
+            //test if exists
+            if (!$property)
+                return response()->json(['property' => null, 'message' => "Property doesn't exists", 'status' => 'success'], 404);
+
             if ($request->input('typeProperty') !== null)
                 $property->typeProperty = $request->input('typeProperty');
             if ($request->input('priceProperty') !== null)
@@ -676,27 +588,30 @@ class PropertyController extends Controller
                 $property->zipCodeProperty = $request->input('zipCodeProperty');
             if ($request->input('cityProperty') !== null)
                 $property->cityProperty = $request->input('cityProperty');
-            if ($request->input('created_by') !== null)
+            if ($request->input('created_by') !== null) {
+                //test if the creator exists
+                $exist = User::find($request->input('created_by'));
+                if (!$exist)
+                    return response()->json(['property' => null, 'message' => 'Unknown creator', 'status' => 'fail'], 404);
+                //update if ok
                 $property->created_by = $request->input('created_by');
-            if ($request->input('updated_by') !== null)
+            }
+            if ($request->input('updated_by') !== null) {
+                //test if the user who did last update exists
+                $exist = User::find($request->input('updated_by'));
+                if (!$exist)
+                    return response()->json(['property' => null, 'message' => 'Unknown user', 'status' => 'fail'], 404);
+                //update if ok
                 $property->updated_by = $request->input('updated_by');
+            }
 
             $property->update();
 
-            // Update data
-            if ($request->input('data') !== null) {
-                $data = (array)json_decode($request->input('data'), true);
-
-                foreach ($data as $key => $value) {
-                    if (!$this->updateData($property->idProperty, $key, $value))
-                        return response()->json(['message' => 'Property Update Failed!', 'status' => 'fail'], 500);
-                }
-            }
             // Return successful response
-            return response()->json(['property' => $property, 'data' => $this->getAllData($property->idProperty), 'message' => 'ALL UPDATED', 'status' => 'success'], 200);
+            return response()->json(['property' => $property, 'message' => 'Property successfully updated', 'status' => 'success'], 200);
         } catch (\Exception $e) {
             // Return error message
-            return response()->json(['message' => 'Property Update Failed!' . $e->getMessage(), 'status' => 'fail'], 409);
+            return response()->json(['message' => 'Property update failed!', 'status' => 'fail'], 409);
         }
     }
 
@@ -712,20 +627,20 @@ class PropertyController extends Controller
      *     required=true,
      *     description="ID of the property to delete",
      *     @OA\Schema(
-     *       type="number", default="1"
+     *       type="integer", default=1
      *     )
      *   ),
      *   @OA\Response(
-     *       response=409,
-     *       description="Not deleted",
+     *       response=401,
+     *       description="Unauthenticated",
      *   ),
      *   @OA\Response(
      *       response=404,
      *       description="Resource Not Found"
      *   ),
      *   @OA\Response(
-     *       response=500,
-     *       description="Property data not deleted"
+     *       response=409,
+     *       description="Property deletion failed!",
      *   ),
      *   @OA\Response(
      *     response=200,
@@ -753,19 +668,14 @@ class PropertyController extends Controller
      *       ),
      *       @OA\Property(
      *         property="created_by",
-     *         default="1",
-     *         description="Id of user who created this one",
+     *         default=1,
+     *         description="Id of creator",
      *       ),
      *       @OA\Property(
      *         property="updated_by",
-     *         default="1",
-     *         description="Id of user who modified this one",
+     *         default=1,
+     *         description="Id of user who did last update",
      *       ),
-     *       @OA\Property(
-     *         property="data",
-     *         default="[""]",
-     *         description="Property data",
-     *       )
      *      )
      *   ),
      * )
@@ -773,198 +683,17 @@ class PropertyController extends Controller
     public function deleteProperty($id)
     {
         try {
-            $property = Property::findOrFail($id);
-            $propertyData = $this->getAllData($id);
+            $property = Property::find($id);
 
-            // Update data
-            if ($propertyData !== null) {
-                if (!$this->deleteData($id))
-                    return response()->json(['message' => 'Faq Deletion Failed!', 'status' => 'fail'], 500);
-            }
+            if (!$property)
+                return response()->json(['property' => $property, 'message' => 'Property successfully deleted!', 'status' => 'success'], 200);
 
             $property->delete();
 
-            return response()->json(['property' => $property, 'data' => $propertyData, 'message' => 'DELETED', 'status' => 'success'], 200);
+            return response()->json(['property' => $property, 'message' => 'Property successfully deleted!', 'status' => 'success'], 200);
         } catch (\Exception $e) {
             // Return error message
             return response()->json(['message' => 'Property deletion failed!' . $e->getMessage(), 'status' => 'fail'], 409);
-        }
-    }
-
-    /**
-     * @OA\Post(
-     *   path="/api/v1/properties/data/{id}",
-     *   summary="Add property data",
-     *   tags={"Property Controller"},
-     *   security={{ "apiAuth": {} }},
-     *   @OA\Parameter(
-     *     name="id",
-     *     in="path",
-     *     required=true,
-     *     description="ID of the property",
-     *     @OA\Schema(
-     *       type="number", default="1"
-     *     )
-     *   ),
-     *   @OA\Parameter(
-     *     name="data",
-     *     in="query",
-     *     required=true,
-     *     description="Data of the property to add",
-     *     @OA\Schema(
-     *       type="string", default="{'cle':'valeur','deuxiemecle':'deuxiemevaleur'}"
-     *     )
-     *   ),
-     *   @OA\Parameter(
-     *     name="created_by",
-     *     in="query",
-     *     required=true,
-     *     description="ID of the logged user",
-     *     @OA\Schema(
-     *       type="number", default="1"
-     *     )
-     *   ),
-     *   @OA\Parameter(
-     *     name="updated_by",
-     *     in="query",
-     *     required=true,
-     *     description="ID of the logged user",
-     *     @OA\Schema(
-     *       type="number", default="1"
-     *     )
-     *   ),
-     *   @OA\Response(
-     *       response=409,
-     *       description="Data not created",
-     *   ),
-     *   @OA\Response(
-     *       response=404,
-     *       description="Resource Not Found",
-     *   ),
-     *   @OA\Response(
-     *       response=500,
-     *       description="Property data not added",
-     *       @OA\JsonContent(
-     *        @OA\Property(
-     *          property="message",
-     *          default="Property data not added",
-     *          description="Message",
-     *        ),
-     *        @OA\Property(
-     *          property="status",
-     *          default="fail",
-     *          description="Status",
-     *        ),
-     *       ),
-     *   ),
-     *   @OA\Response(
-     *     response=201,
-     *     description="Property data created",
-     *       @OA\JsonContent(
-     *        @OA\Property(
-     *          property="data",
-     *          default="[""]",
-     *          description="data",
-     *        ),
-     *        @OA\Property(
-     *          property="status",
-     *          default="success",
-     *          description="Status",
-     *        ),
-     *       ),
-     *   ),
-     * )
-     */
-    public function addData($id, Request $request)
-    {
-        try {
-            if (!$this->_addData($id, $request))
-                return response()->json(['message' => 'Not all data has been added', 'status' => 'fail'], 409);
-
-            // Return successful response
-            return response()->json(['data' => $this->getAllData($id), 'message' => 'Data created', 'status' => 'success'], 201);
-        } catch (\Exception $e) {
-            // Return error message
-            return response()->json(['message' => 'Property data not added!', 'status' => 'fail'], 409);
-        }
-    }
-
-    // Fonction utilisée par la route et lors de la creation de user pour ajouter toutes les data
-    public function _addData($idProperty, $request)
-    {
-        $data = (array)json_decode($request->input('data'), true);
-
-        try {
-            foreach ($data as $key => $value) {
-                $propertyData = new PropertyData;
-                $propertyData->keyPropertyData = $key;
-                $propertyData->valuePropertyData = $value;
-                $propertyData->created_by = $request->input('created_by');
-                $propertyData->updated_by = $request->input('updated_by');
-                $propertyData->idProperty = $idProperty;
-
-                $propertyData->save();
-            }
-
-            // Return successful response
-            return true;
-        } catch (\Exception $e) {
-            // Return error message
-            return false;
-        }
-    }
-
-    public function getAllData($idProperty)
-    {
-        $data = array();
-        foreach (PropertyData::all()->where('idProperty', $idProperty) as $value) {
-            array_push($data, $value);
-        }
-        return response()->json($data, 200)->original;
-    }
-
-    public function getData($idProperty, $key)
-    {
-        return response()->json(
-            PropertyData::all()
-                ->where('idProperty', $idProperty)
-                ->where('keyPropertyData', $key),
-            200
-        );
-    }
-
-    public function updateData($idProperty, $key, $value)
-    {
-        try {
-            $propertyData = PropertyData::all()
-                ->where('idProperty', $idProperty)
-                ->where('keyPropertyData', $key)
-                ->first();
-
-            if ($propertyData == null)
-                return false;
-
-            $propertyData->valuePropertyData = $value;
-            $propertyData->update();
-
-            return true;
-        } catch (\Exception $e) {
-            return false;
-        }
-    }
-
-    public function deleteData($idProperty)
-    {
-        try {
-            $propertyData = PropertyData::all()->where('idProperty', $idProperty);
-
-            foreach ($propertyData as $data) {
-                $data->delete();
-            }
-
-            return true;
-        } catch (\Exception $e) {
-            return false;
         }
     }
 }

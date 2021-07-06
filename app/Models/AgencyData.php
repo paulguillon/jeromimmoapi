@@ -13,7 +13,7 @@ class AgencyData extends Model implements AuthenticatableContract, AuthorizableC
 {
     use Authenticatable, Authorizable, HasFactory;
 
-    protected $table = 'agencydata';
+    protected $table = 'agencyData';
 
     protected $primaryKey = 'idAgencyData';
 
