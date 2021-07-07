@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Property;
 use Illuminate\Http\Request;
+use App\Models\Property;
 use App\Models\PropertyData;
 use App\Models\User;
 
@@ -33,14 +33,6 @@ class PropertyDataController extends Controller
      *     )
      *   ),
      *   @OA\Response(
-     *       response=404,
-     *       description="Resource Not Found"
-     *   ),
-     *   @OA\Response(
-     *       response=409,
-     *       description="Data could not be retrieved"
-     *   ),
-     *   @OA\Response(
      *     response=200,
      *     description="List of data",
      *     @OA\JsonContent(
@@ -61,13 +53,23 @@ class PropertyDataController extends Controller
      *       ),
      *       @OA\Property(
      *         property="created_by",
-     *         default=1,
+     *         default="1",
      *         description="ID of creator",
      *       ),
      *       @OA\Property(
+     *         property="created_at",
+     *         default="2021-02-05T09:00:57.000000Z",
+     *         description="Timestamp of the creation",
+     *       ),
+     *       @OA\Property(
      *         property="updated_by",
-     *         default=1,
-     *         description="ID of user who has updated this data",
+     *         default="1",
+     *         description="Id of creator",
+     *       ),
+     *       @OA\Property(
+     *         property="updated_at",
+     *         default="2021-02-05T09:00:57.000000Z",
+     *         description="Timestamp of the last update",
      *       ),
      *       @OA\Property(
      *         property="idProperty",
@@ -75,7 +77,31 @@ class PropertyDataController extends Controller
      *         description="ID of the property that this data is related to",
      *       ),
      *     )
-     *   )
+     *),
+     *   @OA\Response(
+     *       response=404,
+     *       description="Resource Not Found"
+     *   ),
+     *   @OA\Response(
+     *       response=409,
+     *       description="Data could not be retrieved"
+     *   ),
+     *   @OA\Response(
+     *       response=500,
+     *       description="UserData not found",
+     *       @OA\JsonContent(
+     *        @OA\Property(
+     *          property="message",
+     *          default="No data for this user",
+     *          description="Message",
+     *        ),
+     *        @OA\Property(
+     *          property="status",
+     *          default="fail",
+     *          description="Status",
+     *        ),
+     *       ),
+     *   ),
      * )
      */
     public function getAllData($id)
@@ -117,42 +143,18 @@ class PropertyDataController extends Controller
      *     )
      *   ),
      *   @OA\Response(
-     *     response=404,
-     *     description="No data for this key"
-     *   ),
-     *   @OA\Response(
-     *     response=409,
-     *     description="Server error"
-     *   ),
-     *   @OA\Response(
-     *     response=500,
-     *     description="Data not found",
-     *     @OA\JsonContent(
-     *       @OA\Property(
-     *         property="message",
-     *         default="Data doesn't exist",
-     *         description="Message",
-     *       ),
-     *       @OA\Property(
-     *         property="status",
-     *         default="fail",
-     *         description="Status",
-     *       ),
-     *     ),
-     *   ),
-     *   @OA\Response(
      *     response=200,
      *     description="Requested data",
      *     @OA\JsonContent(
      *       @OA\Property(
      *         property="idPropertyData",
      *         default="1",
-     *         description="key of the property",
+     *         description="ID of the property",
      *       ),
      *       @OA\Property(
      *         property="keyPropertyData",
      *         default="key",
-     *         description="key of the property",
+     *         description="Key of the property",
      *       ),
      *       @OA\Property(
      *         property="valuePropertyData",
@@ -175,6 +177,30 @@ class PropertyDataController extends Controller
      *         description="Property associated with the data",
      *       ),
      *     )
+     *   ),
+     *   @OA\Response(
+     *     response=404,
+     *     description="No data for this key"
+     *   ),
+     *   @OA\Response(
+     *     response=409,
+     *     description="Server error"
+     *   ),
+     *   @OA\Response(
+     *     response=500,
+     *     description="Data not found",
+     *     @OA\JsonContent(
+     *       @OA\Property(
+     *         property="message",
+     *         default="Data doesn't exist",
+     *         description="Message",
+     *       ),
+     *       @OA\Property(
+     *         property="status",
+     *         default="fail",
+     *         description="Status",
+     *       ),
+     *     ),
      *   ),
      * )
      */
@@ -251,26 +277,23 @@ class PropertyDataController extends Controller
      *       type="integer", default=1
      *     )
      *   ),
-     *   @OA\Response(
-     *     response=401,
-     *     description="Unauthenticated"
-     *   ),
-     *   @OA\Response(
-     *     response=404,
-     *     description="Unknown Property"
-     *   ),
-     *   @OA\Response(
-     *     response=409,
-     *     description="Data addition failed!",
+     *   @OA\Parameter(
+     *     name="idProperty",
+     *     in="query",
+     *     required=true,
+     *     description="Id from property",
+     *     @OA\Schema(
+     *       type="integer", default="1"
+     *     )
      *   ),
      *   @OA\Response(
      *     response=201,
-     *     description="Data added",
+     *     description="Property Data added",
      *     @OA\JsonContent(
      *       @OA\Property(
      *         property="idPropertyData",
      *         default=1,
-     *         description="Id of the property",
+     *         description="Id of the data of the property",
      *       ),
      *       @OA\Property(
      *         property="keyPropertyData",
@@ -293,11 +316,23 @@ class PropertyDataController extends Controller
      *         description="ID of user who has updated",
      *       ),
      *       @OA\Property(
-     *         property="idUser",
+     *         property="idProperty",
      *         default="1",
-     *         description="User's id who this new data is related to",
+     *         description="Property's ID who this new data is related to",
      *       ),
      *     )
+     *   ),
+     *   @OA\Response(
+     *     response=401,
+     *     description="Unauthenticated"
+     *   ),
+     *   @OA\Response(
+     *     response=404,
+     *     description="Unknown Property"
+     *   ),
+     *   @OA\Response(
+     *     response=409,
+     *     description="Data addition failed!",
      *   ),
      * )
      */
@@ -312,7 +347,7 @@ class PropertyDataController extends Controller
         ]);
 
         try {
-            //if property or users doesn't exist
+            //if created_by and updated_by doesn't exist
             $created_by = User::all()->where('idUser', $request->input('created_by'))->first();
             $updated_by = User::all()->where('idUser', $request->input('updated_by'))->first();
             if (!$this->existProperty($id))
@@ -402,7 +437,7 @@ class PropertyDataController extends Controller
      *     name="updated_by",
      *     in="query",
      *     required=false,
-     *     description="New modifier",
+     *     description="New user who updates",
      *     @OA\Schema(
      *       type="integer", default=1
      *     )
@@ -415,18 +450,6 @@ class PropertyDataController extends Controller
      *     @OA\Schema(
      *       type="integer", default=1
      *     )
-     *   ),
-     *   @OA\Response(
-     *       response=401,
-     *       description="Unauthenticated"
-     *   ),
-     *   @OA\Response(
-     *       response=404,
-     *       description="Resource Not Found",
-     *   ),
-     *   @OA\Response(
-     *       response=409,
-     *       description="Data update failed",
      *   ),
      *   @OA\Response(
      *     response=200,
@@ -464,6 +487,18 @@ class PropertyDataController extends Controller
      *       ),
      *     )
      *   ),
+     *   @OA\Response(
+     *       response=401,
+     *       description="Unauthenticated"
+     *   ),
+     *   @OA\Response(
+     *       response=404,
+     *       description="Resource Not Found",
+     *   ),
+     *   @OA\Response(
+     *       response=409,
+     *       description="Data update failed",
+     *   ),
      * )
      */
     public function updatePropertyData($id, $key, Request $request)
@@ -478,7 +513,7 @@ class PropertyDataController extends Controller
         ]);
 
         try {
-            //if users doesn't exist
+            //if created_by and updated_by doesn't exist
             if ($request->input('created_by')) {
                 $created_by = User::all()->where('idUser', $request->input('created_by'))->first();
                 if (empty($created_by))
@@ -490,7 +525,7 @@ class PropertyDataController extends Controller
                     return response()->json(['data' => null, 'message' => "User unknown", 'status' => 'fail'], 404);
             }
 
-            //if property doesn't exists
+            //if property doesn't exist
             if (!$this->existProperty($id))
                 return response()->json(['data' => null, 'message' => "Unknown Property", 'status' => 'fail'], 404);
 
@@ -556,18 +591,6 @@ class PropertyDataController extends Controller
      *     )
      *   ),
      *   @OA\Response(
-     *       response=401,
-     *       description="Unauthenticated"
-     *   ),
-     *   @OA\Response(
-     *       response=404,
-     *       description="No data for this key"
-     *   ),
-     *   @OA\Response(
-     *       response=409,
-     *       description="Data deletion failed!",
-     *   ),
-     *   @OA\Response(
      *     response=200,
      *     description="Property data deleted",
      *     @OA\JsonContent(
@@ -578,7 +601,7 @@ class PropertyDataController extends Controller
      *       ),
      *       @OA\Property(
      *         property="valuePropertyData",
-     *         default="any value",
+     *         default="Any value",
      *         description="Value of the property data",
      *       ),
      *       @OA\Property(
@@ -597,6 +620,18 @@ class PropertyDataController extends Controller
      *         description="ID of property this data was related to",
      *       )
      *      )
+     *   ),
+     *   @OA\Response(
+     *       response=401,
+     *       description="Unauthenticated"
+     *   ),
+     *   @OA\Response(
+     *       response=404,
+     *       description="No data for this key"
+     *   ),
+     *   @OA\Response(
+     *       response=409,
+     *       description="Data deletion failed!",
      *   ),
      * )
      */

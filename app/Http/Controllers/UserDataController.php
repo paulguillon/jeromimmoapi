@@ -20,8 +20,8 @@ class UserDataController extends Controller
 
     /**
      * @OA\Get(
-     *   path="/api/v1/user/{id}/userdata/{keyUserData}",
-     *   summary="Return data of a user",
+     *   path="/api/v1/user/{id}/data",
+     *   summary="Return all data of specific user",
      *   tags={"UserData Controller"},
      *   security={{ "apiAuth": {} }},
      *   @OA\Parameter(
@@ -33,23 +33,29 @@ class UserDataController extends Controller
      *       type="number", default=1
      *     )
      *   ),
-     *  @OA\Parameter(
-     *     name="keyUserData",
-     *     in="path",
-     *     required=true,
-     *     description="Key of the data to get",
-     *     @OA\Schema(
-     *       type="string", default="key"
-     *     )
-     *   ),
      *   @OA\Response(
      *     response=200,
-     *     description="One user data",
+     *     description="List of data",
      *     @OA\JsonContent(
      *       @OA\Property(
      *         property="idUserData",
      *         default="1",
-     *         description="Id of the data of the user",
+     *         description="Id of the user data",
+     *       ),
+     *       @OA\Property(
+     *         property="keyUserData",
+     *         default="Any key",
+     *         description="Key of the user data",
+     *       ),
+     *       @OA\Property(
+     *         property="valueUserData",
+     *         default="Any value",
+     *         description="Value of the user data",
+     *       ),
+     *       @OA\Property(
+     *         property="created_by",
+     *         default="1",
+     *         description="ID of creator",
      *       ),
      *       @OA\Property(
      *         property="created_at",
@@ -57,7 +63,7 @@ class UserDataController extends Controller
      *         description="Timestamp of the creation",
      *       ),
      *       @OA\Property(
-     *         property="created_by",
+     *         property="updated_by",
      *         default="1",
      *         description="Id of creator",
      *       ),
@@ -67,24 +73,9 @@ class UserDataController extends Controller
      *         description="Timestamp of the last update",
      *       ),
      *       @OA\Property(
-     *         property="updated_by",
-     *         default="1",
-     *         description="Id of creator",
-     *       ),
-     *       @OA\Property(
-     *         property="keyUserData",
-     *         default="Piscine",
-     *         description="key",
-     *       ),
-     *       @OA\Property(
-     *         property="valueUserData",
-     *         default="true",
-     *         description="value",
-     *       ),
-     *       @OA\Property(
      *         property="idUser",
      *         default="1",
-     *         description="Id of the user",
+     *         description="ID of the user that this data is related to",
      *       ),
      *     )
      *   ),
@@ -95,6 +86,10 @@ class UserDataController extends Controller
      *   @OA\Response(
      *       response=404,
      *       description="Resource Not Found"
+     *   ),
+     *   @OA\Response(
+     *       response=409,
+     *       description="Data could not be retrieved"
      *   ),
      *   @OA\Response(
      *       response=500,
@@ -115,51 +110,163 @@ class UserDataController extends Controller
      * )
      */
 
-    public function getUserData($id, $keyUserData)
+    public function getAllData($id)
     {
         try {
+            //if user doesn't exists
+            if (!$this->existUser($id)) return response()->json(['data' => null, 'message' => "User doesn't exists", 'status' => 'fail'], 404);
+
+            $data = array_values(UserData::all()
+                ->where('idUser', $id)->toArray());
+            return response()->json(['total' => count($data), 'data' => $data, 'message' => 'User data successfully retrieved', 'status' => 'success'], 200);
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Data recovery failed!', 'status' => 'fail'], 409);
+        }
+    }
+    /**
+     * @OA\Get(
+     *   path="/api/v1/user/{id}/data/{key}",
+     *   summary="Return specific data of the specified user",
+     *   tags={"UserData Controller"},
+     *   @OA\Parameter(
+     *     name="id",
+     *     in="path",
+     *     required=true,
+     *     description="ID of the concerned user",
+     *     @OA\Schema(
+     *       type="integer", default=1
+     *     )
+     *   ),
+     *   @OA\Parameter(
+     *     name="key",
+     *     in="path",
+     *     required=true,
+     *     description="key of the user to get",
+     *     @OA\Schema(
+     *       type="string", default="thumbnail"
+     *     )
+     *   ),
+     *   @OA\Response(
+     *     response=200,
+     *     description="Requested data",
+     *     @OA\JsonContent(
+     *       @OA\Property(
+     *         property="idUserData",
+     *         default="1",
+     *         description="ID of the user",
+     *       ),
+     *       @OA\Property(
+     *         property="keyUserData",
+     *         default="key",
+     *         description="Key of the user",
+     *       ),
+     *       @OA\Property(
+     *         property="valueUserData",
+     *         default="Any value",
+     *         description="Value of the user",
+     *       ),
+     *       @OA\Property(
+     *         property="created_by",
+     *         default="1",
+     *         description="Creator",
+     *       ),
+     *       @OA\Property(
+     *         property="updated_by",
+     *         default="1",
+     *         description="Who updates",
+     *       ),
+     *       @OA\Property(
+     *         property="idUser",
+     *         default="1",
+     *         description="User associated with the data",
+     *       ),
+     *     )
+     *   ),
+     *   @OA\Response(
+     *     response=404,
+     *     description="No data for this key"
+     *   ),
+     *   @OA\Response(
+     *     response=409,
+     *     description="Server error"
+     *   ),
+     *   @OA\Response(
+     *     response=500,
+     *     description="Data not found",
+     *     @OA\JsonContent(
+     *       @OA\Property(
+     *         property="message",
+     *         default="Data doesn't exist",
+     *         description="Message",
+     *       ),
+     *       @OA\Property(
+     *         property="status",
+     *         default="fail",
+     *         description="Status",
+     *       ),
+     *     ),
+     *   ),
+     * )
+     */
+    public function getUserData($id, $key)
+    {
+        try {
+            //if property doesn't exists
+            if (!$this->existUser($id))
+                return response()->json(['data' => null, 'message' => "User doesn't exists", 'status' => 'fail'], 404);
+
             $userData = UserData::all()
                 ->where('idUser', $id)
-                ->where('keyUserData', $keyUserData)
+                ->where('keyUserData', $key)
                 ->first();
 
-            if (empty($userData))
-                return response()->json(['message' => "Data of User  $id doesn't exist", 'status' => 'fail'], 500);
+            //key doesn't exists
+            if (!$userData)
+                return response()->json(['data' => null, 'message' => "No data for this key", 'status' => 'fail'], 404);
 
-            return response()->json($userData, 200);
+            return response()->json(['data' => $userData, 'message' => 'Data successfully retrieved!', 'status' => 'success'], 200);
         } catch (\Exception $e) {
-            return response()->json(['message' => 'Data not found!' . $e->getMessage()], 404);
+            return response()->json(['message' => 'Data recovery failed!' . $e->getMessage(), 'status' => 'fail'], 409);
         }
     }
     /**
      * @OA\Post(
-     *   path="/api/v1/user/{id}/userdata",
-     *   summary="Add data of user",
+     *   path="/api/v1/user/{id}/data",
+     *   summary="Add a data to a specific user",
      *   tags={"UserData Controller"},
      *   security={{ "apiAuth": {} }},
+     *   @OA\Parameter(
+     *     name="id",
+     *     in="path",
+     *     required=true,
+     *     description="ID of the user",
+     *     @OA\Schema(
+     *       type="integer", default=1
+     *     )
+     *   ),
      *   @OA\Parameter(
      *     name="keyUserData",
      *     in="query",
      *     required=true,
-     *     description="Key of the data to add",
+     *     description="Key of the user data",
      *     @OA\Schema(
-     *       type="string", default="One key"
+     *       type="string", default="Any key"
      *     )
      *   ),
      *   @OA\Parameter(
      *     name="valueUserData",
      *     in="query",
      *     required=true,
-     *     description="Value of the data to add",
+     *     description="Value of the user data",
      *     @OA\Schema(
-     *       type="any", default="One value"
+     *       type="any", default="Any value"
      *     )
      *   ),
      *   @OA\Parameter(
      *     name="created_by",
      *     in="query",
      *     required=true,
-     *     description="Id of the creator",
+     *     description="ID of the creator",
      *     @OA\Schema(
      *       type="integer", default="1"
      *     )
@@ -168,7 +275,7 @@ class UserDataController extends Controller
      *     name="updated_by",
      *     in="query",
      *     required=true,
-     *     description="Id of the user",
+     *     description="ID of the user",
      *     @OA\Schema(
      *       type="integer", default="1"
      *     )
@@ -192,39 +299,29 @@ class UserDataController extends Controller
      *         description="Id of the data of the user",
      *       ),
      *       @OA\Property(
-     *         property="created_at",
-     *         default="2021-02-05T09:00:57.000000Z",
-     *         description="Timestamp of the creation",
+     *         property="keyUserData",
+     *         default="Some key",
+     *         description="Key to add",
+     *       ),
+     *       @OA\Property(
+     *         property="valueUserData",
+     *         default="Any value",
+     *         description="Value of the key to add",
      *       ),
      *       @OA\Property(
      *         property="created_by",
      *         default="1",
-     *         description="Id of the creator",
-     *       ),
-     *       @OA\Property(
-     *         property="updated_at",
-     *         default="2021-02-05T09:00:57.000000Z",
-     *         description="Timestamp of the last update",
+     *         description="ID of creator",
      *       ),
      *       @OA\Property(
      *         property="updated_by",
      *         default="1",
-     *         description="Id of the creator",
-     *       ),
-     *       @OA\Property(
-     *         property="keyUserData",
-     *         default="Piscine",
-     *         description="Key",
-     *       ),
-     *       @OA\Property(
-     *         property="valueUserData",
-     *         default="true",
-     *         description="Value",
+     *         description="ID of user who has updated",
      *       ),
      *       @OA\Property(
      *         property="idUser",
      *         default="1",
-     *         description="Id of the user",
+     *         description="User's ID who this new data is related to",
      *       ),
      *     )
      *   ),
@@ -237,71 +334,123 @@ class UserDataController extends Controller
      *       description="Resource Not Found",
      *   ),
      *   @OA\Response(
-     *       response=500,
-     *       description="User data not added",
-     *       @OA\JsonContent(
-     *        @OA\Property(
-     *          property="message",
-     *          default="User data not added",
-     *          description="Message",
-     *        ),
-     *        @OA\Property(
-     *          property="status",
-     *          default="fail",
-     *          description="Status",
-     *        ),
-     *       ),
+     *     response=409,
+     *     description="Data addition failed!",
      *   ),
      * )
      */
-    public function addData($id, Request $request)
+    public function addUserData($id, Request $request)
     {
         //validate incoming request
         $this->validate($request, [
-            'created_by' => 'required|integer',
-            'updated_by' => 'required|integer',
             'keyUserData' => 'required|string',
-            'valueUserData' => 'required|string'
+            'valuePropertyData' => 'required|string',
+            'created_by' => 'required|integer',
+            'updated_by' => 'required|integer'
         ]);
 
         try {
+            //if  created_by and updated_by doesn't exist
+            $created_by = User::all()->where('idUser', $request->input('created_by'))->first();
+            $updated_by = User::all()->where('idUser', $request->input('updated_by'))->first();
+            if (!$this->existUser($id))
+                return response()->json(['data' => null, 'message' => "Unknown User", 'status' => 'fail'], 404);
+            if (!$created_by)
+                return response()->json(['data' => null, 'message' => "Creator unknown", 'status' => 'fail'], 404);
+            if (!$updated_by)
+                return response()->json(['data' => null, 'message' => "User unknown", 'status' => 'fail'], 404);
+
+            //if property data already exists
+            $exist = UserData::all()
+                ->where('keyUserData', $request->input('keyUserData'))
+                ->where('idUser', $id)
+                ->first();
+            if ($exist)
+                return response()->json(['data' => null, 'message' => "Data already exists", 'status' => 'fail'], 404);
+
+            //creation of the new data
             $userData = new UserData;
-            $userData->created_by = $request->input('created_by');
-            $userData->updated_by = $request->input('updated_by');
             $userData->keyUserData = $request->input('keyUserData');
             $userData->valueUserData = $request->input('valueUserData');
-            $userData->idUser = $id;
+            $userData->created_by = (int)$request->input('created_by');
+            $userData->updated_by = (int)$request->input('updated_by');
+            $userData->idUser = (int)$id;
             $userData->save();
 
             // Return successful response
-            return response()->json(['userData' => $userData, 'message' => 'CREATED', 'status' => 'success'], 201);
+            return response()->json(['userData' => $userData, 'message' => 'User data successfully created', 'status' => 'success'], 201);
         } catch (\Exception $e) {
-            // Return error message
-            return response()->json(['message' => 'FAILED', 'status' => 'fail'], 409);
+            //return error message
+            return response()->json(['message' => 'User Data addition failed!' . $e->getMessage(), 'status' => 'fail'], 409);
         }
     }
     /**
      * @OA\Patch(
-     *   path="/api/v1/user/{id}/userdata/{keyUserData}",
-     *   summary="Update data of an user",
+     *   path="/api/v1/user/{id}/data/{key}",
+     *   summary="Update a user data",
      *   tags={"UserData Controller"},
      *   security={{ "apiAuth": {} }},
      *   @OA\Parameter(
      *     name="id",
      *     in="path",
      *     required=true,
-     *     description="Id from user",
+     *     description="Key of the user related to the data to update",
      *     @OA\Schema(
      *       type="number", default="1"
      *     )
      *   ),
      *   @OA\Parameter(
-     *     name="keyUserData",
+     *     name="key",
      *     in="path",
      *     required=true,
-     *     description="Key of the data to update",
+     *     description="Key of the user data to update",
      *     @OA\Schema(
-     *       type="string", default="key"
+     *       type="string", default="thumbnail"
+     *     )
+     *   ),
+     *   @OA\Parameter(
+     *     name="keyUserData",
+     *     in="query",
+     *     required=false,
+     *     description="New keyUserData",
+     *     @OA\Schema(
+     *       type="string", default="Any key"
+     *     )
+     *   ),
+     *   @OA\Parameter(
+     *     name="valueUserData",
+     *     in="query",
+     *     required=false,
+     *     description="New valueUserData",
+     *     @OA\Schema(
+     *       type="string", default="any value"
+     *     )
+     *   ),
+     *   @OA\Parameter(
+     *     name="created_by",
+     *     in="query",
+     *     required=false,
+     *     description="New creator",
+     *     @OA\Schema(
+     *       type="integer", default=1
+     *     )
+     *   ),
+     *   @OA\Parameter(
+     *     name="updated_by",
+     *     in="query",
+     *     required=false,
+     *     description="New user who updates",
+     *     @OA\Schema(
+     *       type="integer", default=1
+     *     )
+     *   ),
+     *   @OA\Parameter(
+     *     name="idUser",
+     *     in="query",
+     *     required=false,
+     *     description="New idUser",
+     *     @OA\Schema(
+     *       type="integer", default=1
      *     )
      *   ),
      *   @OA\Response(
@@ -311,7 +460,22 @@ class UserDataController extends Controller
      *       @OA\Property(
      *         property="idUserData",
      *         default="1",
-     *         description="Id of the data of the user",
+     *         description="Id of the data user",
+     *       ),
+     *       @OA\Property(
+     *         property="keyUserData",
+     *         default="thumbnail",
+     *         description="Key of the user data",
+     *       ),
+     *       @OA\Property(
+     *         property="valueUserData",
+     *         default="any value",
+     *         description="Value of the user data",
+     *       ),
+     *       @OA\Property(
+     *         property="created_by",
+     *         default=1,
+     *         description="ID of creator",
      *       ),
      *       @OA\Property(
      *         property="updated_by",
@@ -319,205 +483,191 @@ class UserDataController extends Controller
      *         description="Id of creator",
      *       ),
      *       @OA\Property(
-     *         property="keyUserData",
-     *         default="Piscine",
-     *         description="Key",
-     *       ),
-     *       @OA\Property(
-     *         property="valueUserData",
-     *         default="true",
-     *         description="Value",
-     *     
-     *       ),
-     *       @OA\Property(
      *         property="idUser",
      *         default="1",
-     *         description="Id of the user",
+     *         description="ID of user this data is related to",
      *       ),
      *     )
      *),
      *   @OA\Response(
-     *       response=409,
-     *       description="Not updated",
+     *       response=401,
+     *       description="Unauthenticated"
      *   ),
      *   @OA\Response(
      *       response=404,
      *       description="Resource Not Found",
      *   ),
      *   @OA\Response(
-     *       response=500,
-     *       description="User data not updated",
-     *       @OA\JsonContent(
-     *        @OA\Property(
-     *          property="message",
-     *          default="User data not updated",
-     *          description="Message",
-     *        ),
-     *        @OA\Property(
-     *          property="status",
-     *          default="fail",
-     *          description="Status",
-     *        ),
-     *       ),
+     *       response=409,
+     *       description="Data update failed",
      *   ),
      * )
      */
-    public function updateData($id, Request $request)
+    public function updateUserData($id, $key, Request $request)
     {
         // Validate incoming request
         $this->validate($request, [
-            'created_by' => 'integer',
-            'updated_by' => 'integer',
             'keyUserData' => 'string',
             'valueUserData' => 'string',
+            'created_by' => 'integer',
+            'updated_by' => 'integer',
             'idUser' => 'integer'
         ]);
 
         try {
-            // Update
-            $userData = User::findOrFail($id);
-            if ($request->input('created_by') !== null)
-                $userData->created_by = $request->input('created_by');
-            if ($request->input('updated_by') !== null)
-                $userData->updated_by = $request->input('updated_by');
+            //if created_by and updated_by doesn't exist
+            if ($request->input('created_by')) {
+                $created_by = User::all()->where('idUser', $request->input('created_by'))->first();
+                if (empty($created_by))
+                    return response()->json(['data' => null, 'message' => "Creator unknown", 'status' => 'fail'], 404);
+            }
+            if ($request->input('updated_by')) {
+                $updated_by = User::all()->where('idUser', $request->input('updated_by'))->first();
+                if (empty($updated_by))
+                    return response()->json(['data' => null, 'message' => "User unknown", 'status' => 'fail'], 404);
+            }
+
+            //if user doesn't exist
+            if (!$this->existUser($id))
+                return response()->json(['data' => null, 'message' => "Unknown Property", 'status' => 'fail'], 404);
+
+            //test if the new key already exists
+            $newKeyExist = UserData::all()
+                ->where('idUser', $id)
+                ->where('keyUserData', $request->input('keyUserData'))
+                ->first();
+            if ($newKeyExist)
+                return response()->json(['message' => 'Data with this key already exists', 'status' => 'fail'], 404);
+
+            // update
+            $userData = UserData::all()
+                ->where('idUser', $id)
+                ->where('keyUserData', $key)
+                ->first();
+            if (!$userData)
+                return response()->json(['message' => 'No data for this key', 'status' => 'fail'], 404);
+
             if ($request->input('keyUserData') !== null)
                 $userData->keyUserData = $request->input('keyUserData');
             if ($request->input('valueUserData') !== null)
                 $userData->valueUserData = $request->input('valueUserData');
-            if ($request->input('idUser') !== null)
-                $userData->idUser = $request->input('idUser');
+            if ($request->input('created_by') !== null)
+                $userData->created_by = (int)$request->input('created_by');
+            if ($request->input('updated_by') !== null)
+                $userData->updated_by = (int)$request->input('updated_by');
+            if ($request->input('idProperty') !== null)
+                $userData->idProperty = (int)$request->input('idProperty');
+
             $userData->update();
 
-            //return successful response
-            return response()->json(['userData' => $userData, 'message' => 'UPDATED', 'status' => 'success'], 200);
+            // Return successful response
+            return response()->json(['data' => $userData, 'message' => 'Data successfully updated', 'status' => 'success'], 200);
         } catch (\Exception $e) {
             // Return error message
-            return response()->json(['message' => 'UserData update fail' . $e->getMessage(), 'status' => 'fail'], 409);
+            return response()->json(['message' => 'User data Update Failed!', 'status' => 'fail'], 409);
         }
     }
 
-
     /**
      * @OA\Delete(
-     *   path="/api/v1/userdata/{id}",
-     *   summary="Delete a user",
+     *   path="/api/v1/user/{id}/data/{key}",
+     *   summary="Delete a user data",
      *   tags={"UserData Controller"},
      *   security={{ "apiAuth": {} }},
      *   @OA\Parameter(
      *     name="id",
      *     in="path",
      *     required=true,
-     *     description="ID of the user to delete",
+     *     description="ID of the user data to delete",
      *     @OA\Schema(
-     *       type="number", default="1"
+     *       type="integer", default="1"
      *     )
      *   ),
-     *   @OA\Response(
-     *       response=409,
-     *       description="Not deleted",
-     *   ),
-     *   @OA\Response(
-     *       response=404,
-     *       description="Resource Not Found"
-     *   ),
-     *   @OA\Response(
-     *       response=500,
-     *       description="User data not deleted"
+     *   @OA\Parameter(
+     *     name="key",
+     *     in="path",
+     *     required=true,
+     *     description="Key of the user data to delete",
+     *     @OA\Schema(
+     *       type="string", default="thumbnail"
+     *     )
      *   ),
      *   @OA\Response(
      *     response=200,
-     *     description="User deleted",
+     *     description="User data deleted",
      *     @OA\JsonContent(
      *       @OA\Property(
-     *         property="idUser",
-     *         default="1",
-     *         description="id of the user",
+     *         property="keyUserData",
+     *         default="Any key",
+     *         description="Key of the user data",
      *       ),
      *       @OA\Property(
-     *         property="lastnameUser",
-     *         default="lastname",
-     *         description="Last name of the user",
-     *       ),
-     *       @OA\Property(
-     *         property="firstnameUser",
-     *         default="firstname",
-     *         description="First name of the user",
-     *       ),
-     *       @OA\Property(
-     *         property="emailUser",
-     *         default="test@test.fr",
-     *         description="Email address of the user",
-     *       ),
-     *       @OA\Property(
-     *         property="passwordUser",
-     *         default="1234",
-     *         description="Password of the user",
-     *       ),
-     *       @OA\Property(
-     *         property="idRoleUser",
-     *         default="1",
-     *         description="Id of the user's role",
-     *       ),
-     *       @OA\Property(
-     *         property="created_at",
-     *         default="2021-02-05T09:00:57.000000Z",
-     *         description="Timestamp of the creation",
+     *         property="valueUserData",
+     *         default="Any value",
+     *         description="Value of the user data",
      *       ),
      *       @OA\Property(
      *         property="created_by",
-     *         default="1",
-     *         description="Id of user who created this one",
-     *       ),
-     *       @OA\Property(
-     *         property="updated_at",
-     *         default="2021-02-05T09:00:57.000000Z",
-     *         description="Timestamp of the last update",
+     *         default=1,
+     *         description="ID of creator",
      *       ),
      *       @OA\Property(
      *         property="updated_by",
-     *         default="1",
-     *         description="Id of user who modified this one",
+     *         default=1,
+     *         description="ID of user who deleted this data",
      *       ),
      *       @OA\Property(
-     *         property="data",
-     *         default="[]",
-     *         description="User data",
-     *       ),
-     *     )
+     *         property="idUser",
+     *         default=1,
+     *         description="ID of user this data was related to",
+     *       )
+     *      )
+     *   ),
+     *   @OA\Response(
+     *       response=401,
+     *       description="Unauthenticated"
+     *   ),
+     *   @OA\Response(
+     *       response=404,
+     *       description="No data for this key"
+     *   ),
+     *   @OA\Response(
+     *       response=409,
+     *       description="Data deletion failed!",
      *   ),
      * )
      */
-    public function deleteUserData($id)
+    public function deleteUserData($id, $key)
     {
         try {
-            $userData = UserData::findOrFail($id);
+            $userData = UserData::all()
+                ->where('idUser', $id)
+                ->where('keyUserData', $key)
+                ->first();
+
+            if (!$userData)
+                return response()->json(['message' => 'No data for this key', 'status' => 'fail'], 404);
 
             $userData->delete();
 
-            return response()->json(['userData' => $userData, 'status' => 'success'], 200);
+            return response()->json(['data' => $userData, 'message' => 'Data successfully deleted', 'status' => 'success'], 200);
         } catch (\Exception $e) {
             // Return error message
-            return response()->json(['message' => 'User data deletion failed!' . $e->getMessage(), 'status' => 'fail'], 409);
-        }
-    }
-
-    public function deleteData($idUser)
-    {
-        try {
-            $userData = UserData::all()->where('idUser', $idUser);
-
-            foreach ($userData as $data) {
-                $data->delete();
-            }
-
-            return true;
-        } catch (\Exception $e) {
-            return false;
+            return response()->json(['message' => 'Data deletion failed!', 'status' => 'fail'], 409);
         }
     }
 
     public function guard()
     {
         return Auth::guard();
+    }
+
+
+    private function existUser($id)
+    {
+        $user = User::all()
+            ->where('idUser', $id)
+            ->first();
+        return (bool) $user;
     }
 }
