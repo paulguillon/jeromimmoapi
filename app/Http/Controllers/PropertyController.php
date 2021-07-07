@@ -413,7 +413,16 @@ class PropertyController extends Controller
             $property->priceProperty = $request->input('priceProperty');
             $property->zipCodeProperty = $request->input('zipCodeProperty');
             $property->cityProperty = $request->input('cityProperty');
+
+            //test if the creator exists
+            $exist = User::find($request->input('created_by'));
+            if (!$exist)
+                return response()->json(['property' => null, 'message' => 'Unknown creator', 'status' => 'fail'], 404);
             $property->created_by = $request->input('created_by');
+            //test if the creator exists
+            $exist = User::find($request->input('updated_by'));
+            if (!$exist)
+                return response()->json(['property' => null, 'message' => 'Unknown user', 'status' => 'fail'], 404);
             $property->updated_by = $request->input('updated_by');
 
             $property->save();
@@ -693,7 +702,7 @@ class PropertyController extends Controller
             return response()->json(['property' => $property, 'message' => 'Property successfully deleted!', 'status' => 'success'], 200);
         } catch (\Exception $e) {
             // Return error message
-            return response()->json(['message' => 'Property deletion failed!' . $e->getMessage(), 'status' => 'fail'], 409);
+            return response()->json(['message' => 'Property deletion failed!', 'status' => 'fail'], 409);
         }
     }
 }

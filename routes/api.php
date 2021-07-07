@@ -174,18 +174,34 @@ $router->group(['prefix' => 'api/v1'], function () use ($router) {
     |-----------------------|
     */
     // Prefix
-    $router->group(['prefix' => 'visit'], function () use ($router) {
-        // Matches "/api/v1/visit Get all Visit
+    $router->group(['prefix' => 'visits'], function () use ($router) {
+        // Matches "/api/v1/visits Get all Visit
         $router->get('', 'VisitController@getVisits');
-        // Matches "/api/v1/visit/id Get one Visit
+        // Matches "/api/v1/visits/id Get one Visit
         $router->get('/{id}', 'VisitController@getVisit');
-        // Matches "/api/v1/visit Post register Visit
+        // Matches "/api/v1/visits Post register Visit
         $router->post('', 'VisitController@addVisit');
-        // Matches "/api/v1/users/data/idVisit Post Register
-        $router->post('/data/{id}', 'VisitController@addData');
-        // Matches "/api/v1/visit/id Patch one element of one Visit
+        // Matches "/api/v1/visits/id Patch one element of one Visit
         $router->patch('/{id}', 'VisitController@updateVisit');
-        // Matches "/api/v1/visit/id Delete one Visit
+        // Matches "/api/v1/visits/id Delete one Visit
         $router->delete('/{id}', 'VisitController@deleteVisit');
+    });
+    /*
+    |-----------------------|
+    | VisitData Routes      |
+    |-----------------------|
+    */
+    // Prefix
+    $router->group(['prefix' => 'visits'], function () use ($router) {
+        // Matches "/api/v1/visits Get all Visit data of a visit
+        $router->get('/{id}', 'VisitDataController@getAllData');
+        // Matches "/api/v1/visits/{id}/data/{key} Get one Visit
+        $router->get('/{id}/data/{key}', 'VisitDataController@getVisitData');
+        // Matches "/api/v1/visits Post register Visit
+        $router->post('/{id}/data', 'VisitDataController@addVisitData');
+        // Matches "/api/v1/visits/{id}/data/{key} Patch one element of one Visit
+        $router->patch('/{id}/data/{key}', 'VisitDataController@updateVisitData');
+        // Matches "/api/v1/visits/{id}/data/{key} Delete one Visit
+        $router->delete('/{id}/data/{key}', 'VisitDataController@deleteVisitData');
     });
 });
