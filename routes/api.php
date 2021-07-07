@@ -92,6 +92,24 @@ $router->group(['prefix' => 'api/v1'], function () use ($router) {
     });
     /*
     |------------------------|
+    | Property data Routes      |
+    |------------------------|
+    */
+    // Prefix
+    $router->group(['prefix' => 'properties'], function () use ($router) {
+        // Matches "/api/v1/properties/{id}/data Get all data of a Property 
+        $router->get('/{id}/data', 'PropertyDataController@getAllData');
+        // Matches "/api/v1/properties/{id}/data/{key} Get one property data
+        $router->get('/{id}/data/{key}', 'PropertyDataController@getPropertyData');
+        // Matches "/api/v1/properties/{id}/data Post register property data
+        $router->post('/{id}/data', 'PropertyDataController@addPropertyData');
+        // Matches "/api/v1/properties/{id}/data/{key} Patch one data of one Property
+        $router->patch('/{id}/data/{key}', 'PropertyDataController@updatePropertyData');
+        // Matches "/api/v1/properties/{id}/data/{key} Delete one Property
+        $router->delete('/{id}/data/{key}', 'PropertyDataController@deletePropertyData');
+    });
+    /*
+    |------------------------|
     | Agency Routes          |
     |------------------------|
     */

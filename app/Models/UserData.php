@@ -13,7 +13,7 @@ class UserData extends Model implements AuthenticatableContract, AuthorizableCon
 {
     use Authenticatable, Authorizable, HasFactory;
 
-    protected $table = 'userdata';
+    protected $table = 'userData';
 
     protected $primaryKey = 'idUserData';
 

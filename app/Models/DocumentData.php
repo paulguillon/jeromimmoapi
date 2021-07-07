@@ -13,7 +13,7 @@ class DocumentData extends Model implements AuthenticatableContract, Authorizabl
 {
     use Authenticatable, Authorizable, HasFactory;
 
-    protected $table = 'documentdata';
+    protected $table = 'documentData';
 
     protected $primaryKey = 'idDocumentData';
 

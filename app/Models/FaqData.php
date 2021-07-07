@@ -13,7 +13,7 @@ class FaqData extends Model implements AuthenticatableContract, AuthorizableCont
 {
     use Authenticatable, Authorizable, HasFactory;
 
-    protected $table = 'faqdata';
+    protected $table = 'faqData';
 
     protected $primaryKey = 'idFaqData';
 

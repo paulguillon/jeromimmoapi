@@ -13,7 +13,7 @@ class PropertyData extends Model implements AuthenticatableContract, Authorizabl
 {
     use Authenticatable, Authorizable, HasFactory;
 
-    protected $table = 'propertydata';
+    protected $table = 'propertyData';
 
     protected $primaryKey = 'idPropertyData';
 

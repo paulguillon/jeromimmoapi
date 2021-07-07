@@ -13,7 +13,7 @@ class VisitData extends Model implements AuthenticatableContract, AuthorizableCo
 {
     use Authenticatable, Authorizable, HasFactory;
 
-    protected $table = 'visitdata';
+    protected $table = 'visitData';
 
     protected $primaryKey = 'idVisitData';
 
