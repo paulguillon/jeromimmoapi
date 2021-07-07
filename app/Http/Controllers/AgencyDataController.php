@@ -2,12 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\User;
 use Illuminate\Http\Request;
-use App\Models\Visit;
-use App\Models\VisitData;
+use App\Models\User;
+use App\Models\Agency;
+use App\Models\AgencyData;
 
-class VisitController extends Controller
+class AgencyController extends Controller
 {
     /**
      * Constructor
@@ -20,14 +20,14 @@ class VisitController extends Controller
 
     /**
      * @OA\Get(
-     *   path="/api/v1/visits/{id}/data",
-     *   summary="Return all data of specific visit",
-     *   tags={"VisitData Controller"},
+     *   path="/api/v1/agency/{id}/data",
+     *   summary="Return all data of specific agency",
+     *   tags={"AgencyData Controller"},
      *   @OA\Parameter(
      *     name="id",
      *     in="path",
      *     required=true,
-     *     description="ID of the visit",
+     *     description="ID of the agency",
      *     @OA\Schema(
      *       type="integer", default="1"
      *     )
@@ -45,19 +45,19 @@ class VisitController extends Controller
      *     description="List of data",
      *     @OA\JsonContent(
      *       @OA\Property(
-     *         property="idVisitData",
+     *         property="idAgencyData",
      *         default=1,
-     *         description="Id of the visit data",
+     *         description="Id of the agency data",
      *       ),
      *       @OA\Property(
-     *         property="keyVisitData",
+     *         property="keyAgencyData",
      *         default="Any key",
-     *         description="Key of the visit data",
+     *         description="Key of the agency data",
      *       ),
      *       @OA\Property(
-     *         property="valueVisitData",
+     *         property="valueAgencyData",
      *         default="Any value",
-     *         description="Value of the visit data",
+     *         description="Value of the agency data",
      *       ),
      *       @OA\Property(
      *         property="created_at",
@@ -80,9 +80,9 @@ class VisitController extends Controller
      *         description="ID of user who did the last update",
      *       ),
      *       @OA\Property(
-     *         property="idVisit",
+     *         property="idAgency",
      *         default=1,
-     *         description="ID of the visit that this data is related to",
+     *         description="ID of the agency that this data is related to",
      *       ),
      *     )
      *   )
@@ -91,13 +91,13 @@ class VisitController extends Controller
     public function getAllData($id)
     {
         try {
-            //if visit doesn't exists
-            if (!$this->existVisit($id))
-                return response()->json(['data' => null, 'message' => "Visit doesn't exists", 'status' => 'fail'], 404);
+            //if agency doesn't exists
+            if (!$this->existAgency($id))
+                return response()->json(['data' => null, 'message' => "Agency doesn't exists", 'status' => 'fail'], 404);
 
-            $data = array_values(VisitData::all()->where('idVisit', $id)->toArray());
+            $data = array_values(AgencyData::all()->where('idAgency', $id)->toArray());
 
-            return response()->json(['total' => count($data), 'data' => $data, 'message' => 'Visit data successfully retrieved', 'status' => 'success'], 200);
+            return response()->json(['total' => count($data), 'data' => $data, 'message' => 'Agency data successfully retrieved', 'status' => 'success'], 200);
         } catch (\Exception $e) {
             return response()->json(['message' => 'Data recovery failed!', 'status' => 'fail'], 409);
         }
@@ -105,14 +105,14 @@ class VisitController extends Controller
 
     /**
      * @OA\Get(
-     *   path="/api/v1/visits/{id}/data/{key}",
-     *   summary="Return specific data of the specified visit",
-     *   tags={"VisitData Controller"},
+     *   path="/api/v1/agency/{id}/data/{key}",
+     *   summary="Return specific data of the specified agency",
+     *   tags={"AgencyData Controller"},
      *   @OA\Parameter(
      *     name="id",
      *     in="path",
      *     required=true,
-     *     description="ID of the concerned visit",
+     *     description="ID of the concerned agency",
      *     @OA\Schema(
      *       type="integer", default=1
      *     )
@@ -121,7 +121,7 @@ class VisitController extends Controller
      *     name="key",
      *     in="path",
      *     required=true,
-     *     description="key of the visit to get",
+     *     description="key of the agency to get",
      *     @OA\Schema(
      *       type="string", default="thumbnail"
      *     )
@@ -155,19 +155,19 @@ class VisitController extends Controller
      *     description="Requested data",
      *     @OA\JsonContent(
      *       @OA\Property(
-     *         property="idVisitData",
+     *         property="idAgencyData",
      *         default="1",
-     *         description="key of the visit",
+     *         description="key of the agency",
      *       ),
      *       @OA\Property(
-     *         property="keyVisitData",
+     *         property="keyAgencyData",
      *         default="key",
-     *         description="key of the visit",
+     *         description="key of the agency",
      *       ),
      *       @OA\Property(
-     *         property="valueVisitData",
+     *         property="valueAgencyData",
      *         default="Any value",
-     *         description="Value of the visit",
+     *         description="Value of the agency",
      *       ),
      *       @OA\Property(
      *         property="created_at",
@@ -190,9 +190,9 @@ class VisitController extends Controller
      *         description="Who did the last update",
      *       ),
      *       @OA\Property(
-     *         property="idVisit",
+     *         property="idAgency",
      *         default="1",
-     *         description="Property associated with the data",
+     *         description="Agency associated with the data",
      *       ),
      *     )
      *   ),
@@ -201,20 +201,20 @@ class VisitController extends Controller
     public function getVisitData($id, $key)
     {
         try {
-            //if visit doesn't exists
-            if (!$this->existVisit($id))
+            //if agency doesn't exists
+            if (!$this->existAgency($id))
                 return response()->json(['data' => null, 'message' => "Visit doesn't exists", 'status' => 'fail'], 404);
 
-            $visitData = VisitData::all()
-                ->where('idVisit', $id)
-                ->where('keyVisitData', $key)
+            $agencyData = AgencyData::all()
+                ->where('idAgency', $id)
+                ->where('keyAgencyData', $key)
                 ->first();
 
             //key doesn't exists
-            if (!$visitData)
+            if (!$agencyData)
                 return response()->json(['data' => null, 'message' => "No data for this key", 'status' => 'fail'], 404);
 
-            return response()->json(['data' => $visitData, 'message' => 'Data successfully retrieved!', 'status' => 'success'], 200);
+            return response()->json(['data' => $agencyData, 'message' => 'Data successfully retrieved!', 'status' => 'success'], 200);
         } catch (\Exception $e) {
             return response()->json(['message' => 'Data recovery failed!', 'status' => 'fail'], 409);
         }
@@ -222,33 +222,33 @@ class VisitController extends Controller
 
     /**
      * @OA\Post(
-     *   path="/api/v1/visits/{id}/data",
-     *   summary="Add a data to a specific visit",
-     *   tags={"VisitData Controller"},
+     *   path="/api/v1/agency/{id}/data",
+     *   summary="Add a data to a specific agency",
+     *   tags={"AgencyData Controller"},
      *   security={{ "apiAuth": {} }},
      *   @OA\Parameter(
      *     name="id",
      *     in="path",
      *     required=true,
-     *     description="ID of the visit",
+     *     description="ID of the agency",
      *     @OA\Schema(
      *       type="integer", default="1"
      *     )
      *   ),
      *   @OA\Parameter(
-     *     name="keyVisitData",
+     *     name="keyAgencyData",
      *     in="query",
      *     required=true,
-     *     description="Key of the visit data",
+     *     description="Key of the agency data",
      *     @OA\Schema(
      *       type="string", default="Any key"
      *     )
      *   ),
      *   @OA\Parameter(
-     *     name="valueVisitData",
+     *     name="valueAgencyData",
      *     in="query",
      *     required=true,
-     *     description="Value of the visit data",
+     *     description="Value of the agency data",
      *     @OA\Schema(
      *       type="string", default="Any value"
      *     )
@@ -288,17 +288,17 @@ class VisitController extends Controller
      *     description="Data added",
      *     @OA\JsonContent(
      *       @OA\Property(
-     *         property="idVisitData",
+     *         property="idAgencyData",
      *         default=1,
-     *         description="Id of the visit",
+     *         description="Id of the agency",
      *       ),
      *       @OA\Property(
-     *         property="keyVisitData",
+     *         property="keyAgencyData",
      *         default="Some key",
      *         description="Key to add",
      *       ),
      *       @OA\Property(
-     *         property="valueVisitData",
+     *         property="valueAgencyData",
      *         default="Any value",
      *         description="Value of the key to add",
      *       ),
@@ -321,63 +321,63 @@ class VisitController extends Controller
      *   ),
      * )
      */
-    public function addVisitData($id, Request $request)
+    public function addAgencyData($id, Request $request)
     {
         //validate incoming request
         $this->validate($request, [
-            'keyVisitData' => 'required|string',
-            'valueVisitData' => 'required|string',
+            'keyAgencyData' => 'required|string',
+            'valueAgencyData' => 'required|string',
             'created_by' => 'required|integer',
             'updated_by' => 'required|integer'
         ]);
 
         try {
-            //if visit or users doesn't exist
+            //if agency or users doesn't exist
             $created_by = User::all()->where('idUser', $request->input('created_by'))->first();
             $updated_by = User::all()->where('idUser', $request->input('updated_by'))->first();
-            if (!$this->existVisit($id))
+            if (!$this->existAgency($id))
                 return response()->json(['data' => null, 'message' => "Unknown Property", 'status' => 'fail'], 404);
             if (!$created_by)
                 return response()->json(['data' => null, 'message' => "Creator unknown", 'status' => 'fail'], 404);
             if (!$updated_by)
                 return response()->json(['data' => null, 'message' => "User unknown", 'status' => 'fail'], 404);
 
-            //if visit data already exists
-            $exist = VisitData::all()
-                ->where('keyVisitData', $request->input('keyVisitData'))
-                ->where('idVisit', $id)
+            //if agency data already exists
+            $exist = AgencyData::all()
+                ->where('keyAgencyData', $request->input('keyAgencyData'))
+                ->where('idAgency', $id)
                 ->first();
             if ($exist)
                 return response()->json(['data' => null, 'message' => "Data already exists", 'status' => 'fail'], 404);
 
             //creation of the new data
-            $visitData = new VisitData;
-            $visitData->keyVisitData = $request->input('keyVisitData');
-            $visitData->valueVisitData = $request->input('valueVisitData');
-            $visitData->created_by = (int)$request->input('created_by');
-            $visitData->updated_by = (int)$request->input('updated_by');
-            $visitData->idVisit = (int)$id;
-            $visitData->save();
+            $agencyData = new AgencyData;
+            $agencyData->keyAgencyData = $request->input('keyAgencyData');
+            $agencyData->valueAgencyData = $request->input('valueAgencyData');
+            $agencyData->created_by = (int)$request->input('created_by');
+            $agencyData->updated_by = (int)$request->input('updated_by');
+            $agencyData->idVisit = (int)$id;
+            $agencyData->save();
 
             // Return successful response
-            return response()->json(['visitData' => $visitData, 'message' => 'Property data successfully created', 'status' => 'success'], 201);
+            return response()->json(['visitData' => $agencyData, 'message' => 'Agency data successfully created', 'status' => 'success'], 201);
         } catch (\Exception $e) {
             //return error message
-            return response()->json(['message' => 'Property Data addition failed!', 'status' => 'fail'], 409);
+            return response()->json(['message' => 'Agency Data addition failed!', 'status' => 'fail'], 409);
         }
     }
 
     /**
      * @OA\Patch(
-     *   path="/api/v1/visits/{id}/data/{key}",
-     *   summary="Update a visit data",
-     *   tags={"VisitData Controller"},
+     *   path="/api/v1/agency/{id}/data/{key}",
+     *   summary="Update an agency data",
+     *   tags={"AgencyData Controller"},
      *   security={{ "apiAuth": {} }},
      *   @OA\Parameter(
      *     name="id",
      *     in="path",
      *     required=true,
-     *     description="Key of the visit related to the data to update",
+     *     description="Key of the agency related to the data to update",
      *     @OA\Schema(
      *       type="integer", default=1
      *     )
@@ -386,25 +386,25 @@ class VisitController extends Controller
      *     name="key",
      *     in="path",
      *     required=true,
-     *     description="Key of the visit data to update",
+     *     description="Key of the agency data to update",
      *     @OA\Schema(
      *       type="string", default="thumbnail"
      *     )
      *   ),
      *   @OA\Parameter(
-     *     name="keyVisitData",
+     *     name="keyAgencyData",
      *     in="query",
      *     required=false,
-     *     description="New keyVisitData",
+     *     description="New keyAgencyData",
      *     @OA\Schema(
      *       type="string", default="Any key"
      *     )
      *   ),
      *   @OA\Parameter(
-     *     name="valueVisitData",
+     *     name="valueAgencyData",
      *     in="query",
      *     required=false,
-     *     description="New valueVisitData",
+     *     description="New valueAgencyData",
      *     @OA\Schema(
      *       type="string", default="any value"
      *     )
@@ -428,10 +428,10 @@ class VisitController extends Controller
      *     )
      *   ),
      *   @OA\Parameter(
-     *     name="idVisit",
+     *     name="idAgency",
      *     in="query",
      *     required=false,
-     *     description="New idVisit",
+     *     description="New idAgency",
      *     @OA\Schema(
      *       type="integer", default=1
      *     )
@@ -450,22 +450,22 @@ class VisitController extends Controller
      *   ),
      *   @OA\Response(
      *     response=200,
-     *     description="Property data updated",
+     *     description="Agency data updated",
      *     @OA\JsonContent(
      *       @OA\Property(
-     *         property="idVisitData",
+     *         property="idAgencyData",
      *         default=1,
-     *         description="Id of the visit data",
+     *         description="Id of the agency data",
      *       ),
      *       @OA\Property(
-     *         property="keyVisitData",
+     *         property="keyAgencyData",
      *         default="thumbnail",
-     *         description="Key of the visit data",
+     *         description="Key of the agency data",
      *       ),
      *       @OA\Property(
-     *         property="valueVisitData",
+     *         property="valueAgencyData",
      *         default="any value",
-     *         description="Value of the visit data",
+     *         description="Value of the agency data",
      *       ),
      *       @OA\Property(
      *         property="created_by",
@@ -478,23 +478,23 @@ class VisitController extends Controller
      *         description="ID of user that modifier this data",
      *       ),
      *       @OA\Property(
-     *         property="idVisit",
+     *         property="idAgency",
      *         default=1,
-     *         description="ID of visit this data is related to",
+     *         description="ID of agency this data is related to",
      *       ),
      *     )
      *   ),
      * )
      */
-    public function updateVisitData($id, $key, Request $request)
+    public function updateAgencyData($id, $key, Request $request)
     {
         // Validate incoming request
         $this->validate($request, [
-            'keyVisitData' => 'string',
-            'valueVisitData' => 'string',
+            'keyAgencyData' => 'string',
+            'valueAgencyData' => 'string',
             'created_by' => 'integer',
             'updated_by' => 'integer',
-            'idVisit' => 'integer',
+            'idAgency' => 'integer',
         ]);
 
         try {
@@ -510,58 +510,58 @@ class VisitController extends Controller
                     return response()->json(['data' => null, 'message' => "User unknown", 'status' => 'fail'], 404);
             }
 
-            //if visit doesn't exists
-            if (!$this->existVisit($id))
+            //if agency doesn't exists
+            if (!$this->existAgency($id))
                 return response()->json(['data' => null, 'message' => "Unknown Property", 'status' => 'fail'], 404);
 
             //test if the new key already exists
-            $newKeyExist = VisitData::all()
-                ->where('idVisit', $id)
-                ->where('keyVisitData', $request->input('keyVisitData'))
+            $newKeyExist = AgencyData::all()
+                ->where('idAgency', $id)
+                ->where('keyAgencyData', $request->input('keyAgencyData'))
                 ->first();
             if ($newKeyExist)
                 return response()->json(['message' => 'Data with this key already exists', 'status' => 'fail'], 404);
 
             // update
-            $visitData = VisitData::all()
+            $agencyData = AgencyData::all()
                 ->where('idVisit', $id)
                 ->where('keyVisitData', $key)
                 ->first();
-            if (!$visitData)
+            if (!$agencyData)
                 return response()->json(['message' => 'No data for this key', 'status' => 'fail'], 404);
 
-            if ($request->input('keyVisitData') !== null)
-                $visitData->keyVisitData = $request->input('keyVisitData');
-            if ($request->input('valueVisitData') !== null)
-                $visitData->valueVisitData = $request->input('valueVisitData');
+            if ($request->input('keyAgencyData') !== null)
+                $agencyData->keyAgencyData = $request->input('keyAgencyData');
+            if ($request->input('valueAgencyData') !== null)
+                $agencyData->valueAgencyData = $request->input('valueAgencyData');
             if ($request->input('created_by') !== null)
-                $visitData->created_by = (int)$request->input('created_by');
+                $agencyData->created_by = (int)$request->input('created_by');
             if ($request->input('updated_by') !== null)
-                $visitData->updated_by = (int)$request->input('updated_by');
-            if ($request->input('idVisit') !== null)
-                $visitData->idVisit = (int)$request->input('idVisit');
+                $agencyData->updated_by = (int)$request->input('updated_by');
+            if ($request->input('idAgency') !== null)
+                $agencyData->idAgency = (int)$request->input('idAgency');
 
-            $visitData->update();
+            $agencyData->update();
 
             // Return successful response
-            return response()->json(['data' => $visitData, 'message' => 'Data successfully updated', 'status' => 'success'], 200);
+            return response()->json(['data' => $agencyData, 'message' => 'Data successfully updated', 'status' => 'success'], 200);
         } catch (\Exception $e) {
             // Return error message
-            return response()->json(['message' => 'Property data Update Failed!', 'status' => 'fail'], 409);
+            return response()->json(['message' => 'Agency data Update Failed!', 'status' => 'fail'], 409);
         }
     }
 
     /**
      * @OA\Delete(
-     *   path="/api/v1/visits/{id}/data/{key}",
-     *   summary="Delete a visit data",
-     *   tags={"VisitData Controller"},
+     *   path="/api/v1/agency/{id}/data/{key}",
+     *   summary="Delete an agency data",
+     *   tags={"AgencyData Controller"},
      *   security={{ "apiAuth": {} }},
      *   @OA\Parameter(
      *     name="id",
      *     in="path",
      *     required=true,
-     *     description="ID of the visit data to delete",
+     *     description="ID of the agency data to delete",
      *     @OA\Schema(
      *       type="integer", default=1
      *     )
@@ -570,7 +570,7 @@ class VisitController extends Controller
      *     name="key",
      *     in="path",
      *     required=true,
-     *     description="Key of the visit data to delete",
+     *     description="Key of the agency data to delete",
      *     @OA\Schema(
      *       type="string", default="thumbnail"
      *     )
@@ -592,12 +592,12 @@ class VisitController extends Controller
      *     description="Property data deleted",
      *     @OA\JsonContent(
      *       @OA\Property(
-     *         property="keyVisitData",
+     *         property="keyAgencyData",
      *         default="Any key",
-     *         description="Key of the visit data",
+     *         description="Key of the agency data",
      *       ),
      *       @OA\Property(
-     *         property="valueVisitData",
+     *         property="valueAgencyData",
      *         default="any value",
      *         description="Value of the visit data",
      *       ),
@@ -620,31 +620,31 @@ class VisitController extends Controller
      *   ),
      * )
      */
-    public function deleteVisitData($id, $key)
+    public function deleteAgencyData($id, $key)
     {
         try {
-            $visitData = VisitData::all()
-                ->where('idVisit', $id)
-                ->where('keyVisitData', $key)
+            $agencyData = AgencyData::all()
+                ->where('idAgency', $id)
+                ->where('keyAgencyData', $key)
                 ->first();
 
-            if (!$visitData)
+            if (!$agencyData)
                 return response()->json(['message' => 'No data for this key', 'status' => 'fail'], 404);
 
-            $visitData->delete();
+            $agencyData->delete();
 
-            return response()->json(['data' => $visitData, 'message' => 'Data successfully deleted', 'status' => 'success'], 200);
+            return response()->json(['data' => $agencyData, 'message' => 'Data successfully deleted', 'status' => 'success'], 200);
         } catch (\Exception $e) {
             // Return error message
             return response()->json(['message' => 'Data deletion failed!', 'status' => 'fail'], 409);
         }
     }
 
-    private function existVisit($id)
+    private function existAgency($id)
     {
-        $visit = Visit::all()
-            ->where('idVisit', $id)
+        $agency = Agency::all()
+            ->where('idAgency', $id)
             ->first();
-        return (bool) $visit;
+        return (bool) $agency;
     }
 }
