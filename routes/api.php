@@ -228,7 +228,7 @@ $router->group(['prefix' => 'api/v1'], function () use ($router) {
     // Prefix
     $router->group(['prefix' => 'visits'], function () use ($router) {
         // Matches "/api/v1/visits Get all Visit data of a visit
-        $router->get('/{id}', 'VisitDataController@getAllData');
+        $router->get('/{id}/data', 'VisitDataController@getAllData');
         // Matches "/api/v1/visits/{id}/data/{key} Get one Visit
         $router->get('/{id}/data/{key}', 'VisitDataController@getVisitData');
         // Matches "/api/v1/visits Post register Visit
