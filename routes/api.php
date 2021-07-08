@@ -188,19 +188,35 @@ $router->group(['prefix' => 'api/v1'], function () use ($router) {
     |-----------------------|
     */
     // Prefix
-    $router->group(['prefix' => 'document'], function () use ($router) {
-        // Matches "/api/v1/document Get all Document
+    $router->group(['prefix' => 'documents'], function () use ($router) {
+        // Matches "/api/v1/documents Get all Document
         $router->get('', 'DocumentController@getDocuments');
-        // Matches "/api/v1/document/id Get one Document
+        // Matches "/api/v1/documents/id Get one Document
         $router->get('/{id}', 'DocumentController@getDocument');
-        // Matches "/api/v1/document Post register Document
+        // Matches "/api/v1/documents Post register Document
         $router->post('', 'DocumentController@addDocument');
-        // Matches "/api/v1/document/id Put all of one Document
-        // $router->put('/{id}', 'DocumentController@put');
-        // Matches "/api/v1/document/id Patch one element of one Document
+        // Matches "/api/v1/documents/id Patch one element of one Document
         $router->patch('/{id}', 'DocumentController@updateDocument');
-        // Matches "/api/v1/document/id Delete one Document
+        // Matches "/api/v1/documents/id Delete one Document
         $router->delete('/{id}', 'DocumentController@deleteDocument');
+    });
+    /*
+    |-----------------------|
+    | DocumentData Routes   |
+    |-----------------------|
+    */
+    // Prefix
+    $router->group(['prefix' => 'documents'], function () use ($router) {
+        // Matches "/api/v1/documents/{id} Get all Document
+        $router->get('/{id}/data', 'DocumentDataController@getAllData');
+        // Matches "/api/v1/documents/{id}/data/{key} Get one Document
+        $router->get('/{id}/data/{key}', 'DocumentDataController@getDocumentData');
+        // Matches "/api/v1/documents/{id}/data Post register Document
+        $router->post('/{id}/data', 'DocumentDataController@addDocumentData');
+        // Matches "/api/v1/documents/{id}/data/{key} Patch one element of one Document
+        $router->patch('/{id}/data/{key}', 'DocumentDataController@updateDocumentData');
+        // Matches "/api/v1/documents/{id}/data/{key} Delete one Document
+        $router->delete('/{id}/data/{key}', 'DocumentDataController@deleteDocumentData');
     });
     /*
     |-----------------------|
