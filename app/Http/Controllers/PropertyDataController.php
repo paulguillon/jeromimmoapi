@@ -3,9 +3,9 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\User;
 use App\Models\Property;
 use App\Models\PropertyData;
-use App\Models\User;
 
 class PropertyDataController extends Controller
 {
