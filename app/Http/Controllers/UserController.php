@@ -160,11 +160,6 @@ class UserController extends Controller
      *         default="1",
      *         description="Id of user who modified this one",
      *       ),
-     *       @OA\Property(
-     *         property="data",
-     *         default="[]",
-     *         description="User data",
-     *       ),
      *     )
      *   )
      * )
@@ -172,12 +167,6 @@ class UserController extends Controller
     public function getUsers(Request $request)
     {
         $users = User::all();
-
-        for ($i = 0; $i < count($users); $i++) {
-            $user = $users[$i];
-
-            $user['data'] = $this->getAllData($user->idUser);
-        }
 
         return response()->json($users, 200);
     }
