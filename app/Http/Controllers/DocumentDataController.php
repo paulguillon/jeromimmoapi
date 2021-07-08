@@ -2,32 +2,33 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\User;
 use Illuminate\Http\Request;
-use App\Models\Visit;
-use App\Models\VisitData;
+use App\Models\Document;
+use App\Models\DocumentData;
+use App\Models\User;
 
-class VisitDataController extends Controller
+class DocumentDataController extends Controller
 {
     /**
      * Constructor
      */
     public function __construct()
     {
-        // methods with authorization
-        $this->middleware('auth:api', ['accept' => []]);
+        // methods authorization
+        $this->middleware('auth:api');
     }
 
     /**
      * @OA\Get(
-     *   path="/api/v1/visits/{id}/data",
-     *   summary="Return all data of specific visit",
-     *   tags={"VisitData Controller"},
+     *   path="/api/v1/documents/{id}/data",
+     *   summary="Return all data of specific document",
+     *   tags={"DocumentData Controller"},
+     *   security={{ "apiAuth": {} }},
      *   @OA\Parameter(
      *     name="id",
      *     in="path",
      *     required=true,
-     *     description="ID of the visit",
+     *     description="ID of the document",
      *     @OA\Schema(
      *       type="integer", default=1
      *     )
@@ -49,19 +50,19 @@ class VisitDataController extends Controller
      *     description="List of data",
      *     @OA\JsonContent(
      *       @OA\Property(
-     *         property="idVisitData",
+     *         property="idDocumentData",
      *         default=1,
-     *         description="Id of the visit data",
+     *         description="Id of the document data",
      *       ),
      *       @OA\Property(
-     *         property="keyVisitData",
+     *         property="keyDocumentData",
      *         default="Any key",
-     *         description="Key of the visit data",
+     *         description="Key of the document data",
      *       ),
      *       @OA\Property(
-     *         property="valueVisitData",
+     *         property="valueDocumentData",
      *         default="Any value",
-     *         description="Value of the visit data",
+     *         description="Value of the document data",
      *       ),
      *       @OA\Property(
      *         property="created_at",
@@ -84,9 +85,9 @@ class VisitDataController extends Controller
      *         description="ID of user who did the last update",
      *       ),
      *       @OA\Property(
-     *         property="idVisit",
+     *         property="idDocument",
      *         default=1,
-     *         description="ID of the visit that this data is related to",
+     *         description="ID of the document that this data is related to",
      *       ),
      *     )
      *   )
@@ -95,13 +96,13 @@ class VisitDataController extends Controller
     public function getAllData($id)
     {
         try {
-            //if visit doesn't exists
-            if (!$this->existVisit($id))
-                return response()->json(['data' => null, 'message' => "Visit doesn't exists", 'status' => 'fail'], 404);
+            //if document doesn't exists
+            if (!$this->existDocument($id))
+                return response()->json(['data' => null, 'message' => "Document doesn't exists", 'status' => 'fail'], 404);
 
-            $data = array_values(VisitData::all()->where('idVisit', $id)->toArray());
+            $data = array_values(DocumentData::all()->where('idDocument', $id)->toArray());
 
-            return response()->json(['total' => count($data), 'data' => $data, 'message' => 'Property data successfully retrieved', 'status' => 'success'], 200);
+            return response()->json(['total' => count($data), 'data' => $data, 'message' => 'Document data successfully retrieved', 'status' => 'success'], 200);
         } catch (\Exception $e) {
             return response()->json(['message' => 'Data recovery failed!', 'status' => 'fail'], 409);
         }
@@ -109,14 +110,15 @@ class VisitDataController extends Controller
 
     /**
      * @OA\Get(
-     *   path="/api/v1/visits/{id}/data/{key}",
-     *   summary="Return specific data of the specified visit",
-     *   tags={"VisitData Controller"},
+     *   path="/api/v1/documents/{id}/data/{key}",
+     *   summary="Return specific data of the specified document",
+     *   tags={"DocumentData Controller"},
+     *   security={{ "apiAuth": {} }},
      *   @OA\Parameter(
      *     name="id",
      *     in="path",
      *     required=true,
-     *     description="ID of the concerned visit",
+     *     description="ID of the concerned document",
      *     @OA\Schema(
      *       type="integer", default=1
      *     )
@@ -125,7 +127,7 @@ class VisitDataController extends Controller
      *     name="key",
      *     in="path",
      *     required=true,
-     *     description="key of the visit to get",
+     *     description="key of the document to get",
      *     @OA\Schema(
      *       type="string", default="thumbnail"
      *     )
@@ -147,19 +149,19 @@ class VisitDataController extends Controller
      *     description="Requested data",
      *     @OA\JsonContent(
      *       @OA\Property(
-     *         property="idVisitData",
+     *         property="idDocumentData",
      *         default=1,
-     *         description="key of the visit",
+     *         description="key of the document",
      *       ),
      *       @OA\Property(
-     *         property="keyVisitData",
+     *         property="keyDocumentData",
      *         default="key",
-     *         description="key of the visit",
+     *         description="key of the document",
      *       ),
      *       @OA\Property(
-     *         property="valueVisitData",
+     *         property="valueDocumentData",
      *         default="Any value",
-     *         description="Value of the visit",
+     *         description="Value of the document",
      *       ),
      *       @OA\Property(
      *         property="created_at",
@@ -182,31 +184,31 @@ class VisitDataController extends Controller
      *         description="Who did the last update",
      *       ),
      *       @OA\Property(
-     *         property="idVisit",
+     *         property="idDocument",
      *         default=1,
-     *         description="Property associated with the data",
+     *         description="Document associated with the data",
      *       ),
      *     )
      *   ),
      * )
      */
-    public function getVisitData($id, $key)
+    public function getDocumentData($id, $key)
     {
         try {
-            //if visit doesn't exists
-            if (!$this->existVisit($id))
-                return response()->json(['data' => null, 'message' => "Visit doesn't exists", 'status' => 'fail'], 404);
+            //if document doesn't exists
+            if (!$this->existDocument($id))
+                return response()->json(['data' => null, 'message' => "Document doesn't exists", 'status' => 'fail'], 404);
 
-            $visitData = VisitData::all()
-                ->where('idVisit', $id)
-                ->where('keyVisitData', $key)
+            $documentData = DocumentData::all()
+                ->where('idDocument', $id)
+                ->where('keyDocumentData', $key)
                 ->first();
 
             //key doesn't exists
-            if (!$visitData)
+            if (!$documentData)
                 return response()->json(['data' => null, 'message' => "No data for this key", 'status' => 'fail'], 404);
 
-            return response()->json(['data' => $visitData, 'message' => 'Data successfully retrieved!', 'status' => 'success'], 200);
+            return response()->json(['data' => $documentData, 'message' => 'Data successfully retrieved!', 'status' => 'success'], 200);
         } catch (\Exception $e) {
             return response()->json(['message' => 'Data recovery failed!', 'status' => 'fail'], 409);
         }
@@ -214,33 +216,33 @@ class VisitDataController extends Controller
 
     /**
      * @OA\Post(
-     *   path="/api/v1/visits/{id}/data",
-     *   summary="Add a data to a specific visit",
-     *   tags={"VisitData Controller"},
+     *   path="/api/v1/documents/{id}/data",
+     *   summary="Add a data to a specific document",
+     *   tags={"DocumentData Controller"},
      *   security={{ "apiAuth": {} }},
      *   @OA\Parameter(
      *     name="id",
      *     in="path",
      *     required=true,
-     *     description="ID of the visit",
+     *     description="ID of the document",
      *     @OA\Schema(
      *       type="integer", default=1
      *     )
      *   ),
      *   @OA\Parameter(
-     *     name="keyVisitData",
+     *     name="keyDocumentData",
      *     in="query",
      *     required=true,
-     *     description="Key of the visit data",
+     *     description="Key of the document data",
      *     @OA\Schema(
      *       type="string", default="Any key"
      *     )
      *   ),
      *   @OA\Parameter(
-     *     name="valueVisitData",
+     *     name="valueDocumentData",
      *     in="query",
      *     required=true,
-     *     description="Value of the visit data",
+     *     description="Value of the document data",
      *     @OA\Schema(
      *       type="string", default="Any value"
      *     )
@@ -269,7 +271,7 @@ class VisitDataController extends Controller
      *   ),
      *   @OA\Response(
      *     response=404,
-     *     description="Unknown Property"
+     *     description="Unknown Document"
      *   ),
      *   @OA\Response(
      *     response=409,
@@ -280,17 +282,17 @@ class VisitDataController extends Controller
      *     description="Data added",
      *     @OA\JsonContent(
      *       @OA\Property(
-     *         property="idVisitData",
+     *         property="idDocumentData",
      *         default=1,
-     *         description="Id of the visit",
+     *         description="Id of the document",
      *       ),
      *       @OA\Property(
-     *         property="keyVisitData",
+     *         property="keyDocumentData",
      *         default="Some key",
      *         description="Key to add",
      *       ),
      *       @OA\Property(
-     *         property="valueVisitData",
+     *         property="valueDocumentData",
      *         default="Any value",
      *         description="Value of the key to add",
      *       ),
@@ -305,100 +307,100 @@ class VisitDataController extends Controller
      *         description="ID of user who has updated",
      *       ),
      *       @OA\Property(
-     *         property="idVisit",
+     *         property="idDocument",
      *         default=1,
-     *         description="ID of the related visit",
+     *         description="ID of the related document",
      *       ),
      *     )
      *   ),
      * )
      */
-    public function addVisitData($id, Request $request)
+    public function addDocumentData($id, Request $request)
     {
         //validate incoming request
         $this->validate($request, [
-            'keyVisitData' => 'required|string',
-            'valueVisitData' => 'required|string',
+            'keyDocumentData' => 'required|string',
+            'valueDocumentData' => 'required|string',
             'created_by' => 'required|integer',
             'updated_by' => 'required|integer'
         ]);
 
         try {
-            //if visit or users doesn't exist
+            //if document or users doesn't exist
             $created_by = User::all()->where('idUser', $request->input('created_by'))->first();
             $updated_by = User::all()->where('idUser', $request->input('updated_by'))->first();
-            if (!$this->existVisit($id))
-                return response()->json(['data' => null, 'message' => "Unknown Property", 'status' => 'fail'], 404);
+            if (!$this->existDocument($id))
+                return response()->json(['data' => null, 'message' => "Unknown Document", 'status' => 'fail'], 404);
             if (!$created_by)
                 return response()->json(['data' => null, 'message' => "Creator unknown", 'status' => 'fail'], 404);
             if (!$updated_by)
                 return response()->json(['data' => null, 'message' => "User unknown", 'status' => 'fail'], 404);
 
-            //if visit data already exists
-            $exist = VisitData::all()
-                ->where('keyVisitData', $request->input('keyVisitData'))
-                ->where('idVisit', $id)
+            //if document data already exists
+            $exist = DocumentData::all()
+                ->where('keyDocumentData', $request->input('keyDocumentData'))
+                ->where('idDocument', $id)
                 ->first();
             if ($exist)
                 return response()->json(['data' => null, 'message' => "Data already exists", 'status' => 'fail'], 404);
 
             //creation of the new data
-            $visitData = new VisitData;
-            $visitData->keyVisitData = $request->input('keyVisitData');
-            $visitData->valueVisitData = $request->input('valueVisitData');
-            $visitData->created_by = (int)$request->input('created_by');
-            $visitData->updated_by = (int)$request->input('updated_by');
-            $visitData->idVisit = (int)$id;
-            $visitData->save();
+            $documentData = new DocumentData;
+            $documentData->keyDocumentData = $request->input('keyDocumentData');
+            $documentData->valueDocumentData = $request->input('valueDocumentData');
+            $documentData->created_by = (int)$request->input('created_by');
+            $documentData->updated_by = (int)$request->input('updated_by');
+            $documentData->idDocument = (int)$id;
+            $documentData->save();
 
             // Return successful response
-            return response()->json(['visitData' => $visitData, 'message' => 'Property data successfully created', 'status' => 'success'], 201);
+            return response()->json(['documentData' => $documentData, 'message' => 'Document data successfully created', 'status' => 'success'], 201);
         } catch (\Exception $e) {
             //return error message
-            return response()->json(['message' => 'Property Data addition failed!', 'status' => 'fail'], 409);
+            return response()->json(['message' => 'Document Data addition failed!', 'status' => 'fail'], 409);
         }
     }
 
     /**
      * @OA\Patch(
-     *   path="/api/v1/visits/{id}/data/{key}",
-     *   summary="Update a visit data",
-     *   tags={"VisitData Controller"},
+     *   path="/api/v1/documents/{id}/data/{key}",
+     *   summary="Update a document data",
+     *   tags={"DocumentData Controller"},
      *   security={{ "apiAuth": {} }},
      *   @OA\Parameter(
      *     name="id",
      *     in="path",
      *     required=true,
-     *     description="Key of the visit related to the data to update",
+     *     description="Key of the document related to the data to update",
      *     @OA\Schema(
-     *       type="integer", default=1
+     *       type="integer"
      *     )
      *   ),
      *   @OA\Parameter(
      *     name="key",
      *     in="path",
      *     required=true,
-     *     description="Key of the visit data to update",
+     *     description="Key of the document data to update",
      *     @OA\Schema(
-     *       type="string", default="thumbnail"
+     *       type="string"
      *     )
      *   ),
      *   @OA\Parameter(
-     *     name="keyVisitData",
+     *     name="keyDocumentData",
      *     in="query",
      *     required=false,
-     *     description="New keyVisitData",
+     *     description="New keyDocumentData",
      *     @OA\Schema(
-     *       type="string", default="Any key"
+     *       type="string"
      *     )
      *   ),
      *   @OA\Parameter(
-     *     name="valueVisitData",
+     *     name="valueDocumentData",
      *     in="query",
      *     required=false,
-     *     description="New valueVisitData",
+     *     description="New valueDocumentData",
      *     @OA\Schema(
-     *       type="string", default="any value"
+     *       type="string"
      *     )
      *   ),
      *   @OA\Parameter(
@@ -407,7 +409,7 @@ class VisitDataController extends Controller
      *     required=false,
      *     description="New creator",
      *     @OA\Schema(
-     *       type="integer", default=1
+     *       type="integer"
      *     )
      *   ),
      *   @OA\Parameter(
@@ -416,16 +418,16 @@ class VisitDataController extends Controller
      *     required=false,
      *     description="New modifier",
      *     @OA\Schema(
-     *       type="integer", default=1
+     *       type="integer"
      *     )
      *   ),
      *   @OA\Parameter(
-     *     name="idVisit",
+     *     name="idDocument",
      *     in="query",
      *     required=false,
-     *     description="New idVisit",
+     *     description="New idDocument",
      *     @OA\Schema(
-     *       type="integer", default=1
+     *       type="integer"
      *     )
      *   ),
      *   @OA\Response(
@@ -442,22 +444,22 @@ class VisitDataController extends Controller
      *   ),
      *   @OA\Response(
      *     response=200,
-     *     description="Property data updated",
+     *     description="Document data updated",
      *     @OA\JsonContent(
      *       @OA\Property(
-     *         property="idVisitData",
+     *         property="idDocumentData",
      *         default=1,
-     *         description="Id of the visit data",
+     *         description="Id of the document data",
      *       ),
      *       @OA\Property(
-     *         property="keyVisitData",
+     *         property="keyDocumentData",
      *         default="thumbnail",
-     *         description="Key of the visit data",
+     *         description="Key of the document data",
      *       ),
      *       @OA\Property(
-     *         property="valueVisitData",
+     *         property="valueDocumentData",
      *         default="any value",
-     *         description="Value of the visit data",
+     *         description="Value of the document data",
      *       ),
      *       @OA\Property(
      *         property="created_by",
@@ -470,23 +472,23 @@ class VisitDataController extends Controller
      *         description="ID of user that modifier this data",
      *       ),
      *       @OA\Property(
-     *         property="idVisit",
+     *         property="idDocument",
      *         default=1,
-     *         description="ID of visit this data is related to",
+     *         description="ID of document this data is related to",
      *       ),
      *     )
      *   ),
      * )
      */
-    public function updateVisitData($id, $key, Request $request)
+    public function updateDocumentData($id, $key, Request $request)
     {
         // Validate incoming request
         $this->validate($request, [
-            'keyVisitData' => 'string',
-            'valueVisitData' => 'string',
+            'keyDocumentData' => 'string',
+            'valueDocumentData' => 'string',
             'created_by' => 'integer',
             'updated_by' => 'integer',
-            'idVisit' => 'integer',
+            'idDocument' => 'integer',
         ]);
 
         try {
@@ -502,58 +504,58 @@ class VisitDataController extends Controller
                     return response()->json(['data' => null, 'message' => "User unknown", 'status' => 'fail'], 404);
             }
 
-            //if visit doesn't exists
-            if (!$this->existVisit($id))
-                return response()->json(['data' => null, 'message' => "Unknown Property", 'status' => 'fail'], 404);
+            //if document doesn't exists
+            if (!$this->existDocument($id))
+                return response()->json(['data' => null, 'message' => "Unknown document", 'status' => 'fail'], 404);
 
             //test if the new key already exists
-            $newKeyExist = VisitData::all()
-                ->where('idVisit', $id)
-                ->where('keyVisitData', $request->input('keyVisitData'))
+            $newKeyExist = DocumentData::all()
+                ->where('idDocument', $id)
+                ->where('keyDocumentData', $request->input('keyDocumentData'))
                 ->first();
             if ($newKeyExist)
                 return response()->json(['message' => 'Data with this key already exists', 'status' => 'fail'], 404);
 
             // update
-            $visitData = VisitData::all()
-                ->where('idVisit', $id)
-                ->where('keyVisitData', $key)
+            $documentData = DocumentData::all()
+                ->where('idDocument', $id)
+                ->where('keyDocumentData', $key)
                 ->first();
-            if (!$visitData)
+            if (!$documentData)
                 return response()->json(['message' => 'No data for this key', 'status' => 'fail'], 404);
 
-            if ($request->input('keyVisitData') !== null)
-                $visitData->keyVisitData = $request->input('keyVisitData');
-            if ($request->input('valueVisitData') !== null)
-                $visitData->valueVisitData = $request->input('valueVisitData');
+            if ($request->input('keyDocumentData') !== null)
+                $documentData->keyDocumentData = $request->input('keyDocumentData');
+            if ($request->input('valueDocumentData') !== null)
+                $documentData->valueDocumentData = $request->input('valueDocumentData');
             if ($request->input('created_by') !== null)
-                $visitData->created_by = (int)$request->input('created_by');
+                $documentData->created_by = (int)$request->input('created_by');
             if ($request->input('updated_by') !== null)
-                $visitData->updated_by = (int)$request->input('updated_by');
-            if ($request->input('idVisit') !== null)
-                $visitData->idVisit = (int)$request->input('idVisit');
+                $documentData->updated_by = (int)$request->input('updated_by');
+            if ($request->input('idDocument') !== null)
+                $documentData->idDocument = (int)$request->input('idDocument');
 
-            $visitData->update();
+            $documentData->update();
 
             // Return successful response
-            return response()->json(['data' => $visitData, 'message' => 'Data successfully updated', 'status' => 'success'], 200);
+            return response()->json(['data' => $documentData, 'message' => 'Data successfully updated', 'status' => 'success'], 200);
         } catch (\Exception $e) {
             // Return error message
-            return response()->json(['message' => 'Property data Update Failed!', 'status' => 'fail'], 409);
+            return response()->json(['message' => 'Document data Update Failed!', 'status' => 'fail'], 409);
         }
     }
 
     /**
      * @OA\Delete(
-     *   path="/api/v1/visits/{id}/data/{key}",
-     *   summary="Delete a visit data",
-     *   tags={"VisitData Controller"},
+     *   path="/api/v1/documents/{id}/data/{key}",
+     *   summary="Delete a document data",
+     *   tags={"DocumentData Controller"},
      *   security={{ "apiAuth": {} }},
      *   @OA\Parameter(
      *     name="id",
      *     in="path",
      *     required=true,
-     *     description="ID of the visit data to delete",
+     *     description="ID of the document data to delete",
      *     @OA\Schema(
      *       type="integer", default=1
      *     )
@@ -562,7 +564,7 @@ class VisitDataController extends Controller
      *     name="key",
      *     in="path",
      *     required=true,
-     *     description="Key of the visit data to delete",
+     *     description="Key of the document data to delete",
      *     @OA\Schema(
      *       type="string", default="thumbnail"
      *     )
@@ -581,17 +583,17 @@ class VisitDataController extends Controller
      *   ),
      *   @OA\Response(
      *     response=200,
-     *     description="Property data deleted",
+     *     description="Document data deleted",
      *     @OA\JsonContent(
      *       @OA\Property(
-     *         property="keyVisitData",
+     *         property="keyDocumentData",
      *         default="Any key",
-     *         description="Key of the visit data",
+     *         description="Key of the document data",
      *       ),
      *       @OA\Property(
-     *         property="valueVisitData",
+     *         property="valueDocumentData",
      *         default="any value",
-     *         description="Value of the visit data",
+     *         description="Value of the document data",
      *       ),
      *       @OA\Property(
      *         property="created_by",
@@ -604,39 +606,39 @@ class VisitDataController extends Controller
      *         description="ID of user who deleted this data",
      *       ),
      *       @OA\Property(
-     *         property="idVisit",
+     *         property="idDocument",
      *         default=1,
-     *         description="ID of visit this data was related to",
+     *         description="ID of document this data was related to",
      *       )
      *      )
      *   ),
      * )
      */
-    public function deleteVisitData($id, $key)
+    public function deleteDocumentData($id, $key)
     {
         try {
-            $visitData = VisitData::all()
-                ->where('idVisit', $id)
-                ->where('keyVisitData', $key)
+            $documentData = DocumentData::all()
+                ->where('idDocument', $id)
+                ->where('keyDocumentData', $key)
                 ->first();
 
-            if (!$visitData)
+            if (!$documentData)
                 return response()->json(['message' => 'No data for this key', 'status' => 'fail'], 404);
 
-            $visitData->delete();
+            $documentData->delete();
 
-            return response()->json(['data' => $visitData, 'message' => 'Data successfully deleted', 'status' => 'success'], 200);
+            return response()->json(['data' => $documentData, 'message' => 'Data successfully deleted', 'status' => 'success'], 200);
         } catch (\Exception $e) {
             // Return error message
             return response()->json(['message' => 'Data deletion failed!', 'status' => 'fail'], 409);
         }
     }
 
-    private function existVisit($id)
+    private function existDocument($id)
     {
-        $visit = Visit::all()
-            ->where('idVisit', $id)
+        $document = Document::all()
+            ->where('idDocument', $id)
             ->first();
-        return (bool) $visit;
+        return (bool) $document;
     }
 }
