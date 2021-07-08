@@ -58,7 +58,7 @@ $router->group(['prefix' => 'api/v1'], function () use ($router) {
     // Prefix
     $router->group(['prefix' => 'users'], function () use ($router) {
         // Matches "/api/v1/users Get all User data of a user
-        $router->get('/{id}', 'UserDataController@getAllData');
+        $router->get('/{id}/data', 'UserDataController@getAllData');
         // Matches "/api/v1/users/{id}/data/{key} Get one User
         $router->get('/{id}/data/{key}', 'UserDataController@getUserData');
         // Matches "/api/v1/users Post register User
