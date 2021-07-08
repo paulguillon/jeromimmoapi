@@ -206,20 +206,8 @@ class UserController extends Controller
      *       description="Resource Not Found"
      *   ),
      *   @OA\Response(
-     *       response=500,
-     *       description="User not found",
-     *       @OA\JsonContent(
-     *        @OA\Property(
-     *          property="message",
-     *          default="The user ? doesn't exist",
-     *          description="Message",
-     *        ),
-     *        @OA\Property(
-     *          property="status",
-     *          default="fail",
-     *          description="Status",
-     *        ),
-     *       ),
+     *       response=409,
+     *       description="User recovery failed!"
      *   ),
      *   @OA\Response(
      *     response=200,
@@ -275,11 +263,6 @@ class UserController extends Controller
      *         default="1",
      *         description="Id of user who modified this one",
      *       ),
-     *       @OA\Property(
-     *         property="data",
-     *         default="[]",
-     *         description="User data",
-     *       ),
      *     )
      *   ),
      * )
@@ -291,14 +274,11 @@ class UserController extends Controller
             $user = User::all()->where('idUser', $id)->first();
 
             if (empty($user))
-                return response()->json(['message' => "The user $id doesn't exist", 'status' => 'fail'], 500);
-
-            $user['data'] = $this->getAllData($id);
+                return response()->json(['message' => "The user $id doesn't exist", 'status' => 'fail'], 404);
 
             return response()->json($user, 200);
         } catch (\Exception $e) {
-
-            return response()->json(['message' => 'User not found!' . $e->getMessage()], 404);
+            return response()->json(['message' => 'User not found!' . $e->getMessage()], 409);
         }
     }
 
@@ -380,15 +360,6 @@ class UserController extends Controller
      *       type="number", default="1"
      *     )
      *   ),
-     *   @OA\Parameter(
-     *     name="data",
-     *     in="query",
-     *     required=true,
-     *     description="First name of the user to add",
-     *     @OA\Schema(
-     *       type="string", default="{'cle':'valeur','deuxiemecle':'deuxiemevaleur'}"
-     *     )
-     *   ),
      *   @OA\Response(
      *       response=409,
      *       description="Not created",
@@ -396,22 +367,6 @@ class UserController extends Controller
      *   @OA\Response(
      *       response=404,
      *       description="Resource Not Found",
-     *   ),
-     *   @OA\Response(
-     *       response=500,
-     *       description="User data not added",
-     *       @OA\JsonContent(
-     *        @OA\Property(
-     *          property="message",
-     *          default="User data not added",
-     *          description="Message",
-     *        ),
-     *        @OA\Property(
-     *          property="status",
-     *          default="fail",
-     *          description="Status",
-     *        ),
-     *       ),
      *   ),
      *   @OA\Response(
      *     response=201,
@@ -467,11 +422,6 @@ class UserController extends Controller
      *         default="1",
      *         description="Id of user who modified this one",
      *       ),
-     *       @OA\Property(
-     *         property="data",
-     *         default="[]",
-     *         description="User data",
-     *       ),
      *     )
      *   ),
      * )
@@ -487,7 +437,6 @@ class UserController extends Controller
             'idRoleUser' => 'required|integer',
             'created_by' => 'integer',
             'updated_by' => 'integer',
-            'data' => 'string',
         ]);
 
         try {
@@ -503,13 +452,8 @@ class UserController extends Controller
 
             $user->save();
 
-            if ($request->input('data') !== null) {
-                if (!$this->_addData($user->idUser, $request))
-                    return response()->json(['message' => 'User data not added!', 'status' => 'fail'], 500);
-            }
-
             // Return successful response
-            return response()->json(['user' => $user, 'message' => 'CREATED', 'status' => 'success'], 201);
+            return response()->json(['user' => $user, 'message' => 'User successfully created!', 'status' => 'success'], 201);
         } catch (\Exception $e) {
             // Return error message
             return response()->json(['message' => 'User Registration Failed!', 'status' => 'fail'], 409);
@@ -600,13 +544,9 @@ class UserController extends Controller
      *       type="number", default="1"
      *     )
      *   ),
-     *   @OA\Parameter(
-     *     name="data",
-     *     in="query",
-     *     description="First name of the user to add",
-     *     @OA\Schema(
-     *       type="string", default="{'cle':'valeur','deuxiemecle':'deuxiemevaleur'}"
-     *     )
+     *   @OA\Response(
+     *       response=401,
+     *       description="Unauthenticated",
      *   ),
      *   @OA\Response(
      *       response=409,
@@ -615,22 +555,6 @@ class UserController extends Controller
      *   @OA\Response(
      *       response=404,
      *       description="Resource Not Found",
-     *   ),
-     *   @OA\Response(
-     *       response=500,
-     *       description="User data not updated",
-     *       @OA\JsonContent(
-     *        @OA\Property(
-     *          property="message",
-     *          default="User data not updated",
-     *          description="Message",
-     *        ),
-     *        @OA\Property(
-     *          property="status",
-     *          default="fail",
-     *          description="Status",
-     *        ),
-     *       ),
      *   ),
      *   @OA\Response(
      *     response=200,
@@ -686,11 +610,6 @@ class UserController extends Controller
      *         default="1",
      *         description="Id of user who modified this one",
      *       ),
-     *       @OA\Property(
-     *         property="data",
-     *         default="[]",
-     *         description="User data",
-     *       ),
      *     )
      *   ),
      * )
@@ -706,8 +625,6 @@ class UserController extends Controller
             'idRoleUser' => 'integer',
             'created_by' => 'integer',
             'updated_by' => 'integer',
-
-            'data' => 'string',
         ]);
 
         try {
@@ -732,24 +649,13 @@ class UserController extends Controller
 
             $user->update();
 
-            // Update data
-            if ($request->input('data') !== null) {
-                $data = (array)json_decode($request->input('data'), true);
-
-                foreach ($data as $key => $value) {
-                    if (!$this->updateData($user->idUser, $key, $value))
-                        return response()->json(['message' => 'User data Update Failed!', 'status' => 'fail'], 500);
-                }
-            }
-
             //return successful response
-            return response()->json(['user' => $user, 'data' => $this->getAllData($user->idUser), 'message' => 'ALL UPDATED', 'status' => 'success'], 200);
+            return response()->json(['user' => $user, 'message' => 'ALL UPDATED', 'status' => 'success'], 200);
         } catch (\Exception $e) {
             // Return error message
             return response()->json(['message' => 'User Update Failed!' . $e->getMessage(), 'status' => 'fail'], 409);
         }
     }
-
 
     /**
      * @OA\Delete(
@@ -767,16 +673,16 @@ class UserController extends Controller
      *     )
      *   ),
      *   @OA\Response(
-     *       response=409,
-     *       description="Not deleted",
+     *       response=401,
+     *       description="Unauthenticated",
      *   ),
      *   @OA\Response(
      *       response=404,
      *       description="Resource Not Found"
      *   ),
      *   @OA\Response(
-     *       response=500,
-     *       description="User data not deleted"
+     *       response=409,
+     *       description="Deletion failed!",
      *   ),
      *   @OA\Response(
      *     response=200,
@@ -832,11 +738,6 @@ class UserController extends Controller
      *         default="1",
      *         description="Id of user who modified this one",
      *       ),
-     *       @OA\Property(
-     *         property="data",
-     *         default="[]",
-     *         description="User data",
-     *       ),
      *     )
      *   ),
      * )
@@ -844,199 +745,14 @@ class UserController extends Controller
     public function deleteUser($id)
     {
         try {
-            $user = User::findOrFail($id);
-            $userData = $this->getAllData($id);
-
-            //delete les data
-            if ($userData !== null) {
-                if (!$this->deleteData($id))
-                    return response()->json(['message' => 'User Deletion Failed!', 'status' => 'fail'], 500);
-            }
+            $user = User::find($id);
 
             $user->delete();
 
-            return response()->json(['user' => $user, 'data' => $userData, 'message' => 'DELETED', 'status' => 'success'], 200);
+            return response()->json(['user' => $user, 'message' => 'DELETED', 'status' => 'success'], 200);
         } catch (\Exception $e) {
             // Return error message
             return response()->json(['message' => 'User deletion failed!' . $e->getMessage(), 'status' => 'fail'], 409);
-        }
-    }
-
-    /**
-     * @OA\Post(
-     *   path="/api/v1/users/data/{id}",
-     *   summary="Add user data",
-     *   tags={"User Controller"},
-     *   security={{ "apiAuth": {} }},
-     *   @OA\Parameter(
-     *     name="id",
-     *     in="path",
-     *     required=true,
-     *     description="ID of the user",
-     *     @OA\Schema(
-     *       type="number", default="1"
-     *     )
-     *   ),
-     *   @OA\Parameter(
-     *     name="data",
-     *     in="query",
-     *     required=true,
-     *     description="data to add",
-     *     @OA\Schema(
-     *       type="string", default="{}"
-     *     )
-     *   ),
-     *   @OA\Parameter(
-     *     name="created_by",
-     *     in="query",
-     *     required=true,
-     *     description="ID of the creator",
-     *     @OA\Schema(
-     *       type="number", default="1"
-     *     )
-     *   ),
-     *   @OA\Parameter(
-     *     name="updated_by",
-     *     in="query",
-     *     required=true,
-     *     description="ID of the updator",
-     *     @OA\Schema(
-     *       type="number", default="1"
-     *     )
-     *   ),
-     *   @OA\Response(
-     *       response=409,
-     *       description="Data not created",
-     *   ),
-     *   @OA\Response(
-     *       response=404,
-     *       description="Resource Not Found",
-     *   ),
-     *   @OA\Response(
-     *       response=500,
-     *       description="User data not added",
-     *       @OA\JsonContent(
-     *        @OA\Property(
-     *          property="message",
-     *          default="User data not added",
-     *          description="Message",
-     *        ),
-     *        @OA\Property(
-     *          property="status",
-     *          default="fail",
-     *          description="Status",
-     *        ),
-     *       ),
-     *   ),
-     *   @OA\Response(
-     *     response=201,
-     *     description="User data created",
-     *       @OA\JsonContent(
-     *        @OA\Property(
-     *          property="data",
-     *          default="[]",
-     *          description="data",
-     *        ),
-     *        @OA\Property(
-     *          property="status",
-     *          default="success",
-     *          description="Status",
-     *        ),
-     *       ),
-     *   ),
-     * )
-     */
-    public function addData($id, Request $request)
-    {
-        try {
-            if (!$this->_addData($id, $request))
-                return response()->json(['message' => 'Not all data has been added', 'status' => 'fail'], 409);
-
-            //return successful response
-            return response()->json(['data' => $this->getAllData($id), 'message' => 'Data created', 'status' => 'success'], 201);
-        } catch (\Exception $e) {
-            // Return error message
-            return response()->json(['message' => 'User data not added!', 'status' => 'fail'], 409);
-        }
-    }
-
-    //fonction utilisée par la route et lors de la creation de user pour ajouter toutes les data
-    public function _addData($idUser, $request)
-    {
-        $data = (array)json_decode($request->input('data'), true);
-
-        try {
-            foreach ($data as $key => $value) {
-
-                $userData = new UserData;
-                $userData->keyUserData = $key;
-                $userData->valueUserData = $value;
-                $userData->created_by = $request->input('created_by');
-                $userData->updated_by = $request->input('updated_by');
-                $userData->idUser = $idUser;
-
-                $userData->save();
-            }
-
-            // Return successful response
-            return true;
-        } catch (\Exception $e) {
-            // Return error message
-            return false;
-        }
-    }
-
-    public function getAllData($idUser)
-    {
-        $data = array();
-        foreach (UserData::all()->where('idUser', $idUser) as $value) {
-            array_push($data, $value);
-        }
-        return response()->json($data, 200)->original;
-    }
-
-    public function getData($idUser, $key)
-    {
-        return response()->json(
-            UserData::all()
-                ->where('idUser', $idUser)
-                ->where('keyUserData', $key),
-            200
-        );
-    }
-
-    public function updateData($idUser, $key, $value)
-    {
-        try {
-            $userData = UserData::all()
-                ->where('idUser', $idUser)
-                ->where('keyUserData', $key)
-                ->first();
-
-            if ($userData == null)
-                return false;
-
-            $userData->valueUserData = $value;
-            $userData->update();
-
-            return true;
-        } catch (\Exception $e) {
-            return false;
-        }
-    }
-
-    public function deleteData($idUser)
-    {
-        try {
-            $userData = UserData::all()->where('idUser', $idUser);
-
-            foreach ($userData as $data) {
-                $data->delete();
-            }
-
-            return true;
-        } catch (\Exception $e) {
-            return false;
         }
     }
 
