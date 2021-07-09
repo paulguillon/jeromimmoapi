@@ -205,7 +205,7 @@ class FaqController extends Controller
             if (!$this->existFaq($id))
                 return response()->json(['data' => null, 'message' => "Faq doesn't exists", 'status' => 'fail'], 404);
 
-            $agencyData = FaqData::all()
+            $faqData = FaqData::all()
                 ->where('idFaq', $id)
                 ->where('keyFaqData', $key)
                 ->first();
