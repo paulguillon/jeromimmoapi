@@ -20,7 +20,7 @@ class VisitController extends Controller
 
     /**
      * @OA\Get(
-     *   path="/api/v1/visit",
+     *   path="/api/v1/visits",
      *   summary="Return all visits",
      *   tags={"Visit Controller"},
      *   security={{ "apiAuth": {} }},
@@ -35,7 +35,7 @@ class VisitController extends Controller
      *     @OA\JsonContent(
      *       @OA\Property(
      *         property="idVisit",
-     *         default="1",
+     *         default=1,
      *         description="Id of the visit",
      *       ),
      *       @OA\Property(
@@ -50,7 +50,7 @@ class VisitController extends Controller
      *       ),
      *       @OA\Property(
      *         property="created_by",
-     *         default="1",
+     *         default=1,
      *         description="Id of user who created this one",
      *       ),
      *       @OA\Property(
@@ -60,23 +60,23 @@ class VisitController extends Controller
      *       ),
      *       @OA\Property(
      *         property="updated_by",
-     *         default="1",
+     *         default=1,
      *         description="Id of user who modified this one",
      *       ),
      *     )
      *   )
      * )
      */
-    public function getAllData()
+    public function getVisits()
     {
         $visits = Visit::all();
 
-        return response()->json(['total' => count($visits), compact("visits"), 'message' => "Visits successfully retrieved!", 'status' => 'success'], 200);
+        return response()->json(['total' => count($visits), 'visits' => $visits, 'message' => "Visits successfully retrieved!", 'status' => 'success'], 200);
     }
 
     /**
      * @OA\Get(
-     *   path="/api/v1/visit/{id}",
+     *   path="/api/v1/visits/{id}",
      *   summary="Return a visit",
      *   tags={"Visit Controller"},
      *   security={{ "apiAuth": {} }},
@@ -86,7 +86,7 @@ class VisitController extends Controller
      *     required=true,
      *     description="ID of the visit to get",
      *     @OA\Schema(
-     *       type="number", default=1
+     *       type="integer", default=1
      *     )
      *   ),
      *   @OA\Response(
@@ -107,7 +107,7 @@ class VisitController extends Controller
      *     @OA\JsonContent(
      *       @OA\Property(
      *         property="idVisit",
-     *         default="1",
+     *         default=1,
      *         description="id of the visit",
      *       ),
      *       @OA\Property(
@@ -122,7 +122,7 @@ class VisitController extends Controller
      *       ),
      *       @OA\Property(
      *         property="created_by",
-     *         default="1",
+     *         default=1,
      *         description="Id of user who created this one",
      *       ),
      *       @OA\Property(
@@ -132,7 +132,7 @@ class VisitController extends Controller
      *       ),
      *       @OA\Property(
      *         property="updated_by",
-     *         default="1",
+     *         default=1,
      *         description="Id of user who modified this one",
      *       ),
      *     )
@@ -143,7 +143,7 @@ class VisitController extends Controller
     public function getVisit($id)
     {
         try {
-            $visit = Visit::all()->where('idVisit', $id)->first();
+            $visit = Visit::find($id);
 
             if (!$visit)
                 return response()->json(['visit' => null, 'message' => "Visit doesn't exists", 'status' => 'success'], 404);
@@ -155,7 +155,7 @@ class VisitController extends Controller
     }
     /**
      * @OA\Post(
-     *   path="/api/v1/visit",
+     *   path="/api/v1/visits",
      *   summary="Add a visit",
      *   tags={"Visit Controller"},
      *   security={{ "apiAuth": {} }},
@@ -165,7 +165,7 @@ class VisitController extends Controller
      *     required=true,
      *     description="Date of the visit",
      *     @OA\Schema(
-     *       type="string", default="2020-10-20 20:20:20"
+     *       type="string"
      *     )
      *   ),
      *   @OA\Parameter(
@@ -174,7 +174,7 @@ class VisitController extends Controller
      *     required=true,
      *     description="ID of the logged user",
      *     @OA\Schema(
-     *       type="number", default="1"
+     *       type="number"
      *     )
      *   ),
      *   @OA\Parameter(
@@ -183,7 +183,7 @@ class VisitController extends Controller
      *     required=true,
      *     description="ID of the logged user",
      *     @OA\Schema(
-     *       type="number", default="1"
+     *       type="number"
      *     )
      *   ),
      *   @OA\Response(
@@ -204,7 +204,7 @@ class VisitController extends Controller
      *     @OA\JsonContent(
      *       @OA\Property(
      *         property="idVisit",
-     *         default="1",
+     *         default=1,
      *         description="id of the visit",
      *       ),
      *       @OA\Property(
@@ -219,7 +219,7 @@ class VisitController extends Controller
      *       ),
      *       @OA\Property(
      *         property="created_by",
-     *         default="1",
+     *         default=1,
      *         description="Id of user who created this one",
      *       ),
      *       @OA\Property(
@@ -229,7 +229,7 @@ class VisitController extends Controller
      *       ),
      *       @OA\Property(
      *         property="updated_by",
-     *         default="1",
+     *         default=1,
      *         description="Id of user who modified this one",
      *       ),
      *       @OA\Property(
@@ -246,8 +246,6 @@ class VisitController extends Controller
         //validate incoming request
         $this->validate($request, [
             'dateVisit' => 'required|date_format:Y-m-d H:i',
-            'keyVisitData' => 'string',
-            'valueVisitData' => 'string',
             'created_by' => 'required|integer',
             'updated_by' => 'required|integer',
         ]);
@@ -260,13 +258,13 @@ class VisitController extends Controller
             $exist = User::find($request->input('created_by'));
             if (!$exist)
                 return response()->json(['visit' => null, 'message' => 'Unknown creator', 'status' => 'fail'], 404);
-            $visit->created_by = $request->input('created_by');
+            $visit->created_by = (int)$request->input('created_by');
 
-            //test if the creator exists
+            //test if the user exists
             $exist = User::find($request->input('updated_by'));
             if (!$exist)
                 return response()->json(['visit' => null, 'message' => 'Unknown user', 'status' => 'fail'], 404);
-            $visit->updated_by = $request->input('updated_by');
+            $visit->updated_by = (int)$request->input('updated_by');
 
             $visit->save();
 
@@ -280,7 +278,7 @@ class VisitController extends Controller
 
     /**
      * @OA\Patch(
-     *   path="/api/v1/visit/{id}",
+     *   path="/api/v1/visits/{id}",
      *   summary="Update a visit",
      *   tags={"Visit Controller"},
      *   security={{ "apiAuth": {} }},
@@ -290,7 +288,7 @@ class VisitController extends Controller
      *     required=true,
      *     description="ID of the visit to update",
      *     @OA\Schema(
-     *       type="number", default="1"
+     *       type="number", default=1
      *     )
      *   ),
      *   @OA\Parameter(
@@ -306,7 +304,7 @@ class VisitController extends Controller
      *     in="query",
      *     description="ID of the logged user",
      *     @OA\Schema(
-     *       type="number", default="1"
+     *       type="number", default=1
      *     )
      *   ),
      *   @OA\Parameter(
@@ -314,7 +312,7 @@ class VisitController extends Controller
      *     in="query",  
      *     description="ID of the logged user",
      *     @OA\Schema(
-     *       type="number", default="1"
+     *       type="number", default=1
      *     )
      *   ),
      *   @OA\Response(
@@ -335,7 +333,7 @@ class VisitController extends Controller
      *     @OA\JsonContent(
      *       @OA\Property(
      *         property="idVisit",
-     *         default="1",
+     *         default=1,
      *         description="id of the visit",
      *       ),
      *       @OA\Property(
@@ -350,7 +348,7 @@ class VisitController extends Controller
      *       ),
      *       @OA\Property(
      *         property="created_by",
-     *         default="1",
+     *         default=1,
      *         description="Id of user who created this visit",
      *       ),
      *       @OA\Property(
@@ -360,7 +358,7 @@ class VisitController extends Controller
      *       ),
      *       @OA\Property(
      *         property="updated_by",
-     *         default="1",
+     *         default=1,
      *         description="Id of user who modified this visit",
      *       ),
      *     )
@@ -372,8 +370,6 @@ class VisitController extends Controller
         //validate incoming request
         $this->validate($request, [
             'dateVisit' => 'date_format:Y-m-d H:i',
-            'keyVisitData' => 'string',
-            'valueVisitData' => 'string',
             'created_by' => 'integer',
             'updated_by' => 'integer',
         ]);
@@ -388,17 +384,13 @@ class VisitController extends Controller
 
             if ($request->input('dateVisit') !== null)
                 $visit->dateVisit = $request->input('dateVisit');
-            if ($request->input('keyVisitData') !== null)
-                $visit->keyVisitData = $request->input('keyVisitData');
-            if ($request->input('valueVisitData') !== null)
-                $visit->valueVisitData = $request->input('valueVisitData');
             if ($request->input('created_by') !== null) {
                 //test if the creator exists
                 $exist = User::find($request->input('created_by'));
                 if (!$exist)
                     return response()->json(['visit' => null, 'message' => 'Unknown creator', 'status' => 'fail'], 404);
                 //update if ok
-                $visit->created_by = $request->input('created_by');
+                $visit->created_by = (int)$request->input('created_by');
             }
             if ($request->input('updated_by') !== null) {
                 //test if the creator exists
@@ -406,7 +398,7 @@ class VisitController extends Controller
                 if (!$exist)
                     return response()->json(['visit' => null, 'message' => 'Unknown user', 'status' => 'fail'], 404);
                 //update if ok
-                $visit->updated_by = $request->input('updated_by');
+                $visit->updated_by = (int)$request->input('updated_by');
             }
 
             $visit->update();
@@ -421,7 +413,7 @@ class VisitController extends Controller
 
     /**
      * @OA\Delete(
-     *   path="/api/v1/visit/{id}",
+     *   path="/api/v1/visits/{id}",
      *   summary="Delete a visit",
      *   tags={"Visit Controller"},
      *   security={{ "apiAuth": {} }},
@@ -431,7 +423,7 @@ class VisitController extends Controller
      *     required=true,
      *     description="ID of the visit to delete",
      *     @OA\Schema(
-     *       type="number", default="1"
+     *       type="number", default=1
      *     )
      *   ),
      *   @OA\Response(
@@ -452,7 +444,7 @@ class VisitController extends Controller
      *     @OA\JsonContent(
      *       @OA\Property(
      *         property="idVisit",
-     *         default="1",
+     *         default=1,
      *         description="id of the visit",
      *       ),
      *       @OA\Property(
@@ -467,7 +459,7 @@ class VisitController extends Controller
      *       ),
      *       @OA\Property(
      *         property="created_by",
-     *         default="1",
+     *         default=1,
      *         description="Id of user who created this one",
      *       ),
      *       @OA\Property(
@@ -477,7 +469,7 @@ class VisitController extends Controller
      *       ),
      *       @OA\Property(
      *         property="updated_by",
-     *         default="1",
+     *         default=1,
      *         description="Id of user who modified this one",
      *       ),
      *     )
@@ -487,7 +479,7 @@ class VisitController extends Controller
     public function deleteVisit($id)
     {
         try {
-            $visit = Visit::findOrFail($id);
+            $visit = Visit::find($id);
 
             if (!$visit)
                 return response()->json(['visit' => null, 'message' => "Visit doesn't exists", 'status' => 'success'], 404);
