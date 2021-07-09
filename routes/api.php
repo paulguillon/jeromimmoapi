@@ -144,7 +144,7 @@ $router->group(['prefix' => 'api/v1'], function () use ($router) {
         // Matches "/api/v1/agency/id Delete one agency
         $router->delete('/{id}', 'AgencyController@deleteAgency');
     });
-     /*
+    /*
     |------------------------|
     | Agency data Routes   |
     |------------------------|
