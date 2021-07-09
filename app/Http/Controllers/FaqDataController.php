@@ -523,7 +523,7 @@ class FaqController extends Controller
                 return response()->json(['message' => 'Data with this key already exists', 'status' => 'fail'], 404);
 
             // update
-            $agencyData = FaqData::all()
+            $faqData = FaqData::all()
                 ->where('idFaq', $id)
                 ->where('keyFaqData', $key)
                 ->first();
