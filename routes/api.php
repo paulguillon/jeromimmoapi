@@ -58,7 +58,7 @@ $router->group(['prefix' => 'api/v1'], function () use ($router) {
     // Prefix
     $router->group(['prefix' => 'users'], function () use ($router) {
         // Matches "/api/v1/users Get all User data of a user
-        $router->get('/{id}', 'UserDataController@getAllData');
+        $router->get('/{id}/data', 'UserDataController@getAllData');
         // Matches "/api/v1/users/{id}/data/{key} Get one User
         $router->get('/{id}/data/{key}', 'UserDataController@getUserData');
         // Matches "/api/v1/users Post register User
@@ -144,7 +144,7 @@ $router->group(['prefix' => 'api/v1'], function () use ($router) {
         // Matches "/api/v1/agency/id Delete one agency
         $router->delete('/{id}', 'AgencyController@deleteAgency');
     });
-     /*
+    /*
     |------------------------|
     | Agency data Routes   |
     |------------------------|
@@ -175,12 +175,28 @@ $router->group(['prefix' => 'api/v1'], function () use ($router) {
         $router->get('/{id}', 'FaqController@getFaq');
         // Matches "/api/v1/faq Post add faq
         $router->post('', 'FaqController@addFaq');
-        // Matches "/api/v1/faq/data/idFaq Post Register
-        $router->post('/data/{id}', 'FaqController@addData');
         // Matches "/api/v1/faq/id Patch one element of one faq
         $router->patch('/{id}', 'FaqController@updateFaq');
         // Matches "/api/v1/faq/id delete one faq
         $router->delete('/{id}', 'FaqController@deleteFaq');
+    });
+        /*
+    |------------------------|
+    | Faq data Routes        |
+    |------------------------|
+    */
+    // Prefix
+    $router->group(['prefix' => 'faq'], function () use ($router) {
+        // Matches "/api/v1/faq/{id}/data Get all data of a faq 
+        $router->get('/{id}/data', 'FaqDataController@getAllData');
+        // Matches "/api/v1/faq/{id}/data/{key} Get one Faq data
+        $router->get('/{id}/data/{key}', 'FaqDataController@getFaqData');
+        // Matches "/api/v1/faq/{id}/data Post register Faq data
+        $router->post('/{id}/data', 'FaqDataController@addFaqData');
+        // Matches "/api/v1/faq/{id}/data/{key} Patch one data of one Faq
+        $router->patch('/{id}/data/{key}', 'FaqDataController@updateFaqData');
+        // Matches "/api/v1/agency/{id}/data/{key} Delete one Faq
+        $router->delete('/{id}/data/{key}', 'FaqDataController@deleteFaqData');
     });
     /*
     |-----------------------|

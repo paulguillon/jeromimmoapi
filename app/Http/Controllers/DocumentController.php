@@ -76,14 +76,8 @@ class DocumentController extends Controller
     public function getDocuments(Request $request)
     {
         $documents = Document::all();
-
-        for ($i = 0; $i < count($documents); $i++) {
-            $document = $documents[$i];
-        }
-
         return response()->json($documents, 200);
     }
-
     /**
      * @OA\Get(
      *   path="/api/v1/documents/{id}",

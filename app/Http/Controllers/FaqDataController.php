@@ -4,10 +4,10 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\User;
-use App\Models\Agency;
-use App\Models\AgencyData;
+use App\Models\Faq;
+use App\Models\FaqData;
 
-class AgencyController extends Controller
+class FaqController extends Controller
 {
     /**
      * Constructor
@@ -20,14 +20,14 @@ class AgencyController extends Controller
 
     /**
      * @OA\Get(
-     *   path="/api/v1/agency/{id}/data",
-     *   summary="Return all data of specific agency",
-     *   tags={"AgencyData Controller"},
+     *   path="/api/v1/faq/{id}/data",
+     *   summary="Return all data of specific faq",
+     *   tags={"FaqData Controller"},
      *   @OA\Parameter(
      *     name="id",
      *     in="path",
      *     required=true,
-     *     description="ID of the agency",
+     *     description="ID of the faq",
      *     @OA\Schema(
      *       type="integer", default="1"
      *     )
@@ -45,19 +45,19 @@ class AgencyController extends Controller
      *     description="List of data",
      *     @OA\JsonContent(
      *       @OA\Property(
-     *         property="idAgencyData",
+     *         property="idFaqData",
      *         default=1,
-     *         description="Id of the agency data",
+     *         description="Id of the faq data",
      *       ),
      *       @OA\Property(
-     *         property="keyAgencyData",
+     *         property="keyFaqData",
      *         default="Any key",
-     *         description="Key of the agency data",
+     *         description="Key of the faq data",
      *       ),
      *       @OA\Property(
-     *         property="valueAgencyData",
+     *         property="valueFaqData",
      *         default="Any value",
-     *         description="Value of the agency data",
+     *         description="Value of the faq data",
      *       ),
      *       @OA\Property(
      *         property="created_at",
@@ -80,9 +80,9 @@ class AgencyController extends Controller
      *         description="ID of user who did the last update",
      *       ),
      *       @OA\Property(
-     *         property="idAgency",
+     *         property="idFaq",
      *         default=1,
-     *         description="ID of the agency that this data is related to",
+     *         description="ID of the faq that this data is related to",
      *       ),
      *     )
      *   )
@@ -91,13 +91,13 @@ class AgencyController extends Controller
     public function getAllData($id)
     {
         try {
-            //if agency doesn't exists
-            if (!$this->existAgency($id))
-                return response()->json(['data' => null, 'message' => "Agency doesn't exists", 'status' => 'fail'], 404);
+            //if faq doesn't exists
+            if (!$this->existFaq($id))
+                return response()->json(['data' => null, 'message' => "Faq doesn't exists", 'status' => 'fail'], 404);
 
-            $data = array_values(AgencyData::all()->where('idAgency', $id)->toArray());
+            $data = array_values(FaqData::all()->where('idFaq', $id)->toArray());
 
-            return response()->json(['total' => count($data), 'data' => $data, 'message' => 'Agency data successfully retrieved', 'status' => 'success'], 200);
+            return response()->json(['total' => count($data), 'data' => $data, 'message' => 'Faq data successfully retrieved', 'status' => 'success'], 200);
         } catch (\Exception $e) {
             return response()->json(['message' => 'Data recovery failed!', 'status' => 'fail'], 409);
         }
@@ -105,14 +105,14 @@ class AgencyController extends Controller
 
     /**
      * @OA\Get(
-     *   path="/api/v1/agency/{id}/data/{key}",
-     *   summary="Return specific data of the specified agency",
-     *   tags={"AgencyData Controller"},
+     *   path="/api/v1/faq/{id}/data/{key}",
+     *   summary="Return specific data of the specified faq",
+     *   tags={"FaqData Controller"},
      *   @OA\Parameter(
      *     name="id",
      *     in="path",
      *     required=true,
-     *     description="ID of the concerned agency",
+     *     description="ID of the concerned faq",
      *     @OA\Schema(
      *       type="integer", default=1
      *     )
@@ -121,7 +121,7 @@ class AgencyController extends Controller
      *     name="key",
      *     in="path",
      *     required=true,
-     *     description="key of the agency to get",
+     *     description="key of the faq to get",
      *     @OA\Schema(
      *       type="string", default="thumbnail"
      *     )
@@ -155,19 +155,19 @@ class AgencyController extends Controller
      *     description="Requested data",
      *     @OA\JsonContent(
      *       @OA\Property(
-     *         property="idAgencyData",
+     *         property="idFaqData",
      *         default="1",
-     *         description="key of the agency",
+     *         description="key of the faq",
      *       ),
      *       @OA\Property(
-     *         property="keyAgencyData",
+     *         property="keyFaqData",
      *         default="key",
-     *         description="key of the agency",
+     *         description="key of the faq",
      *       ),
      *       @OA\Property(
-     *         property="valueAgencyData",
+     *         property="valueFaqData",
      *         default="Any value",
-     *         description="Value of the agency",
+     *         description="Value of the faq",
      *       ),
      *       @OA\Property(
      *         property="created_at",
@@ -190,31 +190,31 @@ class AgencyController extends Controller
      *         description="Who did the last update",
      *       ),
      *       @OA\Property(
-     *         property="idAgency",
+     *         property="idFaq",
      *         default="1",
-     *         description="Agency associated with the data",
+     *         description="Faq associated with the data",
      *       ),
      *     )
      *   ),
      * )
      */
-    public function getAgencyData($id, $key)
+    public function getFaqData($id, $key)
     {
         try {
-            //if agency doesn't exists
-            if (!$this->existAgency($id))
-                return response()->json(['data' => null, 'message' => "Agency doesn't exists", 'status' => 'fail'], 404);
+            //if faq doesn't exists
+            if (!$this->existFaq($id))
+                return response()->json(['data' => null, 'message' => "Faq doesn't exists", 'status' => 'fail'], 404);
 
-            $agencyData = AgencyData::all()
-                ->where('idAgency', $id)
-                ->where('keyAgencyData', $key)
+            $faqData = FaqData::all()
+                ->where('idFaq', $id)
+                ->where('keyFaqData', $key)
                 ->first();
 
             //key doesn't exists
-            if (!$agencyData)
+            if (!$faqData)
                 return response()->json(['data' => null, 'message' => "No data for this key", 'status' => 'fail'], 404);
 
-            return response()->json(['data' => $agencyData, 'message' => 'Data successfully retrieved!', 'status' => 'success'], 200);
+            return response()->json(['data' => $faqData, 'message' => 'Data successfully retrieved!', 'status' => 'success'], 200);
         } catch (\Exception $e) {
             return response()->json(['message' => 'Data recovery failed!', 'status' => 'fail'], 409);
         }
@@ -222,33 +222,33 @@ class AgencyController extends Controller
 
     /**
      * @OA\Post(
-     *   path="/api/v1/agency/{id}/data",
-     *   summary="Add a data to a specific agency",
-     *   tags={"AgencyData Controller"},
+     *   path="/api/v1/faq/{id}/data",
+     *   summary="Add a data to a specific faq",
+     *   tags={"FaqData Controller"},
      *   security={{ "apiAuth": {} }},
      *   @OA\Parameter(
      *     name="id",
      *     in="path",
      *     required=true,
-     *     description="ID of the agency",
+     *     description="ID of the faq",
      *     @OA\Schema(
      *       type="integer", default="1"
      *     )
      *   ),
      *   @OA\Parameter(
-     *     name="keyAgencyData",
+     *     name="keyFaqData",
      *     in="query",
      *     required=true,
-     *     description="Key of the agency data",
+     *     description="Key of the faq data",
      *     @OA\Schema(
      *       type="string", default="Any key"
      *     )
      *   ),
      *   @OA\Parameter(
-     *     name="valueAgencyData",
+     *     name="valueFaqData",
      *     in="query",
      *     required=true,
-     *     description="Value of the agency data",
+     *     description="Value of the faq data",
      *     @OA\Schema(
      *       type="string", default="Any value"
      *     )
@@ -288,17 +288,17 @@ class AgencyController extends Controller
      *     description="Data added",
      *     @OA\JsonContent(
      *       @OA\Property(
-     *         property="idAgencyData",
+     *         property="idFaqData",
      *         default=1,
-     *         description="Id of the agency",
+     *         description="Id of the faq",
      *       ),
      *       @OA\Property(
-     *         property="keyAgencyData",
+     *         property="keyFaqData",
      *         default="Some key",
      *         description="Key to add",
      *       ),
      *       @OA\Property(
-     *         property="valueAgencyData",
+     *         property="valueFaqData",
      *         default="Any value",
      *         description="Value of the key to add",
      *       ),
@@ -321,63 +321,63 @@ class AgencyController extends Controller
      *   ),
      * )
      */
-    public function addAgencyData($id, Request $request)
+    public function addFaqData($id, Request $request)
     {
         //validate incoming request
         $this->validate($request, [
-            'keyAgencyData' => 'required|string',
-            'valueAgencyData' => 'required|string',
+            'keyFaqData' => 'required|string',
+            'valueFaqData' => 'required|string',
             'created_by' => 'required|integer',
             'updated_by' => 'required|integer'
         ]);
 
         try {
-            //if agency or users doesn't exist
+            //if faq or users doesn't exist
             $created_by = User::all()->where('idUser', $request->input('created_by'))->first();
             $updated_by = User::all()->where('idUser', $request->input('updated_by'))->first();
-            if (!$this->existAgency($id))
+            if (!$this->existFaq($id))
                 return response()->json(['data' => null, 'message' => "Unknown Property", 'status' => 'fail'], 404);
             if (!$created_by)
                 return response()->json(['data' => null, 'message' => "Creator unknown", 'status' => 'fail'], 404);
             if (!$updated_by)
                 return response()->json(['data' => null, 'message' => "User unknown", 'status' => 'fail'], 404);
 
-            //if agency data already exists
-            $exist = AgencyData::all()
-                ->where('keyAgencyData', $request->input('keyAgencyData'))
-                ->where('idAgency', $id)
+            //if faq data already exists
+            $exist = FaqData::all()
+                ->where('keyFaqData', $request->input('keyFaqData'))
+                ->where('idFaq', $id)
                 ->first();
             if ($exist)
                 return response()->json(['data' => null, 'message' => "Data already exists", 'status' => 'fail'], 404);
 
             //creation of the new data
-            $agencyData = new AgencyData;
-            $agencyData->keyAgencyData = $request->input('keyAgencyData');
-            $agencyData->valueAgencyData = $request->input('valueAgencyData');
-            $agencyData->created_by = (int)$request->input('created_by');
-            $agencyData->updated_by = (int)$request->input('updated_by');
-            $agencyData->idVisit = (int)$id;
-            $agencyData->save();
+            $faqData = new FaqData;
+            $faqData->keyFaqData = $request->input('keyFaqData');
+            $faqData->valueFaqData = $request->input('valueFaqData');
+            $faqData->created_by = (int)$request->input('created_by');
+            $faqData->updated_by = (int)$request->input('updated_by');
+            $faqData->idVisit = (int)$id;
+            $faqData->save();
 
             // Return successful response
-            return response()->json(['agencyData' => $agencyData, 'message' => 'Agency data successfully created', 'status' => 'success'], 201);
+            return response()->json(['faqData' => $faqData, 'message' => 'Faq data successfully created', 'status' => 'success'], 201);
         } catch (\Exception $e) {
             //return error message
-            return response()->json(['message' => 'Agency Data addition failed!', 'status' => 'fail'], 409);
+            return response()->json(['message' => 'Faq Data addition failed!', 'status' => 'fail'], 409);
         }
     }
 
     /**
      * @OA\Patch(
-     *   path="/api/v1/agency/{id}/data/{key}",
-     *   summary="Update an agency data",
-     *   tags={"AgencyData Controller"},
+     *   path="/api/v1/faq/{id}/data/{key}",
+     *   summary="Update an faq data",
+     *   tags={"FaqData Controller"},
      *   security={{ "apiAuth": {} }},
      *   @OA\Parameter(
      *     name="id",
      *     in="path",
      *     required=true,
-     *     description="Key of the agency related to the data to update",
+     *     description="Key of the faq related to the data to update",
      *     @OA\Schema(
      *       type="integer", default=1
      *     )
@@ -386,25 +386,25 @@ class AgencyController extends Controller
      *     name="key",
      *     in="path",
      *     required=true,
-     *     description="Key of the agency data to update",
+     *     description="Key of the faq data to update",
      *     @OA\Schema(
      *       type="string", default="thumbnail"
      *     )
      *   ),
      *   @OA\Parameter(
-     *     name="keyAgencyData",
+     *     name="keyFaqData",
      *     in="query",
      *     required=false,
-     *     description="New keyAgencyData",
+     *     description="New keyFaqData",
      *     @OA\Schema(
      *       type="string", default="Any key"
      *     )
      *   ),
      *   @OA\Parameter(
-     *     name="valueAgencyData",
+     *     name="valueFaqData",
      *     in="query",
      *     required=false,
-     *     description="New valueAgencyData",
+     *     description="New valueFaqData",
      *     @OA\Schema(
      *       type="string", default="any value"
      *     )
@@ -428,10 +428,10 @@ class AgencyController extends Controller
      *     )
      *   ),
      *   @OA\Parameter(
-     *     name="idAgency",
+     *     name="idFaq",
      *     in="query",
      *     required=false,
-     *     description="New idAgency",
+     *     description="New idFaq",
      *     @OA\Schema(
      *       type="integer", default=1
      *     )
@@ -450,22 +450,22 @@ class AgencyController extends Controller
      *   ),
      *   @OA\Response(
      *     response=200,
-     *     description="Agency data updated",
+     *     description="Faq data updated",
      *     @OA\JsonContent(
      *       @OA\Property(
-     *         property="idAgencyData",
+     *         property="idFaqData",
      *         default=1,
-     *         description="Id of the agency data",
+     *         description="Id of the faq data",
      *       ),
      *       @OA\Property(
-     *         property="keyAgencyData",
+     *         property="keyFaqData",
      *         default="thumbnail",
-     *         description="Key of the agency data",
+     *         description="Key of the faq data",
      *       ),
      *       @OA\Property(
-     *         property="valueAgencyData",
+     *         property="valueFaqData",
      *         default="any value",
-     *         description="Value of the agency data",
+     *         description="Value of the faq data",
      *       ),
      *       @OA\Property(
      *         property="created_by",
@@ -478,23 +478,23 @@ class AgencyController extends Controller
      *         description="ID of user that modifier this data",
      *       ),
      *       @OA\Property(
-     *         property="idAgency",
+     *         property="idFaq",
      *         default=1,
-     *         description="ID of agency this data is related to",
+     *         description="ID of faq this data is related to",
      *       ),
      *     )
      *   ),
      * )
      */
-    public function updateAgencyData($id, $key, Request $request)
+    public function updateFaqData($id, $key, Request $request)
     {
         // Validate incoming request
         $this->validate($request, [
-            'keyAgencyData' => 'string',
-            'valueAgencyData' => 'string',
+            'keyFaqData' => 'string',
+            'valueFaqData' => 'string',
             'created_by' => 'integer',
             'updated_by' => 'integer',
-            'idAgency' => 'integer',
+            'idFaq' => 'integer',
         ]);
 
         try {
@@ -510,58 +510,58 @@ class AgencyController extends Controller
                     return response()->json(['data' => null, 'message' => "User unknown", 'status' => 'fail'], 404);
             }
 
-            //if agency doesn't exists
-            if (!$this->existAgency($id))
+            //if faq doesn't exists
+            if (!$this->existFaq($id))
                 return response()->json(['data' => null, 'message' => "Unknown Property", 'status' => 'fail'], 404);
 
             //test if the new key already exists
-            $newKeyExist = AgencyData::all()
-                ->where('idAgency', $id)
-                ->where('keyAgencyData', $request->input('keyAgencyData'))
+            $newKeyExist = FaqData::all()
+                ->where('idFaq', $id)
+                ->where('keyFaqData', $request->input('keyFaqData'))
                 ->first();
             if ($newKeyExist)
                 return response()->json(['message' => 'Data with this key already exists', 'status' => 'fail'], 404);
 
             // update
-            $agencyData = AgencyData::all()
-                ->where('idAgency', $id)
-                ->where('keyAgencyData', $key)
+            $faqData = FaqData::all()
+                ->where('idFaq', $id)
+                ->where('keyFaqData', $key)
                 ->first();
-            if (!$agencyData)
+            if (!$faqData)
                 return response()->json(['message' => 'No data for this key', 'status' => 'fail'], 404);
 
-            if ($request->input('keyAgencyData') !== null)
-                $agencyData->keyAgencyData = $request->input('keyAgencyData');
-            if ($request->input('valueAgencyData') !== null)
-                $agencyData->valueAgencyData = $request->input('valueAgencyData');
+            if ($request->input('keyFaqData') !== null)
+                $faqData->keyFaqData = $request->input('keyFaqData');
+            if ($request->input('valueFaqData') !== null)
+                $faqData->valueFaqData = $request->input('valueFaqData');
             if ($request->input('created_by') !== null)
-                $agencyData->created_by = (int)$request->input('created_by');
+                $faqData->created_by = (int)$request->input('created_by');
             if ($request->input('updated_by') !== null)
-                $agencyData->updated_by = (int)$request->input('updated_by');
-            if ($request->input('idAgency') !== null)
-                $agencyData->idAgency = (int)$request->input('idAgency');
+                $faqData->updated_by = (int)$request->input('updated_by');
+            if ($request->input('idFaq') !== null)
+                $faqData->idFaq = (int)$request->input('idFaq');
 
-            $agencyData->update();
+            $faqData->update();
 
             // Return successful response
-            return response()->json(['data' => $agencyData, 'message' => 'Data successfully updated', 'status' => 'success'], 200);
+            return response()->json(['data' => $faqData, 'message' => 'Data successfully updated', 'status' => 'success'], 200);
         } catch (\Exception $e) {
             // Return error message
-            return response()->json(['message' => 'Agency data Update Failed!', 'status' => 'fail'], 409);
+            return response()->json(['message' => 'Faq data Update Failed!', 'status' => 'fail'], 409);
         }
     }
 
     /**
      * @OA\Delete(
-     *   path="/api/v1/agency/{id}/data/{key}",
-     *   summary="Delete an agency data",
-     *   tags={"AgencyData Controller"},
+     *   path="/api/v1/faq/{id}/data/{key}",
+     *   summary="Delete an faq data",
+     *   tags={"FaqData Controller"},
      *   security={{ "apiAuth": {} }},
      *   @OA\Parameter(
      *     name="id",
      *     in="path",
      *     required=true,
-     *     description="ID of the agency data to delete",
+     *     description="ID of the faq data to delete",
      *     @OA\Schema(
      *       type="integer", default=1
      *     )
@@ -570,7 +570,7 @@ class AgencyController extends Controller
      *     name="key",
      *     in="path",
      *     required=true,
-     *     description="Key of the agency data to delete",
+     *     description="Key of the faq data to delete",
      *     @OA\Schema(
      *       type="string", default="thumbnail"
      *     )
@@ -592,14 +592,14 @@ class AgencyController extends Controller
      *     description="Property data deleted",
      *     @OA\JsonContent(
      *       @OA\Property(
-     *         property="keyAgencyData",
+     *         property="keyFaqData",
      *         default="Any key",
-     *         description="Key of the agency data",
+     *         description="Key of the faq data",
      *       ),
      *       @OA\Property(
-     *         property="valueAgencyData",
+     *         property="valueFaqData",
      *         default="any value",
-     *         description="Value of the agency data",
+     *         description="Value of the faq data",
      *       ),
      *       @OA\Property(
      *         property="created_by",
@@ -612,39 +612,39 @@ class AgencyController extends Controller
      *         description="ID of user who deleted this data",
      *       ),
      *       @OA\Property(
-     *         property="idAgency",
+     *         property="idFaq",
      *         default=1,
-     *         description="ID of agency this data was related to",
+     *         description="ID of faq this data was related to",
      *       )
      *      )
      *   ),
      * )
      */
-    public function deleteAgencyData($id, $key)
+    public function deleteFaqData($id, $key)
     {
         try {
-            $agencyData = AgencyData::all()
-                ->where('idAgency', $id)
-                ->where('keyAgencyData', $key)
+            $faqData = FaqData::all()
+                ->where('idFaq', $id)
+                ->where('keyFaqData', $key)
                 ->first();
 
-            if (!$agencyData)
+            if (!$faqData)
                 return response()->json(['message' => 'No data for this key', 'status' => 'fail'], 404);
 
-            $agencyData->delete();
+            $faqData->delete();
 
-            return response()->json(['data' => $agencyData, 'message' => 'Data successfully deleted', 'status' => 'success'], 200);
+            return response()->json(['data' => $faqData, 'message' => 'Data successfully deleted', 'status' => 'success'], 200);
         } catch (\Exception $e) {
             // Return error message
             return response()->json(['message' => 'Data deletion failed!', 'status' => 'fail'], 409);
         }
     }
 
-    private function existAgency($id)
+    private function existFaq($id)
     {
-        $agency = Agency::all()
-            ->where('idAgency', $id)
+        $faq= Faq::all()
+            ->where('idFaq', $id)
             ->first();
-        return (bool) $agency;
+        return (bool) $faq;
     }
 }
