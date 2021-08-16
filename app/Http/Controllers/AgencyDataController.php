@@ -15,7 +15,7 @@ class AgencyDataController extends Controller
     public function __construct()
     {
         // methods with authorization
-        $this->middleware('auth:api', ['accept' => []]);
+        $this->middleware('auth:api', ['except' => ["getAllData", "getAgencyData"]]);
     }
 
     /**
