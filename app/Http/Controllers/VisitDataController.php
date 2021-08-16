@@ -135,7 +135,11 @@ class VisitDataController extends Controller
      *     description="Unauthenticated"
      *   ),
      *   @OA\Response(
-     *     response=404,
+     *     response=204,
+     *     description="No data for this key"
+     *   ),
+     *   @OA\Response(
+     *     response=204,
      *     description="No data for this key"
      *   ),
      *   @OA\Response(
@@ -204,7 +208,7 @@ class VisitDataController extends Controller
 
             //key doesn't exists
             if (!$visitData)
-                return response()->json(['data' => null, 'message' => "No data for this key", 'status' => 'fail'], 404);
+                return response()->json(['data' => null, 'message' => "No data for this key", 'status' => 'fail'], 204);
 
             return response()->json(['data' => $visitData, 'message' => 'Data successfully retrieved!', 'status' => 'success'], 200);
         } catch (\Exception $e) {
@@ -441,6 +445,10 @@ class VisitDataController extends Controller
      *       description="Data update failed",
      *   ),
      *   @OA\Response(
+     *       response=204,
+     *       description="No data for this key",
+     *   ),
+     *   @OA\Response(
      *     response=200,
      *     description="Property data updated",
      *     @OA\JsonContent(
@@ -520,7 +528,7 @@ class VisitDataController extends Controller
                 ->where('keyVisitData', $key)
                 ->first();
             if (!$visitData)
-                return response()->json(['message' => 'No data for this key', 'status' => 'fail'], 404);
+                return response()->json(['message' => 'No data for this key', 'status' => 'fail'], 204);
 
             if ($request->input('keyVisitData') !== null)
                 $visitData->keyVisitData = $request->input('keyVisitData');
@@ -572,7 +580,7 @@ class VisitDataController extends Controller
      *       description="Unauthenticated"
      *   ),
      *   @OA\Response(
-     *       response=404,
+     *       response=204,
      *       description="No data for this key"
      *   ),
      *   @OA\Response(
@@ -621,7 +629,7 @@ class VisitDataController extends Controller
                 ->first();
 
             if (!$visitData)
-                return response()->json(['message' => 'No data for this key', 'status' => 'fail'], 404);
+                return response()->json(['message' => 'No data for this key', 'status' => 'fail'], 204);
 
             $visitData->delete();
 
