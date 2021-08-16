@@ -7,7 +7,7 @@ use App\Models\User;
 use App\Models\Agency;
 use App\Models\AgencyData;
 
-class AgencyController extends Controller
+class AgencyDataController extends Controller
 {
     /**
      * Constructor
