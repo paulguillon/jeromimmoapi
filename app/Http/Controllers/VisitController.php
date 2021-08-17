@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use App\Models\Visit;
+
 class VisitController extends Controller
 {
     /**
@@ -18,10 +20,19 @@ class VisitController extends Controller
 
     /**
      * @OA\Get(
-     *   path="/api/v1/visits",
-     *   summary="Return all visits",
+     *   path="/api/v1/users/{idUser}/visits",
+     *   summary="Return all visits of a user",
      *   tags={"Visit Controller"},
      *   security={{ "apiAuth": {} }},
+     *   @OA\Parameter(
+     *     name="idUser",
+     *     in="path",
+     *     required=true,
+     *     description="ID of user",
+     *     @OA\Schema(
+     *       type="integer", default=1
+     *     )
+     *   ),
      *   @OA\Parameter(ref="#/components/parameters/get_request_parameter_limit"),
      *   @OA\Response(
      *       response=401,
@@ -65,9 +76,9 @@ class VisitController extends Controller
      *   )
      * )
      */
-    public function getVisits()
+    public function getVisits($idUser)
     {
-        $visits = Visit::all();
+        $visits = DB::select("SELECT visit.* FROM visit INNER JOIN hasVisit ON(hasVisit.idVisit = visit.idVisit) WHERE hasVisit.idUser = $idUser");
 
         return response()->json(['total' => count($visits), 'visits' => $visits, 'message' => "Visits successfully retrieved!", 'status' => 'success'], 200);
     }

@@ -49,6 +49,9 @@ $router->group(['prefix' => 'api/v1'], function () use ($router) {
         $router->patch('/{id}', 'UserController@updateUser');
         // Matches "/api/v1/users/id Delete one User
         $router->delete('/{id}', 'UserController@deleteUser');
+
+        // Matches "/api/v1/users/idUser/visits Visits of one user
+        $router->get('/{idUser}/visits', 'VisitController@getVisits');
     });
     /*
     |-----------------------|

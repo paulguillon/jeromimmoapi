@@ -21,8 +21,8 @@ class CreateHasVisitTable extends Migration
             $table->timestamp('updated_at')->default(DB::raw('CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP'));
             $table->foreignId('updated_by')->constrained('users', 'idUser');
             $table->string('action', 255);
-            $table->foreignId('idVisitData')->constrained('visitData', 'idVisitData');
-            $table->foreignId('idUserData')->constrained('userData', 'idUserData');
+            $table->foreignId('idVisit')->constrained('visit', 'idVisit');
+            $table->foreignId('idUser')->constrained('users', 'idUser');
         });
     }
 
