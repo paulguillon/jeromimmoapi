@@ -22,7 +22,7 @@ class Favorite extends Model implements AuthenticatableContract, AuthorizableCon
      * @var array
      */
     protected $fillable = [
-        'idProperty', 'IdUser'
+        'idProperty', 'idUser', 'created_by', 'updated_by', 'action'
     ];
 
     /**

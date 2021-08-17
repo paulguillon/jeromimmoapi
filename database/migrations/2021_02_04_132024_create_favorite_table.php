@@ -5,7 +5,7 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\DB;
 
-class CreateHasFavorisTable extends Migration
+class CreateFavoriteTable extends Migration
 {
     /**
      * Run the migrations.
@@ -14,7 +14,7 @@ class CreateHasFavorisTable extends Migration
      */
     public function up()
     {
-        Schema::create('Favorite', function (Blueprint $table) {
+        Schema::create('favorite', function (Blueprint $table) {
             $table->bigIncrements('idFavorite');
             $table->timestamp('created_at')->default(DB::raw('CURRENT_TIMESTAMP'));
             $table->foreignId('created_by')->constrained('users', 'idUser');
