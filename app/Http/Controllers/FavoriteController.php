@@ -37,27 +37,27 @@ class FavoriteController extends Controller
      *     description="List of favorites",
      *     @OA\JsonContent(
      *       @OA\Property(
-     *         favorite="idFavorite",
+     *         property"idFavorite",
      *         default="favorite id",
      *         description="Id of the Favorite",
      *       ),
      *       @OA\Property(
-     *         favorite="created_at",
+     *         property"created_at",
      *         default="2021-02-05T09:00:57.000000Z",
      *         description="Timestamp of the favorite creation",
      *       ),
      *       @OA\Property(
-     *         favorite="created_by",
+     *         property"created_by",
      *         default=1,
      *         description="Id of user who created this one",
      *       ),
      *       @OA\Property(
-     *         favorite="updated_at",
+     *         property"updated_at",
      *         default="2021-02-05T09:00:57.000000Z",
      *         description="Timestamp of the favorite last update",
      *       ),
      *       @OA\Property(
-     *         favorite="updated_by",
+     *         property"updated_by",
      *         default=1,
      *         description="Id of user who modified this one",
      *       ),
@@ -87,32 +87,32 @@ class FavoriteController extends Controller
      *   tags={"Favorite Controller"},
      *   security={{ "apiAuth": {} }},
      *     @OA\Property(
-     *         favorite="idFavorite",
+     *         property"idFavorite",
      *         default="favorite id",
      *         description="Id of the Favorite",
      *       ),
      *       @OA\Property(
-     *         favorite="idUser",
+     *         property"idUser",
      *         default="user id",
      *         description="Id of the user",
      *       ),
      *       @OA\Property(
-     *         favorite="created_at",
+     *         property"created_at",
      *         default="2021-02-05T09:00:57.000000Z",
      *         description="Timestamp of the favorite creation",
      *       ),
      *       @OA\Property(
-     *         favorite="created_by",
+     *         property"created_by",
      *         default=1,
      *         description="Id of user who created this one",
      *       ),
      *       @OA\Property(
-     *         favorite="updated_at",
+     *         property"updated_at",
      *         default="2021-02-05T09:00:57.000000Z",
      *         description="Timestamp of the favorite last update",
      *       ),
      *       @OA\Property(
-     *         favorite="updated_by",
+     *         property"updated_by",
      *         default=1,
      *         description="Id of user who modified this one",
      *       ),
@@ -133,32 +133,32 @@ class FavoriteController extends Controller
      *     description="Favorite created",
      *     @OA\JsonContent(
      *       @OA\Property(
-     *         favorite="idFavorite",
+     *         property"idFavorite",
      *         default="Favorite id",
      *         description="Id of the Favorite",
      *       ),
      *       @OA\Property(
-     *         favorite="idUser",
+     *         property"idUser",
      *         default="user id",
      *         description="Id of the user",
      *       ),
      *       @OA\Property(
-     *         favorite="created_at",
+     *         property"created_at",
      *         default="2021-02-05T09:00:57.000000Z",
      *         description="Timestamp of the favorite creation",
      *       ),
      *       @OA\Property(
-     *         favorite="created_by",
+     *         property"created_by",
      *         default=1,
      *         description="Id of creator",
      *       ),
      *       @OA\Property(
-     *         favorite="updated_at",
+     *         property"updated_at",
      *         default="2021-02-05T09:00:57.000000Z",
      *         description="Timestamp of the Favorite last update",
      *       ),
      *       @OA\Property(
-     *         favorite="updated_by",
+     *         property"updated_by",
      *         default=1,
      *         description="Id of creator",
      *       ),
@@ -233,12 +233,12 @@ class FavoriteController extends Controller
      *     description="Favorite deleted",
      *     @OA\JsonContent(
      *        @OA\Property(
-     *         favorite="idFavorite",
+     *         property"idFavorite",
      *         default="favorite id",
      *         description="Id of the Favorite",
      *       ),
      *       @OA\Property(
-     *         favorite="idUser",
+     *         property"idUser",
      *         default="user id",
      *         description="Id of the user",
      *       ),
