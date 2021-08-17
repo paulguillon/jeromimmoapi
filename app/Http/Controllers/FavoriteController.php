@@ -20,7 +20,7 @@ class FavoriteController extends Controller
 
     /**
      * @OA\Get(
-     *   path="/api/v1/users/id/favorites",
+     *   path="/api/v1/users/{id}/favorites",
      *   summary="Return all Favorites",
      *   tags={"Favorite Controller"},
      *   @OA\Parameter(ref="#/components/parameters/get_request_parameter_limit"),
@@ -82,7 +82,7 @@ class FavoriteController extends Controller
 
     /**
      * @OA\Post(
-     *   path="/api/v1/users/id/favorite",
+     *   path="/api/v1/users/{id}/favorite",
      *   summary="Add a favorite",
      *   tags={"Favorite Controller"},
      *   security={{ "apiAuth": {} }},
@@ -203,7 +203,7 @@ class FavoriteController extends Controller
 
     /**
      * @OA\Delete(
-     *   path="/api/v1/users/id/favorite",
+     *   path="/api/v1/users/{id}/favorite",
      *   summary="Delete a Favorite",
      *   tags={"Favorite Controller"},
      *   security={{ "apiAuth": {} }},
