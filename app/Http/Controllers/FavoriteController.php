@@ -219,9 +219,6 @@ class FavoriteController extends Controller
         $this->validate($request, [
             'idProperty' => 'required|integer',
             'idUser' => 'required|integer',
-            'action' => 'string',
-            'created_by' => 'required|integer',
-            'updated_by' => 'required|integer',
         ]);
 
         try {
