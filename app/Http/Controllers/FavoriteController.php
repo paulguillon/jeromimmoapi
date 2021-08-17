@@ -219,43 +219,23 @@ class FavoriteController extends Controller
         $this->validate($request, [
             'idProperty' => 'required|integer',
             'idUser' => 'required|integer',
-            'action' => 'string',
-            'created_by' => 'integer',
-            'updated_by' => 'integer',
         ]);
 
         try {
             $favorite = new Favorite;
             $favorite->idProperty = $request->input('idProperty');
-            $favorite->action = $request->input('action') ?? "";
             $favorite->idUser = $request->input('idUser');
-
-            //test if the creator exists
-            $exist = User::find($request->input('created_by'));
-            if (!$exist)
-                return response()->json(['favorite' => null, 'message' => 'Unknown creator', 'status' => 'fail'], 404);
-
-            //test if the creator exists
-            $exist = User::find($request->input('updated_by'));
-            if (!$exist)
-                return response()->json(['favorite' => null, 'message' => 'Unknown user', 'status' => 'fail'], 404);
-
+            
             $exist = Favorite::all()->where("idUser", $request->input("idUser"))->where("idProperty", $request->input("idProperty"))->first();
-
             $save = $exist;
 
             if ($exist) {
-
                 $exist->delete();
             } else {
 
                 $exist = new Favorite;
-
                 $exist->idProperty = $request->input('idProperty');
-                $exist->action = $request->input('action') ?? "";
                 $exist->idUser = $request->input('idUser');
-                $exist->updated_by = $request->input('updated_by');
-                $exist->created_by = $request->input('created_by');
 
                 $exist->save();
             }
@@ -265,67 +245,6 @@ class FavoriteController extends Controller
         } catch (\Exception $e) {
             //return error message
             return response()->json(['message' => 'Favorite add Failed!' .  $e->getMessage(), 'status' => 'fail'], 409);
-        }
-    }
-
-
-    /**
-     * @OA\Delete(
-     *   path="/api/v1/favorites/{idFavorite}",
-     *   summary="Delete a Favorite",
-     *   tags={"Favorite Controller"},
-     *   security={{ "apiAuth": {} }},
-     *   @OA\Parameter(
-     *     name="idFavorite",
-     *     in="path",
-     *     required=true,
-     *     description="ID of the Favorite to delete",
-     *     @OA\Schema(
-     *       type="integer", default=1
-     *     )
-     *   ),
-     *   @OA\Response(
-     *       response=401,
-     *       description="Unauthenticated",
-     *   ),
-     *   @OA\Response(
-     *       response=404,
-     *       description="Resource Not Found"
-     *   ),
-     *   @OA\Response(
-     *       response=409,
-     *       description="Favorite deletion failed!",
-     *   ),
-     *   @OA\Response(
-     *     response=200,
-     *     description="Favorite deleted",
-     *     @OA\JsonContent(
-     *        @OA\Property(
-     *         property="idFavorite",
-     *         default="1",
-     *         description="Id of the Favorite",
-     *       ),
-     *       @OA\Property(
-     *         property="idUser",
-     *         default="1",
-     *         description="Id of the user",
-     *       ),
-     *      )
-     *   ),
-     * )
-     */
-    public function deleteFavorite($idFavorite)
-    {
-        try {
-            $favorite = Favorite::find($idFavorite);
-            if (!$favorite)
-                return response()->json(['favorite' => $favorite, 'message' => 'Favorite successfully deleted!', 'status' => 'success'], 200);
-            $favorite->delete();
-
-            return response()->json(['favorite' => $favorite, 'message' => 'Favorite successfully deleted!', 'status' => 'success'], 200);
-        } catch (\Exception $e) {
-            // Return error message
-            return response()->json(['message' => 'Favorite deletion failed!', 'status' => 'fail'], 409);
         }
     }
 }
