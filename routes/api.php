@@ -52,6 +52,15 @@ $router->group(['prefix' => 'api/v1'], function () use ($router) {
 
         // Matches "/api/v1/users/idUser/visits Visits of one user
         $router->get('/{idUser}/visits', 'VisitController@getVisits');
+
+
+
+        // Matches "/api/v1/users/id/favorite Favorites of one user
+        $router->get('/{id}/favorites', 'FavoriteController@getFavorites');
+        // Matches "/api/v1/users/id/favorite add one favorite of user
+        $router->post('/{id}/favorite', 'FavoriteController@addFavorite');
+        // Matches "/api/v1/users/id/favorite add one favorite of user
+        $router->delete('/{id}/favorite', 'FavoriteController@deleteFavorite');
     });
     /*
     |-----------------------|
@@ -183,7 +192,7 @@ $router->group(['prefix' => 'api/v1'], function () use ($router) {
         // Matches "/api/v1/faq/id delete one faq
         $router->delete('/{id}', 'FaqController@deleteFaq');
     });
-        /*
+    /*
     |------------------------|
     | Faq data Routes        |
     |------------------------|
