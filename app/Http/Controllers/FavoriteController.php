@@ -58,19 +58,9 @@ class FavoriteController extends Controller
      *         description="Timestamp of the favorite creation",
      *       ),
      *       @OA\Property(
-     *         property="created_by",
-     *         default=1,
-     *         description="Id of User who created this one",
-     *       ),
-     *       @OA\Property(
      *         property="updated_at",
      *         default="2021-02-05T09:00:57.000000Z",
      *         description="Timestamp of the favorite last update",
-     *       ),
-     *       @OA\Property(
-     *         property="updated_by",
-     *         default=1,
-     *         description="Id of User who modified this one",
      *       ),
      *     )
      *   )
@@ -113,24 +103,6 @@ class FavoriteController extends Controller
      *       type="number", default="1"
      *     )
      *     ),
-     *  @OA\Parameter(
-     *     name="created_by",
-     *     in="query",
-     *     required=true,
-     *     description="ID of the logged user",
-     *     @OA\Schema(
-     *       type="integer", default=1
-     *     )
-     *   ),
-     *   @OA\Parameter(
-     *     name="updated_by",
-     *     in="query",
-     *     required=true,
-     *     description="ID of the logged user",
-     *     @OA\Schema(
-     *       type="integer", default=1
-     *     )
-     *   ),
      *     @OA\Property(
      *         property="idFavorite",
      *         default="favorite id",
@@ -147,20 +119,11 @@ class FavoriteController extends Controller
      *         description="Timestamp of the favorite creation",
      *       ),
      *       @OA\Property(
-     *         property="created_by",
-     *         default=1,
-     *         description="Id of User who created this one",
-     *       ),
-     *       @OA\Property(
      *         property="updated_at",
      *         default="2021-02-05T09:00:57.000000Z",
      *         description="Timestamp of the favorite last update",
      *       ),
-     *       @OA\Property(
-     *         property="updated_by",
-     *         default=1,
-     *         description="Id of User who modified this one",
-     *       ),
+     *      
      *   @OA\Response(
      *       response=401,
      *       description="Unauthenticated",
@@ -193,19 +156,9 @@ class FavoriteController extends Controller
      *         description="Timestamp of the favorite creation",
      *       ),
      *       @OA\Property(
-     *         property="created_by",
-     *         default=1,
-     *         description="Id of creator",
-     *       ),
-     *       @OA\Property(
      *         property="updated_at",
      *         default="2021-02-05T09:00:57.000000Z",
      *         description="Timestamp of the Favorite last update",
-     *       ),
-     *       @OA\Property(
-     *         property="updated_by",
-     *         default=1,
-     *         description="Id of creator",
      *       ),
      *     )
      *   ),
@@ -225,7 +178,7 @@ class FavoriteController extends Controller
             $favorite = new Favorite;
             $favorite->idProperty = $request->input('idProperty');
             $favorite->idUser = $request->input('idUser');
-            
+
             $exist = Favorite::all()->where("idUser", $request->input("idUser"))->where("idProperty", $request->input("idProperty"))->first();
             $save = $exist;
 
