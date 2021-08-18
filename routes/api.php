@@ -55,7 +55,6 @@ $router->group(['prefix' => 'api/v1'], function () use ($router) {
 
         // Matches "/api/v1/users/id/favorite Favorites of one user
         $router->get('/{idUser}/favorites', 'FavoriteController@getAllFavorites');
-
     });
 
 
@@ -63,6 +62,7 @@ $router->group(['prefix' => 'api/v1'], function () use ($router) {
         $router->get('/', 'FavoriteController@getFavorite');
         $router->patch('/', 'FavoriteController@toggleFavorite');
     });
+
     /*
     |-----------------------|
     | UserData Routes       |
