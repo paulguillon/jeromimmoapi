@@ -20,7 +20,7 @@ class UserDataController extends Controller
 
     /**
      * @OA\Get(
-     *   path="/api/v1/user/{id}/data",
+     *   path="/api/v1/users/{id}/data",
      *   summary="Return all data of specific user",
      *   tags={"UserData Controller"},
      *   security={{ "apiAuth": {} }},
@@ -125,7 +125,7 @@ class UserDataController extends Controller
     }
     /**
      * @OA\Get(
-     *   path="/api/v1/user/{id}/data/{key}",
+     *   path="/api/v1/users/{id}/data/{key}",
      *   summary="Return specific data of the specified user",
      *   tags={"UserData Controller"},
      *   @OA\Parameter(
@@ -231,7 +231,7 @@ class UserDataController extends Controller
     }
     /**
      * @OA\Post(
-     *   path="/api/v1/user/{id}/data",
+     *   path="/api/v1/users/{id}/data",
      *   summary="Add a data to a specific user",
      *   tags={"UserData Controller"},
      *   security={{ "apiAuth": {} }},
@@ -386,7 +386,7 @@ class UserDataController extends Controller
     }
     /**
      * @OA\Patch(
-     *   path="/api/v1/user/{id}/data/{key}",
+     *   path="/api/v1/users/{id}/data/{key}",
      *   summary="Update a user data",
      *   tags={"UserData Controller"},
      *   security={{ "apiAuth": {} }},
@@ -570,7 +570,7 @@ class UserDataController extends Controller
 
     /**
      * @OA\Delete(
-     *   path="/api/v1/user/{id}/data/{key}",
+     *   path="/api/v1/users/{id}/data/{key}",
      *   summary="Delete a user data",
      *   tags={"UserData Controller"},
      *   security={{ "apiAuth": {} }},
