@@ -59,6 +59,7 @@ $router->group(['prefix' => 'api/v1'], function () use ($router) {
 
 
     $router->group(['prefix' => 'favorites'], function () use ($router) {
+        $router->get('/', 'FavoriteController@getFavorite');
         $router->patch('/', 'FavoriteController@toggleFavorite');
     });
 

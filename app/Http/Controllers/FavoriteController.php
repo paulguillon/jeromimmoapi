@@ -80,6 +80,75 @@ class FavoriteController extends Controller
     }
 
     /**
+     * @OA\Get(
+     *  path="/api/v1/favorites",
+     *  summary="Return one Favorite of one User if it exists",
+     *  tags={"Favorite Controller"},
+     *  security={{ "apiAuth": {} }},
+     *  @OA\Parameter(ref="#/components/parameters/get_request_parameter_limit"),
+     *  @OA\Parameter(
+     *    name="idUser",
+     *    in="query",
+     *    required=true,
+     *    description="ID of the user to get favorite",
+     *    @OA\Schema(
+     *      type="integer", default=1
+     *    )
+     *  ),
+     *  @OA\Parameter(
+     *    name="idProperty",
+     *    in="query",
+     *    required=true,
+     *    description="ID of the user to get favorite",
+     *    @OA\Schema(
+     *      type="integer", default=1
+     *    )
+     *  ),
+     *  @OA\Response(
+     *      response=401,
+     *      description="Unauthenticated",
+     *  ),
+     *  @OA\Response(
+     *      response=204,
+     *      description="Resource Not Found"
+     *  ),
+     *  @OA\Response(
+     *   response=200,
+     *   description="One favorite",
+     *   @OA\JsonContent(
+     *    @OA\Property(
+     *      property="idFavorite",
+     *      default="favorite id",
+     *      description="Id of the Favorite",
+     *    ),
+     *    @OA\Property(
+     *      property="created_at",
+     *      default="2021-02-05T09:00:57.000000Z",
+     *      description="Timestamp of the favorite creation",
+     *    ),
+     *    @OA\Property(
+     *      property="updated_at",
+     *      default="2021-02-05T09:00:57.000000Z",
+     *      description="Timestamp of the favorite last update",
+     *    ),
+     *   )
+     *  )
+     * )
+     */
+
+    public function getFavorite(Request $request)
+    {
+        try {
+            $favorite = Favorite::all()->where('idUser', $request->input('idUser'))->where('idProperty', $request->input('idProperty'))->first();
+            if (empty($favorite))
+                return response()->json(null, 204);
+            return response()->json($favorite, 200);
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'favorite not found!' . $e->getMessage()], 409);
+        }
+    }
+
+    /**
      * @OA\Patch(
      *   path="/api/v1/favorites",
      *   summary="Add a favorite",
