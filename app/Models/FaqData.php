@@ -23,7 +23,7 @@ class FaqData extends Model implements AuthenticatableContract, AuthorizableCont
      * @var array
      */
     protected $fillable = [
-        'keyFaqData', 'valueFaqData', 'idFaq', 'created_by', 'updated_by'
+        'idFaqData', 'created_by', 'updated_by', 'keyFaqData', 'valueFaqData',
     ];
 
     /**
@@ -31,7 +31,5 @@ class FaqData extends Model implements AuthenticatableContract, AuthorizableCont
      *
      * @var array
      */
-    protected $hidden = [
-
-    ];
+    protected $hidden = [];
 }
