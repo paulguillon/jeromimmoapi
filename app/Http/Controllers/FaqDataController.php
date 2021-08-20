@@ -7,7 +7,7 @@ use App\Models\User;
 use App\Models\Faq;
 use App\Models\FaqData;
 
-class FaqController extends Controller
+class FaqDataController extends Controller
 {
     /**
      * Constructor
@@ -15,7 +15,7 @@ class FaqController extends Controller
     public function __construct()
     {
         // methods with authorization
-        $this->middleware('auth:api', ['accept' => []]);
+        $this->middleware('auth:api', ['except' => ['getFaqData', 'getAllData']]);
     }
 
     /**
@@ -345,7 +345,7 @@ class FaqController extends Controller
             //if faq data already exists
             $exist = FaqData::all()
                 ->where('keyFaqData', $request->input('keyFaqData'))
-                ->where('idFaq', $id)
+                ->where('idFaqData', $id)
                 ->first();
             if ($exist)
                 return response()->json(['data' => null, 'message' => "Data already exists", 'status' => 'fail'], 404);
@@ -356,14 +356,13 @@ class FaqController extends Controller
             $faqData->valueFaqData = $request->input('valueFaqData');
             $faqData->created_by = (int)$request->input('created_by');
             $faqData->updated_by = (int)$request->input('updated_by');
-            $faqData->idVisit = (int)$id;
             $faqData->save();
 
             // Return successful response
             return response()->json(['faqData' => $faqData, 'message' => 'Faq data successfully created', 'status' => 'success'], 201);
         } catch (\Exception $e) {
             //return error message
-            return response()->json(['message' => 'Faq Data addition failed!', 'status' => 'fail'], 409);
+            return response()->json(['message' => 'Faq Data addition failed!', $e->getMessage(), 'status' => 'fail'], 409);
         }
     }
 
@@ -423,15 +422,6 @@ class FaqController extends Controller
      *     in="query",
      *     required=false,
      *     description="New modifier",
-     *     @OA\Schema(
-     *       type="integer", default=1
-     *     )
-     *   ),
-     *   @OA\Parameter(
-     *     name="idFaq",
-     *     in="query",
-     *     required=false,
-     *     description="New idFaq",
      *     @OA\Schema(
      *       type="integer", default=1
      *     )
@@ -513,15 +503,7 @@ class FaqController extends Controller
             //if faq doesn't exists
             if (!$this->existFaq($id))
                 return response()->json(['data' => null, 'message' => "Unknown Property", 'status' => 'fail'], 404);
-
-            //test if the new key already exists
-            $newKeyExist = FaqData::all()
-                ->where('idFaq', $id)
-                ->where('keyFaqData', $request->input('keyFaqData'))
-                ->first();
-            if ($newKeyExist)
-                return response()->json(['message' => 'Data with this key already exists', 'status' => 'fail'], 404);
-
+                
             // update
             $faqData = FaqData::all()
                 ->where('idFaq', $id)
@@ -642,7 +624,7 @@ class FaqController extends Controller
 
     private function existFaq($id)
     {
-        $faq= Faq::all()
+        $faq = Faq::all()
             ->where('idFaq', $id)
             ->first();
         return (bool) $faq;

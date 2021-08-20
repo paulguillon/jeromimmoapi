@@ -13,17 +13,17 @@ class Faq extends Model implements AuthenticatableContract, AuthorizableContract
 {
     use Authenticatable, Authorizable, HasFactory;
 
-    protected $table = 'faq'; 
+    protected $table = 'faq';
 
     protected $primaryKey = 'idFaq';
 
     /**
      * The attributes that are mass assignable.
      *
-     * @var array
+        * @var array
      */
     protected $fillable = [
-        'created_by', 'updated_by'
+        'idFaq', 'faqTypeName', 'created_by', 'updated_by'
     ];
 
     /**
@@ -31,7 +31,5 @@ class Faq extends Model implements AuthenticatableContract, AuthorizableContract
      *
      * @var array
      */
-    protected $hidden = [
-        
-    ];
+    protected $hidden = [];
 }

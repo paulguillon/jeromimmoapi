@@ -15,7 +15,7 @@ class FaqController extends Controller
     public function __construct()
     {
         // methods with authorization
-        $this->middleware('auth:api', ['accept' => ['addFaq']]);
+        $this->middleware('auth:api', ['except' => ['getFaq', 'getAllFaq']]);
     }
 
 
@@ -24,7 +24,6 @@ class FaqController extends Controller
      *   path="/api/v1/faq",
      *   summary="Return all faq",
      *   tags={"Faq Controller"},
-     *   security={{ "apiAuth": {} }},
      *   @OA\Parameter(ref="#/components/parameters/get_request_parameter_limit"),
      *   @OA\Response(
      *       response=401,
@@ -39,7 +38,7 @@ class FaqController extends Controller
      *     description="List of faq",
      *     @OA\JsonContent(
      *       @OA\Property(
-     *         property="idfaq",
+     *         property="idFaq",
      *         default="1",
      *         description="id of the faq",
      *       ),
@@ -74,13 +73,13 @@ class FaqController extends Controller
      */
 
 
-    public function getAllFaq(Request $request)
+    public function getAllFaq()
     {
         $faqs = Faq::all();
 
         for ($i = 0; $i < count($faqs); $i++) {
-            $faq = $faqs[$i];
 
+            $faq = $faqs[$i];
             $faq['data'] = $this->getAllData($faq->idFaq);
         }
 
@@ -92,7 +91,6 @@ class FaqController extends Controller
      *   path="/api/v1/faq/{id}",
      *   summary="Return a faq",
      *   tags={"Faq Controller"},
-     *   security={{ "apiAuth": {} }},
      *   @OA\Parameter(
      *     name="id",
      *     in="path",
@@ -171,6 +169,7 @@ class FaqController extends Controller
             $faq['data'] = $this->getAllData($id);
             return response()->json($faq, 200);
         } catch (\Exception $e) {
+
             return response()->json(['message' => 'Faq not found!' . $e->getMessage()], 404);
         }
     }
@@ -182,6 +181,15 @@ class FaqController extends Controller
      *   summary="Add a faq",
      *   tags={"Faq Controller"},
      *   security={{ "apiAuth": {} }},
+     *   @OA\Parameter(
+     *     name="faqTypeName",
+     *     in="query",
+     *     required=true,
+     *     description="Title of Faq",
+     *     @OA\Schema(
+     *       type="string", default="Titre"
+     *     )
+     *   ),
      *   @OA\Parameter(
      *     name="created_by",
      *     in="query",
@@ -198,15 +206,6 @@ class FaqController extends Controller
      *     description="ID of the logged user",
      *     @OA\Schema(
      *       type="number", default="1"
-     *     )
-     *   ),
-     *   @OA\Parameter(
-     *     name="data",
-     *     in="query",
-     *     required=true,
-     *     description="First name of the faq to add",
-     *     @OA\Schema(
-     *       type="string", default="{'test':'test','test2':'test2'}"
      *     )
      *   ),
      *   @OA\Response(
@@ -266,7 +265,7 @@ class FaqController extends Controller
     {
         //validate incoming request
         $this->validate($request, [
-            'data' => 'string',
+            'faqTypeName' => 'required|string',
             'created_by' => 'required|integer',
             'updated_by' => 'required|integer',
         ]);
@@ -274,15 +273,11 @@ class FaqController extends Controller
         try {
 
             $faq = new Faq;
+            $faq->faqTypeName = $request->input('faqTypeName');
             $faq->created_by = $request->input('created_by');
             $faq->updated_by = $request->input('updated_by');
-
             $faq->save();
 
-            if ($request->input('data') !== null) {
-                if (!$this->_addData($faq->idFaq, $request))
-                    return response()->json(['message' => 'Faq data not added!', 'status' => 'fail'], 500);
-            }
             //return successful response
             return response()->json(['faq' => $faq, 'data' => $this->getAllData($faq->idFaq), 'message' => 'CREATED', 'status' => 'success'], 201);
         } catch (\Exception $e) {
@@ -298,7 +293,7 @@ class FaqController extends Controller
      *   tags={"Faq Controller"},
      *   security={{ "apiAuth": {} }},
      *   @OA\Parameter(
-     *     name="idFaq",
+     *     name="id",
      *     in="path",
      *     required=true,
      *     description="ID of the faq to update",
@@ -306,10 +301,14 @@ class FaqController extends Controller
      *       type="number", default="1"
      *     )
      *   ),
-     *     @OA\Property(
-     *         property="idFaq",
-     *         default="1",
-     *         description="Id of the agency",
+     @OA\Parameter(
+     *     name="faqTypeName",
+     *     in="query",
+     *     required=true,
+     *     description="New Title",
+     *     @OA\Schema(
+     *       type="string", default="Titre"
+     *     )
      *   ),
      *   @OA\Parameter(
      *     name="created_by",
@@ -325,14 +324,6 @@ class FaqController extends Controller
      *     description="ID of the logged user",
      *     @OA\Schema(
      *       type="number", default="1"
-     *     )
-     *   ),
-     *   @OA\Parameter(
-     *     name="data",
-     *     in="query",
-     *     description="Data to add",
-     *     @OA\Schema(
-     *       type="string", default="{'cle':'valeur','deuxiemecle':'deuxiemevaleur'}"
      *     )
      *   ),
      *   @OA\Response(
@@ -401,33 +392,28 @@ class FaqController extends Controller
     {
         //validate incoming request
         $this->validate($request, [
-            'data' => 'string',
+            'faqTypeName' => 'string',
             'created_by' => 'integer',
             'updated_by' => 'integer'
         ]);
 
         try {
-            $faq = Faq::findOrFail($id);
+            $faq = Faq::all()->where('idFaq', $id)->first();
 
             if (in_array(null or '', $request->all()))
                 return response()->json(['message' => 'Null or empty value', 'status' => 'fail'], 500);
-
+            
             if ($request->input('created_by') !== null)
                 $faq->created_by = $request->input('created_by');
+            
             if ($request->input('updated_by') !== null)
                 $faq->updated_by = $request->input('updated_by');
 
+            if ($request->input('faqTypeName') !== null)
+                $faq->faqTypeName = $request->input('faqTypeName');
+
             $faq->update();
 
-            //maj des data
-            if ($request->input('data') !== null) {
-                $data = (array)json_decode($request->input('data'), true);
-
-                foreach ($data as $key => $value) {
-                    if (!$this->updateData($faq->idFaq, $key, $value))
-                        return response()->json(['message' => 'Faq Update Failed!', 'status' => 'fail'], 500);
-                }
-            }
             //return successful response
             return response()->json(['faq' => $faq, 'data' => $this->getAllData($faq->idFaq), 'message' => 'ALL UPDATED', 'status' => 'success'], 200);
         } catch (\Exception $e) {
@@ -523,104 +509,6 @@ class FaqController extends Controller
         }
     }
 
-    /**
-     * @OA\Post(
-     *   path="/api/v1/faq/data/{id}",
-     *   summary="Add faq data",
-     *   tags={"Faq Controller"},
-     *   security={{ "apiAuth": {} }},
-     *   @OA\Parameter(
-     *     name="id",
-     *     in="path",
-     *     required=true,
-     *     description="ID of the faq",
-     *     @OA\Schema(
-     *       type="number", default="1"
-     *     )
-     *   ),
-     *   @OA\Parameter(
-     *     name="data",
-     *     in="query",
-     *     required=true,
-     *     description="data to add",
-     *     @OA\Schema(
-     *       type="string", default="{'test':'test'}"
-     *     )
-     *   ),
-     *   @OA\Parameter(
-     *     name="created_by",
-     *     in="query",
-     *     required=true,
-     *     description="ID of the creator",
-     *     @OA\Schema(
-     *       type="number", default="1"
-     *     )
-     *   ),
-     *   @OA\Parameter(
-     *     name="updated_by",
-     *     in="query",
-     *     required=true,
-     *     description="ID of the updator",
-     *     @OA\Schema(
-     *       type="number", default="1"
-     *     )
-     *   ),
-     *   @OA\Response(
-     *       response=409,
-     *       description="Data not created",
-     *   ),
-     *   @OA\Response(
-     *       response=404,
-     *       description="Resource Not Found",
-     *   ),
-     *   @OA\Response(
-     *       response=500,
-     *       description="Faq data not added",
-     *       @OA\JsonContent(
-     *        @OA\Property(
-     *          property="message",
-     *          default="Faq data not added",
-     *          description="Message",
-     *        ),
-     *        @OA\Property(
-     *          property="status",
-     *          default="fail",
-     *          description="Status",
-     *        ),
-     *       ),
-     *   ),
-     *   @OA\Response(
-     *     response=201,
-     *     description="Faq data created",
-     *       @OA\JsonContent(
-     *        @OA\Property(
-     *          property="data",
-     *          default="[]",
-     *          description="data",
-     *        ),
-     *        @OA\Property(
-     *          property="status",
-     *          default="success",
-     *          description="Status",
-     *        ),
-     *       ),
-     *   ),
-     * )
-     */
-
-    public function addData($id, Request $request)
-    {
-        try {
-            if (!$this->_addData($id, $request))
-                return response()->json(['message' => 'Not all data has been added', 'status' => 'fail'], 409);
-
-            //return successful response
-            return response()->json(['faq' => $this->getAllData($id), 'message' => 'CREATED'], 201);
-        } catch (\Exception $e) {
-            //return error message
-            return response()->json(['message' => 'Faq data not added!' . $e->getMessage()], 409);
-        }
-    }
 
     //fonction utilisée par la route et lors de la creation de user pour ajouter toutes les data
     public function _addData($id, $request)
@@ -628,6 +516,7 @@ class FaqController extends Controller
         $data = (array)json_decode($request->input('data'), true);
 
         try {
+
             foreach ($data as $key => $value) {
 
                 $faqData = new FaqData;
